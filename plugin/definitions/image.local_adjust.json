@@ -1,0 +1,42 @@
+{
+  "capabilityId": "image.local_adjust",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-local-adjust-v1",
+  "displayName": "Local image adjustment",
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "one",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "adjusted_image",
+      "slotId": "result_image"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.local_adjust.parameters.json",
+  "runtimeRequirements": [
+    "browser.canvas_2d"
+  ],
+  "schemaVersion": 1,
+  "supportedAdapterClasses": [
+    "local_canvas"
+  ],
+  "version": "0.1.0"
+}

@@ -8,6 +8,11 @@ It keeps Retake Whiteboard responsible for canvas state, assets, executions,
 history, package lifecycle, and fallback UI while this repository owns the
 image-specific action, panel, preview, parameters, and browser processor.
 
-The initial P9 migration is in progress. Installation and authoring
-instructions will be added once the first vertical package slice is complete.
+The portable Retake Package source lives in [`plugin/`](./plugin). Keeping the
+package boundary in its own directory lets the local Package Manager validate
+only declared files while repository-level tests and authoring dependencies
+stay outside the distributed artifact.
 
+The initial P9 migration is in progress. Installation and authoring
+instructions will be completed once the first vertical package slice is
+verified in Retake Whiteboard.

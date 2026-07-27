@@ -1,0 +1,52 @@
+{
+  "build": {
+    "entrypoint": "src/index.tsx",
+    "profile": "retake_web_plugin_v1",
+    "toolchain": "retake_web_plugin_v1@2+esbuild@0.28.1"
+  },
+  "components": {
+    "agentPresets": [],
+    "pluginModules": [
+      {
+        "definitionHash": "sha256:image-studio-web-v1",
+        "definitionPath": "retake.plugin.json",
+        "pluginModuleId": "design.retake.image-studio.web",
+        "resourcePaths": [
+          "definitions/image.local_adjust.json",
+          "definitions/image.local_adjust.parameters.json"
+        ],
+        "version": "0.1.0"
+      }
+    ],
+    "skills": [],
+    "workflows": []
+  },
+  "dependencies": [],
+  "description": "Retake Image Studio tools for workflow-native image editing.",
+  "entrypoints": [],
+  "files": [
+    "definitions/image.local_adjust.json",
+    "definitions/image.local_adjust.parameters.json",
+    "retake.plugin.json",
+    "src/contracts.ts",
+    "src/image-adjustments.ts",
+    "src/index.tsx",
+    "src/panel-store.ts",
+    "src/retake-plugin-api.d.ts",
+    "src/styles.ts"
+  ],
+  "integrity": "sha256:auto",
+  "license": "MIT",
+  "name": "Retake Image Studio",
+  "optionalDependencies": [],
+  "packageId": "design.retake.image-studio",
+  "permissions": [],
+  "publisher": {
+    "name": "Retake",
+    "publisherId": "retake.publisher.official"
+  },
+  "retakeHostCompatibility": "^0.1.0",
+  "schemaVersion": 1,
+  "signature": null,
+  "version": "0.1.0"
+}

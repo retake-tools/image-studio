@@ -1,0 +1,44 @@
+{
+  "contributions": [
+    {
+      "contributionId": "design.retake.image-studio.action.adjust",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "adjustImageAction",
+      "kind": "action"
+    },
+    {
+      "contributionId": "design.retake.image-studio.capability.local-adjust",
+      "definitionHash": "sha256:image-local-adjust-v1",
+      "definitionPath": "definitions/image.local_adjust.json",
+      "exportName": "localAdjustCapability",
+      "kind": "capability"
+    },
+    {
+      "contributionId": "design.retake.image-studio.panel.adjust",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "adjustImagePanel",
+      "kind": "panel"
+    }
+  ],
+  "definitionHash": "sha256:image-studio-web-v1",
+  "description": "Native Image Studio controls and browser image processors.",
+  "name": "Retake Image Studio",
+  "permissions": [
+    "retake.asset.read.bound",
+    "retake.block.read.bound",
+    "retake.execution.manage.self"
+  ],
+  "pluginModuleId": "design.retake.image-studio.web",
+  "runtime": {
+    "entrypoint": "dist/index.js",
+    "hostApi": {
+      "maximumVersion": 1,
+      "minimumVersion": 1
+    },
+    "kind": "web_module"
+  },
+  "schemaVersion": 1,
+  "version": "0.1.0"
+}

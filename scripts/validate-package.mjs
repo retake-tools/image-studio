@@ -1,0 +1,74 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+
+const packageRoot = new URL('../plugin/', import.meta.url);
+const packageManifest = await readJson('retake.package.json');
+const pluginManifest = await readJson('retake.plugin.json');
+const capability = await readJson('definitions/image.local_adjust.json');
+const parameters = await readJson(
+  'definitions/image.local_adjust.parameters.json',
+);
+
+assert.equal(packageManifest.packageId, 'design.retake.image-studio');
+assert.equal(
+  packageManifest.build.profile,
+  'retake_web_plugin_v1',
+);
+assert.equal(
+  packageManifest.components.pluginModules[0].pluginModuleId,
+  pluginManifest.pluginModuleId,
+);
+assert.equal(
+  packageManifest.components.pluginModules[0].definitionHash,
+  pluginManifest.definitionHash,
+);
+assert.deepEqual(
+  [...packageManifest.files].sort(compareText),
+  packageManifest.files,
+  'Retake Package files must stay sorted.',
+);
+assert.deepEqual(
+  [...pluginManifest.permissions].sort(compareText),
+  pluginManifest.permissions,
+  'Plugin permissions must stay sorted.',
+);
+assert.deepEqual(
+  pluginManifest.contributions.map((entry) => entry.contributionId)
+    .sort(compareText),
+  pluginManifest.contributions.map((entry) => entry.contributionId),
+  'Plugin contribution IDs must stay sorted.',
+);
+
+const capabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => entry.kind === 'capability',
+);
+assert.ok(capabilityDescriptor);
+assert.equal(capabilityDescriptor.definitionHash, capability.definitionHash);
+assert.equal(capabilityDescriptor.definitionPath, 'definitions/image.local_adjust.json');
+assert.equal(capability.capabilityId, 'image.local_adjust');
+assert.equal(capability.parametersSchemaRef, 'definitions/image.local_adjust.parameters.json');
+assert.deepEqual(parameters.required, [
+  'brightness',
+  'contrast',
+  'saturation',
+]);
+assert.equal(parameters.additionalProperties, false);
+
+for (const filePath of packageManifest.files) {
+  await readFile(new URL(filePath, packageRoot));
+}
+
+console.log(JSON.stringify({
+  capabilityId: capability.capabilityId,
+  packageId: packageManifest.packageId,
+  pluginModuleId: pluginManifest.pluginModuleId,
+  sourceFiles: packageManifest.files.length,
+}));
+
+async function readJson(filePath) {
+  return JSON.parse(await readFile(new URL(filePath, packageRoot), 'utf8'));
+}
+
+function compareText(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
