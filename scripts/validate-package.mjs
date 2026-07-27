@@ -4,6 +4,12 @@ import { readFile } from 'node:fs/promises';
 const packageRoot = new URL('../plugin/', import.meta.url);
 const packageManifest = await readJson('retake.package.json');
 const pluginManifest = await readJson('retake.plugin.json');
+const annotationCapability = await readJson(
+  'definitions/image.annotation_edit.json',
+);
+const annotationParameters = await readJson(
+  'definitions/image.annotation_edit.parameters.json',
+);
 const capability = await readJson('definitions/image.local_adjust.json');
 const parameters = await readJson(
   'definitions/image.local_adjust.parameters.json',
@@ -45,6 +51,8 @@ assert.equal(
 assert.deepEqual(
   packageManifest.components.pluginModules[0].resourcePaths,
   [
+    'definitions/image.annotation_edit.json',
+    'definitions/image.annotation_edit.parameters.json',
     'definitions/image.local_adjust.json',
     'definitions/image.local_adjust.parameters.json',
     'definitions/image.local_crop.json',
@@ -185,6 +193,24 @@ assert.equal(
 assert.deepEqual(maskedEditParameters.required, ['maskEncoding']);
 assert.equal(maskedEditParameters.additionalProperties, false);
 
+const annotationCapabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => entry.definitionPath === 'definitions/image.annotation_edit.json',
+);
+assert.ok(annotationCapabilityDescriptor);
+assert.equal(
+  annotationCapabilityDescriptor.definitionHash,
+  annotationCapability.definitionHash,
+);
+assert.equal(annotationCapability.capabilityId, 'image.annotation_edit');
+assert.equal(
+  annotationCapability.parametersSchemaRef,
+  'definitions/image.annotation_edit.parameters.json',
+);
+assert.deepEqual(annotationParameters.required, ['manifest']);
+assert.equal(annotationParameters.additionalProperties, false);
+assert.equal(annotationCapability.outputSlots[0]?.cardinality, 'many');
+assert.equal(annotationCapability.outputSlots[0]?.slotId, 'edited_images');
+
 for (const filePath of packageManifest.files) {
   await readFile(new URL(filePath, packageRoot));
 }
@@ -192,6 +218,7 @@ for (const filePath of packageManifest.files) {
 console.log(JSON.stringify({
   capabilityId: capability.capabilityId,
   capabilityIds: [
+    annotationCapability.capabilityId,
     capability.capabilityId,
     cropCapability.capabilityId,
     resizeCapability.capabilityId,

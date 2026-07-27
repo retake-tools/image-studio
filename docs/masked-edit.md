@@ -1,6 +1,6 @@
 # Masked AI editing
 
-`image.masked_edit@0.1.0` performs a provider-backed edit with two explicit
+`image.masked_edit@0.2.0` performs a provider-backed edit with two explicit
 Image inputs:
 
 - `source_image`: the original image;

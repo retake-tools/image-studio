@@ -8,10 +8,12 @@
     "agentPresets": [],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-v5",
+        "definitionHash": "sha256:image-studio-web-v6",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
+          "definitions/image.annotation_edit.json",
+          "definitions/image.annotation_edit.parameters.json",
           "definitions/image.local_adjust.json",
           "definitions/image.local_adjust.parameters.json",
           "definitions/image.local_crop.json",
@@ -23,7 +25,7 @@
           "definitions/image.masked_edit.json",
           "definitions/image.masked_edit.parameters.json"
         ],
-        "version": "0.5.0"
+        "version": "0.6.0"
       }
     ],
     "skills": [],
@@ -33,6 +35,8 @@
   "description": "Retake Image Studio tools for workflow-native image editing.",
   "entrypoints": [],
   "files": [
+    "definitions/image.annotation_edit.json",
+    "definitions/image.annotation_edit.parameters.json",
     "definitions/image.local_adjust.json",
     "definitions/image.local_adjust.parameters.json",
     "definitions/image.local_crop.json",
@@ -45,6 +49,12 @@
     "definitions/image.masked_edit.parameters.json",
     "retake.plugin.json",
     "src/adjust-panel.tsx",
+    "src/annotation-copy.ts",
+    "src/annotation-overlay.tsx",
+    "src/annotation-panel-support.tsx",
+    "src/annotation-panel.tsx",
+    "src/annotation-styles.ts",
+    "src/annotation.ts",
     "src/browser-image.ts",
     "src/contracts.ts",
     "src/crop-panel.tsx",
@@ -52,6 +62,7 @@
     "src/image-crop.ts",
     "src/image-resize.ts",
     "src/index.tsx",
+    "src/localization.ts",
     "src/masked-edit-panel.tsx",
     "src/masked-edit-styles.ts",
     "src/masked-edit.ts",
@@ -76,5 +87,5 @@
   "retakeHostCompatibility": "^0.1.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.5.0"
+  "version": "0.6.0"
 }

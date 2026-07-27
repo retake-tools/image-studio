@@ -68,6 +68,14 @@ Result Block, edges, and History. This deliberately avoids a generic service
 container, command bus, provider client, or token surface in the Plugin API.
 See [Masked AI editing](./masked-edit.md).
 
+`image.annotation_edit` uses the same connected boundary for semantic image
+editing. The Plugin owns the six annotation tools, normalized geometry,
+per-mark intent, bound draft, prompt compilation, annotated-composite
+generation, Connection choice, and candidate count. Retake owns the source
+Block scope, imported composite Asset, execution lifecycle, multi-result
+projection, Board History, and historical Operation context. See
+[Annotation editing](./annotation.md).
+
 ## Version and contract rules
 
 The Root Package, authoring workspace, and current single PluginModule versions

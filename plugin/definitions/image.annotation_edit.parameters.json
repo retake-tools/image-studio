@@ -1,0 +1,200 @@
+{
+  "$defs": {
+    "baseMark": {
+      "properties": {
+        "color": {
+          "enum": [
+            "#dc2626",
+            "#facc15",
+            "#22c55e",
+            "#2563eb",
+            "#a855f7"
+          ],
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "intent": {
+          "maxLength": 32000,
+          "type": "string"
+        },
+        "strokeSize": {
+          "enum": [
+            "xs",
+            "s",
+            "m",
+            "l",
+            "xl"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "color",
+        "id",
+        "intent",
+        "strokeSize"
+      ],
+      "type": "object"
+    },
+    "lineMark": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseMark"
+        },
+        {
+          "properties": {
+            "end": {
+              "$ref": "#/$defs/point"
+            },
+            "kind": {
+              "enum": [
+                "arrow",
+                "ellipse",
+                "rect"
+              ],
+              "type": "string"
+            },
+            "start": {
+              "$ref": "#/$defs/point"
+            }
+          },
+          "required": [
+            "end",
+            "kind",
+            "start"
+          ],
+          "type": "object"
+        }
+      ],
+      "type": "object",
+      "unevaluatedProperties": false
+    },
+    "markerMark": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseMark"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "marker",
+              "type": "string"
+            },
+            "point": {
+              "$ref": "#/$defs/point"
+            }
+          },
+          "required": [
+            "kind",
+            "point"
+          ],
+          "type": "object"
+        }
+      ],
+      "type": "object",
+      "unevaluatedProperties": false
+    },
+    "pathMark": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseMark"
+        },
+        {
+          "properties": {
+            "kind": {
+              "enum": [
+                "brush",
+                "pen"
+              ],
+              "type": "string"
+            },
+            "points": {
+              "items": {
+                "$ref": "#/$defs/point"
+              },
+              "maxItems": 8192,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "kind",
+            "points"
+          ],
+          "type": "object"
+        }
+      ],
+      "type": "object",
+      "unevaluatedProperties": false
+    },
+    "point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "manifest": {
+      "additionalProperties": false,
+      "properties": {
+        "globalInstruction": {
+          "maxLength": 32000,
+          "type": "string"
+        },
+        "marks": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/markerMark"
+              },
+              {
+                "$ref": "#/$defs/lineMark"
+              },
+              {
+                "$ref": "#/$defs/pathMark"
+              }
+            ]
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "globalInstruction",
+        "marks",
+        "schemaVersion"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "manifest"
+  ],
+  "title": "Annotation image edit parameters",
+  "type": "object"
+}

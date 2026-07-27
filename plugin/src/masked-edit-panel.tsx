@@ -5,10 +5,11 @@ import React, {
   type ReactElement,
 } from 'react';
 import type {
-  ImageToolbarBlockV1,
-  PluginAssetV1,
-  PluginPanelPropsV1,
+  ImageToolbarBlockV2,
+  PluginAssetV2,
+  PluginPanelPropsV2,
 } from './contracts';
+import { isChineseLocale, usePluginEnvironment } from './localization';
 import { maskedEditStyles } from './masked-edit-styles';
 import { validateMaskedEditImages } from './masked-edit';
 import { maskedEditPanelStore } from './panel-store';
@@ -18,7 +19,7 @@ const capabilityId = 'image.masked_edit';
 
 export function ImageStudioMaskedEditPanel({
   host,
-}: PluginPanelPropsV1): ReactElement | null {
+}: PluginPanelPropsV2): ReactElement | null {
   const panel = useSyncExternalStore(
     maskedEditPanelStore.subscribe,
     maskedEditPanelStore.getSnapshot,
@@ -33,7 +34,8 @@ export function ImageStudioMaskedEditPanel({
   const [pending, setPending] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [sourceIndex, setSourceIndex] = useState(0);
-  const copy = localizedMaskedEditCopy();
+  const environment = usePluginEnvironment(host);
+  const copy = localizedMaskedEditCopy(environment.locale);
   const blocks = panel.blocks;
   const sourceBlock = blocks[sourceIndex];
   const maskBlock = blocks[sourceIndex === 0 ? 1 : 0];
@@ -79,9 +81,6 @@ export function ImageStudioMaskedEditPanel({
     setError(null);
     setPending(true);
     try {
-      if (!host.execution.runConnected) {
-        throw new Error(copy.hostUpgrade);
-      }
       await host.execution.runConnected({
         capabilityId,
         inputs: [
@@ -200,8 +199,8 @@ function InputPreview({
   block,
   label,
 }: {
-  asset: PluginAssetV1 | null;
-  block: ImageToolbarBlockV1 | undefined;
+  asset: PluginAssetV2 | null;
+  block: ImageToolbarBlockV2 | undefined;
   label: string;
 }): ReactElement {
   const source = asset?.previewUrl ?? block?.previewUrl;
@@ -219,9 +218,9 @@ function InputPreview({
 }
 
 function validateInputs(
-  blocks: readonly ImageToolbarBlockV1[],
-  source: PluginAssetV1 | null,
-  mask: PluginAssetV1 | null,
+  blocks: readonly ImageToolbarBlockV2[],
+  source: PluginAssetV2 | null,
+  mask: PluginAssetV2 | null,
   copy: ReturnType<typeof localizedMaskedEditCopy>,
 ): string | null {
   if (blocks.length !== 2) return copy.twoImages;
@@ -232,14 +231,13 @@ function validateInputs(
   return null;
 }
 
-function localizedMaskedEditCopy() {
-  if (navigator.language.toLowerCase().startsWith('zh')) {
+function localizedMaskedEditCopy(locale: string) {
+  if (isChineseLocale(locale)) {
     return {
       close: '关闭',
       connectionNote: '将使用 Retake 当前图片默认连接。可在设置中修改或测试连接。',
       dimensionMismatch: '选区蒙版必须与源图像素尺寸完全一致。',
       failed: '局部 AI 编辑启动失败',
-      hostUpgrade: '当前 Retake Host 尚不支持连接式插件执行，请先更新 Retake。',
       mask: '选区蒙版',
       maskPng: '选区蒙版必须是不透明 PNG。',
       prompt: '编辑要求',
@@ -258,7 +256,6 @@ function localizedMaskedEditCopy() {
     connectionNote: 'Uses the current Retake image default Connection. Change or test it in Settings.',
     dimensionMismatch: 'The Selection Mask must match the source pixel dimensions.',
     failed: 'Failed to start masked AI edit',
-    hostUpgrade: 'This Retake Host does not support connected Plugin execution yet. Update Retake first.',
     mask: 'Selection Mask',
     maskPng: 'The Selection Mask must be an opaque PNG.',
     prompt: 'Edit instruction',

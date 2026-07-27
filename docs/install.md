@@ -3,9 +3,10 @@
 Image Studio is installed and managed from Retake Whiteboard. The current
 `image.local_adjust`, `image.local_crop`, `image.local_resize`, and
 `image.local_selection_mask` run entirely in the browser. `image.masked_edit`
-uses the current Retake image Connection. With Codex App Server it uses the
-user's existing local Codex account/plan; the manual Codex/MCP route remains
-available. Neither path requires a separate Image Studio CLI or bridge.
+and `image.annotation_edit` use a Retake image Connection. With Codex App
+Server they use the user's existing local Codex account/plan; the manual
+Codex/MCP route remains available. Neither path requires a separate Image
+Studio CLI or bridge.
 
 ## Install from GitHub
 
@@ -20,7 +21,7 @@ available. Neither path requires a separate Image Studio CLI or bridge.
 4. Review the exact code digest and requested permissions.
 5. Trust and enable the PluginModule.
 6. Select an Image Block and choose **Adjust image**, **Crop image**,
-   **Resize image**, or **Create selection mask**.
+   **Resize image**, **Create selection mask**, or **Annotate image**.
 7. For **Masked AI edit**, select exactly one source Image and one same-sized
    PNG Selection Mask, then use the multi-selection toolbar.
 
@@ -42,14 +43,17 @@ Retake handles this boundary automatically once the source string includes
 
 The PluginModule declares only:
 
+- `retake.asset.create`
 - `retake.asset.read.bound`
 - `retake.block.read.bound`
+- `retake.draft.write.bound`
 - `retake.execution.manage.self`
 
-It can read only the Image Block and Asset bound to its action, and it can
-manage only executions started through its own Capability. It cannot access
-workspace paths, credentials, arbitrary Board data, or private Whiteboard
-stores.
+It can read only Blocks and Assets bound to its action, import an annotated
+composite into the current execution session, persist namespaced drafts on the
+bound source Block, and manage only executions started through its own
+Capabilities. It cannot access workspace paths, credentials, arbitrary Board
+data, or private Whiteboard stores.
 
 Image processing uses Canvas 2D in the current browser session. The result is
 returned to Retake, which persists the standard Asset, Operation, Execution,

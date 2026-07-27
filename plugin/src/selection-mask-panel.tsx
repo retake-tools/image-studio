@@ -6,7 +6,7 @@ import React, {
   type PointerEvent,
   type ReactElement,
 } from 'react';
-import type { PluginPanelPropsV1 } from './contracts';
+import type { PluginPanelPropsV2 } from './contracts';
 import { selectionMaskPanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import {
@@ -21,6 +21,7 @@ import {
   type SelectionMaskTool,
 } from './selection-mask';
 import { imageStudioStyles } from './styles';
+import { isChineseLocale, usePluginEnvironment } from './localization';
 
 const capabilityId = 'image.local_selection_mask';
 const resultSlotId = 'selection_mask';
@@ -32,7 +33,7 @@ interface ActiveStroke {
 
 export function ImageStudioSelectionMaskPanel({
   host,
-}: PluginPanelPropsV1): ReactElement | null {
+}: PluginPanelPropsV2): ReactElement | null {
   const panel = useSyncExternalStore(
     selectionMaskPanelStore.subscribe,
     selectionMaskPanelStore.getSnapshot,
@@ -62,7 +63,8 @@ export function ImageStudioSelectionMaskPanel({
   const blockIsBound = blockId
     ? hostSnapshot.boundBlockIds.includes(blockId)
     : false;
-  const copy = localizedSelectionMaskCopy();
+  const environment = usePluginEnvironment(host);
+  const copy = localizedSelectionMaskCopy(environment.locale);
   const maskState: SelectionMaskState = { inverted, strokes };
 
   useEffect(() => {
@@ -392,8 +394,8 @@ function validDimension(value: number | undefined): number | null {
     : null;
 }
 
-function localizedSelectionMaskCopy() {
-  if (navigator.language.toLowerCase().startsWith('zh')) {
+function localizedSelectionMaskCopy(locale: string) {
+  if (isChineseLocale(locale)) {
     return {
       brushSize: '画笔大小',
       canvas: '选区蒙版画布',
