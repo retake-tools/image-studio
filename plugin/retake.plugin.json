@@ -15,6 +15,13 @@
       "kind": "action"
     },
     {
+      "contributionId": "design.retake.image-studio.action.masked-edit",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "maskedEditSelectionAction",
+      "kind": "action"
+    },
+    {
       "contributionId": "design.retake.image-studio.action.resize",
       "definitionHash": null,
       "definitionPath": null,
@@ -57,6 +64,13 @@
       "kind": "capability"
     },
     {
+      "contributionId": "design.retake.image-studio.capability.masked-edit",
+      "definitionHash": "sha256:image-masked-edit-v1",
+      "definitionPath": "definitions/image.masked_edit.json",
+      "exportName": "maskedEditCapability",
+      "kind": "capability"
+    },
+    {
       "contributionId": "design.retake.image-studio.panel.adjust",
       "definitionHash": null,
       "definitionPath": null,
@@ -68,6 +82,13 @@
       "definitionHash": null,
       "definitionPath": null,
       "exportName": "cropImagePanel",
+      "kind": "panel"
+    },
+    {
+      "contributionId": "design.retake.image-studio.panel.masked-edit",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "maskedEditPanel",
       "kind": "panel"
     },
     {
@@ -85,7 +106,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-v4",
+  "definitionHash": "sha256:image-studio-web-v5",
   "description": "Native Image Studio controls and browser image processors.",
   "name": "Retake Image Studio",
   "permissions": [
@@ -103,5 +124,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 1,
-  "version": "0.4.0"
+  "version": "0.5.0"
 }

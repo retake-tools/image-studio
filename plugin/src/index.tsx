@@ -1,56 +1,32 @@
 import { definePluginContribution } from '@retake/plugin-api';
-import React, {
-  useEffect,
-  useState,
-  useSyncExternalStore,
-  type ReactElement,
-} from 'react';
+import { ImageStudioAdjustPanel } from './adjust-panel';
 import type {
+  ImageSelectionToolbarContextV1,
   ImageToolbarBlockV1,
   PluginActivationContextV1,
-  PluginPanelPropsV1,
 } from './contracts';
 import { ImageStudioCropPanel } from './crop-panel';
-import { ImageStudioResizePanel } from './resize-panel';
-import {
-  defaultImageAdjustments,
-  hasImageAdjustments,
-  imageAdjustmentFilter,
-  renderAdjustedImage,
-  type LocalImageAdjustments,
-} from './image-adjustments';
+import { ImageStudioMaskedEditPanel } from './masked-edit-panel';
 import {
   adjustPanelStore,
   cropPanelStore,
+  maskedEditPanelStore,
   resizePanelStore,
   selectionMaskPanelStore,
 } from './panel-store';
-import { exactSourceImage } from './plugin-assets';
+import { ImageStudioResizePanel } from './resize-panel';
 import { ImageStudioSelectionMaskPanel } from './selection-mask-panel';
-import { imageStudioStyles } from './styles';
 
-const capabilityId = 'image.local_adjust';
-const cropCapabilityId = 'image.local_crop';
-const resizeCapabilityId = 'image.local_resize';
-const selectionMaskCapabilityId = 'image.local_selection_mask';
 const resultSlotId = 'result_image';
 
 export const localAdjustCapability = definePluginContribution({
   apiVersion: 1,
   definition: {
-    capabilityId,
+    capabilityId: 'image.local_adjust',
     category: 'image_editing',
     definitionHash: 'sha256:image-local-adjust-v1',
     displayName: 'Local image adjustment',
-    inputSlots: [{
-      artifactTypes: [],
-      bindingKinds: ['asset', 'block'],
-      cardinality: 'one',
-      dataTypes: ['image'],
-      required: true,
-      semanticRole: 'source',
-      slotId: 'source_image',
-    }],
+    inputSlots: [imageSourceInput()],
     outputSlots: [{
       cardinality: 'one',
       dataType: 'image',
@@ -67,74 +43,14 @@ export const localAdjustCapability = definePluginContribution({
   kind: 'capability',
 });
 
-export const adjustImageAction = definePluginContribution({
-  apiVersion: 1,
-  kind: 'action',
-  label: 'Adjust image',
-  placement: 'image.toolbar',
-  run({ block }: { block: ImageToolbarBlockV1 }) {
-    cropPanelStore.close();
-    resizePanelStore.close();
-    selectionMaskPanelStore.close();
-    adjustPanelStore.open(block);
-  },
-});
-
-export const cropImageAction = definePluginContribution({
-  apiVersion: 1,
-  kind: 'action',
-  label: 'Crop image',
-  placement: 'image.toolbar',
-  run({ block }: { block: ImageToolbarBlockV1 }) {
-    adjustPanelStore.close();
-    resizePanelStore.close();
-    selectionMaskPanelStore.close();
-    cropPanelStore.open(block);
-  },
-});
-
-export const resizeImageAction = definePluginContribution({
-  apiVersion: 1,
-  kind: 'action',
-  label: 'Resize image',
-  placement: 'image.toolbar',
-  run({ block }: { block: ImageToolbarBlockV1 }) {
-    adjustPanelStore.close();
-    cropPanelStore.close();
-    selectionMaskPanelStore.close();
-    resizePanelStore.open(block);
-  },
-});
-
-export const selectionMaskImageAction = definePluginContribution({
-  apiVersion: 1,
-  kind: 'action',
-  label: 'Create selection mask',
-  placement: 'image.toolbar',
-  run({ block }: { block: ImageToolbarBlockV1 }) {
-    adjustPanelStore.close();
-    cropPanelStore.close();
-    resizePanelStore.close();
-    selectionMaskPanelStore.open(block);
-  },
-});
-
 export const localCropCapability = definePluginContribution({
   apiVersion: 1,
   definition: {
-    capabilityId: cropCapabilityId,
+    capabilityId: 'image.local_crop',
     category: 'image_editing',
     definitionHash: 'sha256:image-local-crop-v1',
     displayName: 'Local image crop',
-    inputSlots: [{
-      artifactTypes: [],
-      bindingKinds: ['asset', 'block'],
-      cardinality: 'one',
-      dataTypes: ['image'],
-      required: true,
-      semanticRole: 'source',
-      slotId: 'source_image',
-    }],
+    inputSlots: [imageSourceInput()],
     outputSlots: [{
       cardinality: 'one',
       dataType: 'image',
@@ -154,19 +70,11 @@ export const localCropCapability = definePluginContribution({
 export const localResizeCapability = definePluginContribution({
   apiVersion: 1,
   definition: {
-    capabilityId: resizeCapabilityId,
+    capabilityId: 'image.local_resize',
     category: 'image_editing',
     definitionHash: 'sha256:image-local-resize-v1',
     displayName: 'Local image resize',
-    inputSlots: [{
-      artifactTypes: [],
-      bindingKinds: ['asset', 'block'],
-      cardinality: 'one',
-      dataTypes: ['image'],
-      required: true,
-      semanticRole: 'source',
-      slotId: 'source_image',
-    }],
+    inputSlots: [imageSourceInput()],
     outputSlots: [{
       cardinality: 'one',
       dataType: 'image',
@@ -186,19 +94,11 @@ export const localResizeCapability = definePluginContribution({
 export const localSelectionMaskCapability = definePluginContribution({
   apiVersion: 1,
   definition: {
-    capabilityId: selectionMaskCapabilityId,
+    capabilityId: 'image.local_selection_mask',
     category: 'image_editing',
     definitionHash: 'sha256:image-local-selection-mask-v1',
     displayName: 'Local selection mask authoring',
-    inputSlots: [{
-      artifactTypes: [],
-      bindingKinds: ['asset', 'block'],
-      cardinality: 'one',
-      dataTypes: ['image'],
-      required: true,
-      semanticRole: 'source',
-      slotId: 'source_image',
-    }],
+    inputSlots: [imageSourceInput()],
     outputSlots: [{
       cardinality: 'one',
       dataType: 'image',
@@ -216,284 +116,145 @@ export const localSelectionMaskCapability = definePluginContribution({
   kind: 'capability',
 });
 
-export const adjustImagePanel = definePluginContribution({
+export const maskedEditCapability = definePluginContribution({
   apiVersion: 1,
-  component: ImageStudioAdjustPanel,
-  kind: 'panel',
-  placement: 'workspace.overlay',
+  definition: {
+    capabilityId: 'image.masked_edit',
+    category: 'image_editing',
+    definitionHash: 'sha256:image-masked-edit-v1',
+    displayName: 'Masked AI image edit',
+    inputSlots: [
+      imageSourceInput(),
+      {
+        artifactTypes: [],
+        bindingKinds: ['asset', 'block'],
+        cardinality: 'one',
+        dataTypes: ['image'],
+        required: true,
+        semanticRole: 'inpaint_mask',
+        slotId: 'inpaint_mask',
+      },
+      {
+        artifactTypes: [],
+        bindingKinds: ['inline'],
+        cardinality: 'one',
+        dataTypes: ['text'],
+        required: true,
+        semanticRole: 'prompt',
+        slotId: 'prompt',
+      },
+    ],
+    outputSlots: [{
+      cardinality: 'one',
+      dataType: 'image',
+      projectionBlockTypes: ['image'],
+      semanticRole: 'edited_image',
+      slotId: 'edited_image',
+    }],
+    parametersSchemaRef: 'definitions/image.masked_edit.parameters.json',
+    runtimeRequirements: ['durable_asset_output', 'image_generation'],
+    schemaVersion: 1,
+    supportedAdapterClasses: ['agent_runtime.media'],
+    version: '0.1.0',
+  },
+  kind: 'capability',
 });
-export const cropImagePanel = definePluginContribution({
+
+export const adjustImageAction = imageToolbarAction(
+  'Adjust image',
+  adjustPanelStore,
+);
+export const cropImageAction = imageToolbarAction(
+  'Crop image',
+  cropPanelStore,
+);
+export const resizeImageAction = imageToolbarAction(
+  'Resize image',
+  resizePanelStore,
+);
+export const selectionMaskImageAction = imageToolbarAction(
+  'Create selection mask',
+  selectionMaskPanelStore,
+);
+
+export const maskedEditSelectionAction = definePluginContribution({
   apiVersion: 1,
-  component: ImageStudioCropPanel,
-  kind: 'panel',
-  placement: 'workspace.overlay',
+  kind: 'action',
+  label: 'Masked AI edit',
+  placement: 'selection.toolbar',
+  selectionCount: {
+    max: 2,
+    min: 2,
+  },
+  run({ blocks }: ImageSelectionToolbarContextV1) {
+    closePanels();
+    maskedEditPanelStore.open(blocks);
+  },
 });
-export const resizeImagePanel = definePluginContribution({
-  apiVersion: 1,
-  component: ImageStudioResizePanel,
-  kind: 'panel',
-  placement: 'workspace.overlay',
-});
-export const selectionMaskImagePanel = definePluginContribution({
-  apiVersion: 1,
-  component: ImageStudioSelectionMaskPanel,
-  kind: 'panel',
-  placement: 'workspace.overlay',
-});
+
+export const adjustImagePanel = panelContribution(ImageStudioAdjustPanel);
+export const cropImagePanel = panelContribution(ImageStudioCropPanel);
+export const maskedEditPanel = panelContribution(ImageStudioMaskedEditPanel);
+export const resizeImagePanel = panelContribution(ImageStudioResizePanel);
+export const selectionMaskImagePanel = panelContribution(
+  ImageStudioSelectionMaskPanel,
+);
+
 export function activate(context: PluginActivationContextV1): {
   dispose(): void;
 } {
-  const close = () => {
-    adjustPanelStore.close();
-    cropPanelStore.close();
-    resizePanelStore.close();
-    selectionMaskPanelStore.close();
-  };
-  context.signal.addEventListener('abort', close, { once: true });
+  context.signal.addEventListener('abort', closePanels, { once: true });
   return {
     dispose() {
-      context.signal.removeEventListener('abort', close);
-      close();
+      context.signal.removeEventListener('abort', closePanels);
+      closePanels();
     },
   };
 }
 
-function ImageStudioAdjustPanel({
-  host,
-}: PluginPanelPropsV1): ReactElement | null {
-  const panel = useSyncExternalStore(
-    adjustPanelStore.subscribe,
-    adjustPanelStore.getSnapshot,
-    adjustPanelStore.getSnapshot,
-  );
-  const hostSnapshot = useSyncExternalStore(
-    host.subscribeReadSnapshot,
-    host.getReadSnapshot,
-    host.getReadSnapshot,
-  );
-  const [adjustments, setAdjustments] = useState(defaultImageAdjustments);
-  const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
-  const block = panel.block;
-  const blockId = block?.blockId;
-  const blockIsBound = blockId
-    ? hostSnapshot.boundBlockIds.includes(blockId)
-    : false;
-
-  useEffect(() => {
-    setAdjustments(defaultImageAdjustments);
-    setError(null);
-    setPending(false);
-  }, [blockId]);
-
-  useEffect(() => {
-    if (blockId && !pending && !blockIsBound) {
-      adjustPanelStore.close();
-    }
-  }, [blockId, blockIsBound, pending]);
-
-  if (!block) return null;
-  const asset = host.assets.getBound(block.assetId);
-  const sourceUrl = asset?.previewUrl ?? block.previewUrl;
-  const copy = localizedCopy();
-
-  async function run(): Promise<void> {
-    if (!block || !sourceUrl || pending) return;
-    setError(null);
-    setPending(true);
-    const parameters = adjustments;
-    try {
-      await host.execution.run({
-        capabilityId,
-        inputBlockIds: [block.blockId],
-        parameters: { ...parameters },
-        async execute({ assets, signal }) {
-          const source = exactSourceImage(assets);
-          const rendered = await renderAdjustedImage(
-            source.previewUrl,
-            parameters,
-            signal,
-          );
-          return {
-            images: [{
-              dataUrl: rendered.dataUrl,
-              fileName: `adjusted-${block.blockId}.png`,
-              height: rendered.height,
-              slotId: resultSlotId,
-              width: rendered.width,
-            }],
-          };
-        },
-      });
-      adjustPanelStore.close();
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : copy.failed);
-      setPending(false);
-    }
-  }
-
-  return (
-    <>
-      <style>{imageStudioStyles}</style>
-      <section
-        aria-label={copy.title}
-        className="retake-image-studio-panel"
-        data-retake-image-studio="adjust"
-      >
-        <header className="retake-image-studio-panel__header">
-          <div>
-            <span>Image Studio</span>
-            <h2>{copy.title}</h2>
-          </div>
-          <button
-            aria-label={copy.close}
-            className="retake-image-studio-panel__close"
-            disabled={pending}
-            onClick={() => adjustPanelStore.close()}
-            type="button"
-          >
-            ×
-          </button>
-        </header>
-        {sourceUrl ? (
-          <div className="retake-image-studio-preview">
-            <img
-              alt={block.title}
-              src={sourceUrl}
-              style={{ filter: imageAdjustmentFilter(adjustments) }}
-            />
-          </div>
-        ) : (
-          <p className="retake-image-studio-panel__error">
-            {copy.sourceUnavailable}
-          </p>
-        )}
-        <RangeControl
-          disabled={pending}
-          label={copy.brightness}
-          value={adjustments.brightness}
-          onChange={(brightness) => {
-            setAdjustments((current) => ({ ...current, brightness }));
-          }}
-        />
-        <RangeControl
-          disabled={pending}
-          label={copy.contrast}
-          value={adjustments.contrast}
-          onChange={(contrast) => {
-            setAdjustments((current) => ({ ...current, contrast }));
-          }}
-        />
-        <RangeControl
-          disabled={pending}
-          label={copy.saturation}
-          value={adjustments.saturation}
-          onChange={(saturation) => {
-            setAdjustments((current) => ({ ...current, saturation }));
-          }}
-        />
-        {error ? (
-          <p className="retake-image-studio-panel__error" role="alert">
-            {error}
-          </p>
-        ) : null}
-        <button
-          className="retake-image-studio-panel__run"
-          disabled={
-            pending
-            || !sourceUrl
-            || !hasImageAdjustments(adjustments)
-          }
-          onClick={() => {
-            void run();
-          }}
-          type="button"
-        >
-          {pending ? copy.running : copy.run}
-        </button>
-      </section>
-    </>
-  );
-}
-
-function RangeControl({
-  disabled,
-  label,
-  onChange,
-  value,
-}: {
-  disabled: boolean;
-  label: string;
-  onChange(value: number): void;
-  value: number;
-}): ReactElement {
-  return (
-    <div className="retake-image-studio-range">
-      <span>{label}</span>
-      <button
-        aria-label={`Decrease ${label}`}
-        disabled={disabled || value <= -100}
-        onClick={() => onChange(Math.max(-100, value - 5))}
-        type="button"
-      >
-        −
-      </button>
-      <input
-        aria-label={label}
-        disabled={disabled}
-        max={100}
-        min={-100}
-        onChange={(event) => onChange(Number(event.target.value))}
-        step={1}
-        type="range"
-        value={value}
-      />
-      <button
-        aria-label={`Increase ${label}`}
-        disabled={disabled || value >= 100}
-        onClick={() => onChange(Math.min(100, value + 5))}
-        type="button"
-      >
-        +
-      </button>
-      <output>{value > 0 ? `+${value}` : value}</output>
-    </div>
-  );
-}
-
-function localizedCopy(): {
-  brightness: string;
-  close: string;
-  contrast: string;
-  failed: string;
-  run: string;
-  running: string;
-  saturation: string;
-  sourceUnavailable: string;
-  title: string;
-} {
-  if (navigator.language.toLowerCase().startsWith('zh')) {
-    return {
-      brightness: '亮度',
-      close: '关闭',
-      contrast: '对比度',
-      failed: '图片处理失败',
-      run: '应用调整',
-      running: '处理中…',
-      saturation: '饱和度',
-      sourceUnavailable: '当前图片已不在插件可访问范围内。',
-      title: '调整图片',
-    };
-  }
+function imageSourceInput() {
   return {
-    brightness: 'Brightness',
-    close: 'Close',
-    contrast: 'Contrast',
-    failed: 'Image processing failed',
-    run: 'Apply adjustments',
-    running: 'Processing…',
-    saturation: 'Saturation',
-    sourceUnavailable: 'The source image is no longer available to the plugin.',
-    title: 'Adjust image',
+    artifactTypes: [],
+    bindingKinds: ['asset', 'block'],
+    cardinality: 'one',
+    dataTypes: ['image'],
+    required: true,
+    semanticRole: 'source',
+    slotId: 'source_image',
   };
+}
+
+function imageToolbarAction(
+  label: string,
+  panelStore: {
+    open(block: ImageToolbarBlockV1): void;
+  },
+) {
+  return definePluginContribution({
+    apiVersion: 1,
+    kind: 'action',
+    label,
+    placement: 'image.toolbar',
+    run({ block }: { block: ImageToolbarBlockV1 }) {
+      closePanels();
+      panelStore.open(block);
+    },
+  });
+}
+
+function panelContribution(component: unknown) {
+  return definePluginContribution({
+    apiVersion: 1,
+    component,
+    kind: 'panel',
+    placement: 'workspace.overlay',
+  });
+}
+
+function closePanels(): void {
+  adjustPanelStore.close();
+  cropPanelStore.close();
+  maskedEditPanelStore.close();
+  resizePanelStore.close();
+  selectionMaskPanelStore.close();
 }

@@ -2,8 +2,10 @@
 
 Image Studio is installed and managed from Retake Whiteboard. The current
 `image.local_adjust`, `image.local_crop`, `image.local_resize`, and
-`image.local_selection_mask` run entirely in the browser, so they do not
-require a separate CLI, desktop bridge, provider account, or API key.
+`image.local_selection_mask` run entirely in the browser. `image.masked_edit`
+uses the current Retake image Connection. With Codex App Server it uses the
+user's existing local Codex account/plan; the manual Codex/MCP route remains
+available. Neither path requires a separate Image Studio CLI or bridge.
 
 ## Install from GitHub
 
@@ -19,6 +21,8 @@ require a separate CLI, desktop bridge, provider account, or API key.
 5. Trust and enable the PluginModule.
 6. Select an Image Block and choose **Adjust image**, **Crop image**,
    **Resize image**, or **Create selection mask**.
+7. For **Masked AI edit**, select exactly one source Image and one same-sized
+   PNG Selection Mask, then use the multi-selection toolbar.
 
 Use a full commit ID for a reproducible install. Use a version tag only after
 that tag appears in this repository. A branch name is convenient for testing
@@ -50,6 +54,12 @@ stores.
 Image processing uses Canvas 2D in the current browser session. The result is
 returned to Retake, which persists the standard Asset, Operation, Execution,
 Result Block, edges, and History.
+
+For connected AI editing, Image Studio sends only the owned Capability,
+typed bound Block IDs, prompt, and JSON parameters through
+`host.execution.runConnected`. Retake resolves and tests the Connection,
+executes the provider route, and owns durable writeback. Credentials, tokens,
+workspace paths, and arbitrary provider clients are not exposed to the Plugin.
 
 ## Update and rollback
 

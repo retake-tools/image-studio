@@ -37,8 +37,10 @@ Retake Whiteboard owns:
 - persistence and generic fallback projections.
 
 Plugin code must use the public Retake Host API. Do not import Whiteboard source
-files, private stores, or local workspace paths. Capability output must be
-returned through `host.execution.run`.
+files, private stores, or local workspace paths. Browser-native Capability
+output must be returned through `host.execution.run`. Provider-backed
+Capabilities use the narrow, Retake-owned `host.execution.runConnected`
+operation boundary.
 
 Direct React state, DOM interaction, Canvas 2D, and local preview do not require
 new Host services. Add a Host API only when a capability needs Retake-owned
@@ -58,6 +60,13 @@ an extension of semantic Annotation. Its normalized brush history stays in the
 live Plugin panel, while the exact source-sized black/white PNG is returned as
 the durable `selection_mask` output. See
 [Selection Mask authoring](./selection-mask.md).
+
+`image.masked_edit` is the first connected Capability. The Plugin owns the
+source/mask role UI, prompt, and parameter contract. Retake resolves the
+current Connection and owns provider transport, Operation, Execution, Asset,
+Result Block, edges, and History. This deliberately avoids a generic service
+container, command bus, provider client, or token surface in the Plugin API.
+See [Masked AI editing](./masked-edit.md).
 
 ## Version and contract rules
 

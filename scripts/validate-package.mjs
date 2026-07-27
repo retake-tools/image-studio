@@ -22,6 +22,12 @@ const selectionMaskCapability = await readJson(
 const selectionMaskParameters = await readJson(
   'definitions/image.local_selection_mask.parameters.json',
 );
+const maskedEditCapability = await readJson(
+  'definitions/image.masked_edit.json',
+);
+const maskedEditParameters = await readJson(
+  'definitions/image.masked_edit.parameters.json',
+);
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
 assert.equal(
@@ -47,6 +53,8 @@ assert.deepEqual(
     'definitions/image.local_resize.parameters.json',
     'definitions/image.local_selection_mask.json',
     'definitions/image.local_selection_mask.parameters.json',
+    'definitions/image.masked_edit.json',
+    'definitions/image.masked_edit.parameters.json',
   ],
 );
 assert.deepEqual(
@@ -161,6 +169,22 @@ assert.deepEqual(selectionMaskParameters.required, [
 ]);
 assert.equal(selectionMaskParameters.additionalProperties, false);
 
+const maskedEditCapabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => entry.definitionPath === 'definitions/image.masked_edit.json',
+);
+assert.ok(maskedEditCapabilityDescriptor);
+assert.equal(
+  maskedEditCapabilityDescriptor.definitionHash,
+  maskedEditCapability.definitionHash,
+);
+assert.equal(maskedEditCapability.capabilityId, 'image.masked_edit');
+assert.equal(
+  maskedEditCapability.parametersSchemaRef,
+  'definitions/image.masked_edit.parameters.json',
+);
+assert.deepEqual(maskedEditParameters.required, ['maskEncoding']);
+assert.equal(maskedEditParameters.additionalProperties, false);
+
 for (const filePath of packageManifest.files) {
   await readFile(new URL(filePath, packageRoot));
 }
@@ -172,6 +196,7 @@ console.log(JSON.stringify({
     cropCapability.capabilityId,
     resizeCapability.capabilityId,
     selectionMaskCapability.capabilityId,
+    maskedEditCapability.capabilityId,
   ],
   packageId: packageManifest.packageId,
   pluginModuleId: pluginManifest.pluginModuleId,
