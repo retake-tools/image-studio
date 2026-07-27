@@ -55,6 +55,14 @@ Verify in a disposable Retake Workspace:
   Connection, and records both typed inputs without exposing credentials;
 - a completed connected edit produces one durable edited Image, while the
   manual Codex/MCP route remains queued for explicit execution;
+- **Annotate image** restores a bound namespaced draft, supports all six mark
+  types, saves normalized geometry and intent without adding Board History,
+  imports one exact-size annotated composite, and starts one connected
+  Execution with one to four output Images;
+- reopening an `image.annotation_edit` Operation creates a temporary historical
+  editing session without overwriting the current source draft;
+- changing the Whiteboard locale updates every open Image Studio panel and
+  contributed Action label without reactivating the PluginModule;
 - missing or disabled Image Studio removes the action but preserves historical
   Operation, Execution, Result, Asset, and History projections;
 - the browser console has no warnings or errors during the lifecycle.

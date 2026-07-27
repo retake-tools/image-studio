@@ -4,7 +4,7 @@ import React, {
   useSyncExternalStore,
   type ReactElement,
 } from 'react';
-import type { PluginPanelPropsV1 } from './contracts';
+import type { PluginPanelPropsV2 } from './contracts';
 import {
   defaultImageAdjustments,
   hasImageAdjustments,
@@ -15,13 +15,14 @@ import {
 import { adjustPanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
+import { isChineseLocale, usePluginEnvironment } from './localization';
 
 const capabilityId = 'image.local_adjust';
 const resultSlotId = 'result_image';
 
 export function ImageStudioAdjustPanel({
   host,
-}: PluginPanelPropsV1): ReactElement | null {
+}: PluginPanelPropsV2): ReactElement | null {
   const panel = useSyncExternalStore(
     adjustPanelStore.subscribe,
     adjustPanelStore.getSnapshot,
@@ -56,7 +57,8 @@ export function ImageStudioAdjustPanel({
   if (!block) return null;
   const asset = host.assets.getBound(block.assetId);
   const sourceUrl = asset?.previewUrl ?? block.previewUrl;
-  const copy = localizedCopy();
+  const environment = usePluginEnvironment(host);
+  const copy = localizedCopy(environment.locale);
 
   async function run(): Promise<void> {
     if (!block || !sourceUrl || pending) return;
@@ -222,7 +224,7 @@ function RangeControl({
   );
 }
 
-function localizedCopy(): {
+function localizedCopy(locale: string): {
   brightness: string;
   close: string;
   contrast: string;
@@ -233,7 +235,7 @@ function localizedCopy(): {
   sourceUnavailable: string;
   title: string;
 } {
-  if (navigator.language.toLowerCase().startsWith('zh')) {
+  if (isChineseLocale(locale)) {
     return {
       brightness: '亮度',
       close: '关闭',

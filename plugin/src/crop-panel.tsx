@@ -8,7 +8,7 @@ import React, {
   type ReactElement,
 } from 'react';
 import type {
-  PluginPanelPropsV1,
+  PluginPanelPropsV2,
 } from './contracts';
 import {
   cropOutputGeometry,
@@ -22,6 +22,7 @@ import {
 import { cropPanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
+import { isChineseLocale, usePluginEnvironment } from './localization';
 
 const capabilityId = 'image.local_crop';
 const resultSlotId = 'result_image';
@@ -45,7 +46,7 @@ interface DragState {
 
 export function ImageStudioCropPanel({
   host,
-}: PluginPanelPropsV1): ReactElement | null {
+}: PluginPanelPropsV2): ReactElement | null {
   const panel = useSyncExternalStore(
     cropPanelStore.subscribe,
     cropPanelStore.getSnapshot,
@@ -94,7 +95,8 @@ export function ImageStudioCropPanel({
 
   if (!block) return null;
   const sourceUrl = asset?.previewUrl ?? block.previewUrl;
-  const copy = localizedCropCopy();
+  const environment = usePluginEnvironment(host);
+  const copy = localizedCropCopy(environment.locale);
   const region = dimensions
     ? cropRegionForPreset({
         centerX: center.x,
@@ -365,7 +367,7 @@ export function ImageStudioCropPanel({
   );
 }
 
-function localizedCropCopy(): {
+function localizedCropCopy(locale: string): {
   aspectRatio: string;
   close: string;
   cropArea: string;
@@ -381,7 +383,7 @@ function localizedCropCopy(): {
   sourceUnavailable: string;
   title: string;
 } {
-  if (navigator.language.toLowerCase().startsWith('zh')) {
+  if (isChineseLocale(locale)) {
     return {
       aspectRatio: '画面比例',
       close: '关闭',

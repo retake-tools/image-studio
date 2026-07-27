@@ -46,6 +46,7 @@ for (const [index, capability] of capabilities.entries()) {
 assert.deepEqual(
   capabilities.map((capability) => capability.capabilityId).sort(),
   [
+    'image.annotation_edit',
     'image.local_adjust',
     'image.local_crop',
     'image.local_resize',
@@ -61,6 +62,7 @@ const requiredPublicFiles = [
   'README.md',
   'README.zh-CN.md',
   'docs/authoring.md',
+  'docs/annotation.md',
   'docs/install.md',
   'docs/masked-edit.md',
   'docs/releasing.md',
@@ -75,6 +77,7 @@ const readme = await readText('README.md', repositoryRoot);
 for (const expectedLink of [
   './README.zh-CN.md',
   './docs/authoring.md',
+  './docs/annotation.md',
   './docs/install.md',
   './docs/masked-edit.md',
   './docs/releasing.md',

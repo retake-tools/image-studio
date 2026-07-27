@@ -4,7 +4,7 @@ import React, {
   useSyncExternalStore,
   type ReactElement,
 } from 'react';
-import type { PluginPanelPropsV1 } from './contracts';
+import type { PluginPanelPropsV2 } from './contracts';
 import {
   normalizedResizeEncoding,
   renderResizedImage,
@@ -15,13 +15,14 @@ import {
 import { resizePanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
+import { isChineseLocale, usePluginEnvironment } from './localization';
 
 const capabilityId = 'image.local_resize';
 const resultSlotId = 'result_image';
 
 export function ImageStudioResizePanel({
   host,
-}: PluginPanelPropsV1): ReactElement | null {
+}: PluginPanelPropsV2): ReactElement | null {
   const panel = useSyncExternalStore(
     resizePanelStore.subscribe,
     resizePanelStore.getSnapshot,
@@ -53,7 +54,8 @@ export function ImageStudioResizePanel({
   const blockIsBound = blockId
     ? hostSnapshot.boundBlockIds.includes(blockId)
     : false;
-  const copy = localizedResizeCopy();
+  const environment = usePluginEnvironment(host);
+  const copy = localizedResizeCopy(environment.locale);
 
   useEffect(() => {
     setAllowUpscale(false);
@@ -320,7 +322,7 @@ function validDimension(value: number | undefined): number | null {
     : null;
 }
 
-function localizedResizeCopy(): {
+function localizedResizeCopy(locale: string): {
   allowUpscale: string;
   background: string;
   close: string;
@@ -340,7 +342,7 @@ function localizedResizeCopy(): {
   title: string;
   width: string;
 } {
-  if (navigator.language.toLowerCase().startsWith('zh')) {
+  if (isChineseLocale(locale)) {
     return {
       allowUpscale: '允许放大图片',
       background: '透明背景',

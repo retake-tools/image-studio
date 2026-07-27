@@ -5,7 +5,7 @@
 Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布上提供可视化、流程化、可组合的
 真实图片处理能力。
 
-当前包含四个浏览器原生能力和一个 Retake 连接式 AI 能力：
+当前包含四个浏览器原生能力和两个 Retake 连接式 AI 能力：
 
 - `image.local_adjust`：实时预览和调整亮度、对比度、饱和度；
 - `image.local_crop`：比例预设、裁剪范围、拖动或键盘定位、精确输出尺寸；
@@ -14,6 +14,8 @@ Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布�
   provider-neutral 黑白 PNG 蒙版；
 - `image.masked_edit`：同时绑定源图与等大的 Selection Mask，通过 Retake 当前图片默认连接
   执行局部 Codex 图片编辑；
+- `image.annotation_edit`：通过编号定位点、箭头、画笔、区域画笔、矩形或椭圆标记图片，
+  为每个标记或全局填写修改要求，并生成 1–4 张不含标注的编辑结果；
 - 使用浏览器 Canvas 2D 在本地处理；
 - 通过 Retake Host API 创建新的标准 Image Asset、Operation、Execution 和 Result Block；
 - 不修改源图片。
@@ -58,6 +60,7 @@ npm run release:check
 - [Package 结构与作者边界](./docs/authoring.md)
 - [Selection Mask 边界](./docs/selection-mask.md)
 - [局部 AI 编辑边界](./docs/masked-edit.md)
+- [标注编辑边界](./docs/annotation.md)
 - [发布流程与检查清单](./docs/releasing.md)
 - [参与贡献](./CONTRIBUTING.md)
 

@@ -1,11 +1,11 @@
 {
-  "capabilityId": "image.masked_edit",
+  "capabilityId": "image.annotation_edit",
   "category": "image_editing",
-  "definitionHash": "sha256:image-masked-edit-v2",
+  "definitionHash": "sha256:image-annotation-edit-v2",
   "displayName": {
-    "default": "Masked AI image edit",
+    "default": "Annotation image edit",
     "locales": {
-      "zh-CN": "局部 AI 图片编辑"
+      "zh-CN": "图片标注编辑"
     }
   },
   "inputSlots": [
@@ -26,16 +26,15 @@
     {
       "artifactTypes": [],
       "bindingKinds": [
-        "asset",
-        "block"
+        "asset"
       ],
       "cardinality": "one",
       "dataTypes": [
         "image"
       ],
       "required": true,
-      "semanticRole": "inpaint_mask",
-      "slotId": "inpaint_mask"
+      "semanticRole": "annotated_composite",
+      "slotId": "annotated_composite"
     },
     {
       "artifactTypes": [],
@@ -53,16 +52,16 @@
   ],
   "outputSlots": [
     {
-      "cardinality": "one",
+      "cardinality": "many",
       "dataType": "image",
       "projectionBlockTypes": [
         "image"
       ],
-      "semanticRole": "edited_image",
-      "slotId": "edited_image"
+      "semanticRole": "edited_images",
+      "slotId": "edited_images"
     }
   ],
-  "parametersSchemaRef": "definitions/image.masked_edit.parameters.json",
+  "parametersSchemaRef": "definitions/image.annotation_edit.parameters.json",
   "runtimeRequirements": [
     "durable_asset_output",
     "image_generation"

@@ -5,8 +5,8 @@
 Image Studio is the official Retake plugin for deep, workflow-native image
 editing on the infinite canvas.
 
-The current package provides four browser-native capabilities and one
-Retake-connected AI capability:
+The current package provides four browser-native capabilities and two
+Retake-connected AI capabilities:
 
 - `image.local_adjust`: live brightness, contrast, and saturation preview.
 - `image.local_crop`: aspect presets, crop-size control, drag or keyboard
@@ -18,6 +18,9 @@ Retake-connected AI capability:
 - `image.masked_edit`: bind one source image and one matching Selection Mask,
   then run a local-account Codex image edit through Retake's current image
   Connection.
+- `image.annotation_edit`: mark an image with numbered points, arrows, freehand
+  lines, region brushes, rectangles, or ellipses; attach per-mark or global
+  instructions; and request one to four clean edited candidates.
 
 All processors create a new result asset and block through the Retake Host
 API, leaving the source image unchanged.
@@ -60,6 +63,7 @@ rollback, disable, safe mode, and removal behavior.
 - [Package layout and authoring boundaries](./docs/authoring.md)
 - [Selection Mask authoring](./docs/selection-mask.md)
 - [Masked AI editing](./docs/masked-edit.md)
+- [Annotation editing](./docs/annotation.md)
 - [Release process and checklist](./docs/releasing.md)
 - [Contributing](./CONTRIBUTING.md)
 

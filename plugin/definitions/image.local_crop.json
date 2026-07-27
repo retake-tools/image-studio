@@ -1,8 +1,13 @@
 {
   "capabilityId": "image.local_crop",
   "category": "image_editing",
-  "definitionHash": "sha256:image-local-crop-v1",
-  "displayName": "Local image crop",
+  "definitionHash": "sha256:image-local-crop-v2",
+  "displayName": {
+    "default": "Local image crop",
+    "locales": {
+      "zh-CN": "本地图片裁剪"
+    }
+  },
   "inputSlots": [
     {
       "artifactTypes": [],
@@ -34,9 +39,9 @@
   "runtimeRequirements": [
     "browser.canvas_2d"
   ],
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "supportedAdapterClasses": [
     "local_canvas"
   ],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
