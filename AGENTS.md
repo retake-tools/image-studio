@@ -30,7 +30,9 @@ Delete local and remote feature branches after they are merged.
 
 ## Verification
 
-Run the repository validation, deterministic Retake controlled build, and
-Whiteboard integration tests relevant to the changed capability before
-merging.
+Run `npm run release:check`, `npm run typecheck`, and `npm test`. Also run the
+deterministic Retake controlled build and Whiteboard integration tests relevant
+to the changed capability before merging.
 
+Keep `README.md`, `README.zh-CN.md`, and the public files under `docs/` aligned
+when install, authoring, version, or release behavior changes.

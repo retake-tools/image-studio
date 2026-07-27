@@ -1,5 +1,7 @@
 # Retake Image Studio
 
+[简体中文](./README.zh-CN.md)
+
 Image Studio is the official Retake plugin for deep, workflow-native image
 editing on the infinite canvas.
 
@@ -18,7 +20,7 @@ package boundary in its own directory lets the local Package Manager validate
 only declared files while repository-level tests and authoring dependencies
 stay outside the distributed artifact.
 
-## Install from GitHub
+## Install
 
 In Retake Whiteboard, open **Settings → Plugin library** and install:
 
@@ -33,7 +35,21 @@ review permissions and trust that exact code digest before enabling it.
 Using a full commit ID gives a reproducible install. A branch or version tag
 can be used when following updates intentionally.
 
-## Develop
+No CLI or local bridge is required for this browser-native capability. Retake
+asks for code trust and the three declared, bound-resource permissions before
+the PluginModule can be enabled.
+
+See the [installation and lifecycle guide](./docs/install.md) for updates,
+rollback, disable, safe mode, and removal behavior.
+
+## Documentation
+
+- [Install and manage Image Studio](./docs/install.md)
+- [Package layout and authoring boundaries](./docs/authoring.md)
+- [Release process and checklist](./docs/releasing.md)
+- [Contributing](./CONTRIBUTING.md)
+
+## Develop and verify
 
 Requires Node.js 22 or later.
 
@@ -42,7 +58,12 @@ npm ci
 npm run validate
 npm run typecheck
 npm test
+npm run release:check
 ```
 
 The controlled Package build is owned by the Retake Package toolchain and is
 also exercised by the Whiteboard integration workflow before release.
+
+The current `develop` branch is an integration candidate. A public version tag
+or GitHub release is created only after the verified `develop` state is
+explicitly approved for promotion to `main`.

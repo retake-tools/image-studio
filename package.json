@@ -5,6 +5,7 @@
   "description": "Source and validation workspace for the Retake Image Studio plugin.",
   "type": "module",
   "scripts": {
+    "release:check": "npm run validate && node scripts/check-release.mjs",
     "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "validate": "node scripts/validate-package.mjs"
