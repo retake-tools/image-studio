@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aspectPreset": {
+      "enum": [
+        "original",
+        "1:1",
+        "4:3",
+        "3:4",
+        "16:9",
+        "9:16"
+      ],
+      "type": "string"
+    },
+    "height": {
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "type": "number"
+    },
+    "outputHeight": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "outputWidth": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "sourceHeight": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "sourceWidth": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "width": {
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "type": "number"
+    },
+    "x": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "y": {
+      "minimum": 0,
+      "type": "number"
+    }
+  },
+  "required": [
+    "aspectPreset",
+    "height",
+    "outputHeight",
+    "outputWidth",
+    "sourceHeight",
+    "sourceWidth",
+    "width",
+    "x",
+    "y"
+  ],
+  "title": "Local image crop parameters",
+  "type": "object"
+}

@@ -5,10 +5,14 @@
 Image Studio is the official Retake plugin for deep, workflow-native image
 editing on the infinite canvas.
 
-The first vertical slice provides `image.local_adjust`: a native React panel
-with live brightness, contrast, and saturation preview plus a local Canvas 2D
-processor. The processor creates a new result asset and block through the
-Retake Host API, leaving the source image unchanged.
+The current package provides two browser-native capabilities:
+
+- `image.local_adjust`: live brightness, contrast, and saturation preview.
+- `image.local_crop`: aspect presets, crop-size control, drag or keyboard
+  positioning, exact output dimensions, and Canvas 2D crop output.
+
+Both processors create a new result asset and block through the Retake Host
+API, leaving the source image unchanged.
 
 Retake Whiteboard remains responsible for canvas state, assets, executions,
 history, package lifecycle, trust, fallback UI, and persistence. This

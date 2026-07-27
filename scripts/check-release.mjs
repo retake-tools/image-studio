@@ -7,9 +7,13 @@ const packageRoot = new URL('../plugin/', import.meta.url);
 const authoringPackage = await readJson('package.json', repositoryRoot);
 const rootPackage = await readJson('retake.package.json', packageRoot);
 const pluginModule = await readJson('retake.plugin.json', packageRoot);
-const capability = await readJson(
-  'definitions/image.local_adjust.json',
-  packageRoot,
+const capabilityDescriptors = pluginModule.contributions.filter(
+  (entry) => entry.kind === 'capability',
+);
+const capabilities = await Promise.all(
+  capabilityDescriptors.map((entry) => (
+    readJson(entry.definitionPath, packageRoot)
+  )),
 );
 
 assert.match(
@@ -19,7 +23,6 @@ assert.match(
 );
 assert.equal(rootPackage.version, authoringPackage.version);
 assert.equal(pluginModule.version, authoringPackage.version);
-assert.equal(capability.version, authoringPackage.version);
 assert.equal(rootPackage.packageId, 'design.retake.image-studio');
 assert.equal(pluginModule.pluginModuleId, 'design.retake.image-studio.web');
 
@@ -30,12 +33,20 @@ assert.ok(moduleDescriptor, 'Root Package must declare the PluginModule.');
 assert.equal(moduleDescriptor.version, pluginModule.version);
 assert.equal(moduleDescriptor.definitionHash, pluginModule.definitionHash);
 
-const capabilityDescriptor = pluginModule.contributions.find(
-  (entry) => entry.kind === 'capability'
-    && entry.definitionPath === 'definitions/image.local_adjust.json',
+for (const [index, capability] of capabilities.entries()) {
+  const descriptor = capabilityDescriptors[index];
+  assert.ok(descriptor);
+  assert.match(
+    capability.version,
+    /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?$/,
+    `${capability.capabilityId} must use a semantic version.`,
+  );
+  assert.equal(descriptor.definitionHash, capability.definitionHash);
+}
+assert.deepEqual(
+  capabilities.map((capability) => capability.capabilityId).sort(),
+  ['image.local_adjust', 'image.local_crop'],
 );
-assert.ok(capabilityDescriptor, 'PluginModule must declare local adjust.');
-assert.equal(capabilityDescriptor.definitionHash, capability.definitionHash);
 
 const requiredPublicFiles = [
   'AGENTS.md',
@@ -98,7 +109,7 @@ for (const filePath of portableSourceFiles) {
 }
 
 console.log(JSON.stringify({
-  capabilityId: capability.capabilityId,
+  capabilityIds: capabilities.map((capability) => capability.capabilityId),
   definitionHashesSynchronized: true,
   documentationFiles: requiredPublicFiles.length,
   gitSourceRoot: 'plugin',

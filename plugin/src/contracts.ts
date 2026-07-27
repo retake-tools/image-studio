@@ -45,7 +45,7 @@ export interface PluginHostApiV1 {
         }[];
       }>;
       inputBlockIds: readonly string[];
-      parameters: Readonly<Record<string, number>>;
+      parameters: Readonly<Record<string, boolean | null | number | string>>;
     }): Promise<{
       executionId: string;
       outputAssetIds: readonly string[];

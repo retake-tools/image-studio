@@ -39,9 +39,9 @@ export async function renderAdjustedImage(
   adjustments: LocalImageAdjustments,
   signal: AbortSignal,
 ): Promise<RenderedLocalImage> {
-  throwIfAborted(signal);
-  const image = await loadImage(imageUrl, signal);
-  throwIfAborted(signal);
+  throwIfImageProcessingAborted(signal);
+  const image = await loadBrowserImage(imageUrl, signal);
+  throwIfImageProcessingAborted(signal);
   const width = image.naturalWidth;
   const height = image.naturalHeight;
   if (width <= 0 || height <= 0) {
@@ -58,7 +58,7 @@ export async function renderAdjustedImage(
 
   context.filter = imageAdjustmentFilter(adjustments);
   context.drawImage(image, 0, 0, width, height);
-  throwIfAborted(signal);
+  throwIfImageProcessingAborted(signal);
   return {
     dataUrl: canvas.toDataURL('image/png'),
     height,
@@ -70,38 +70,7 @@ function percentage(value: number): number {
   return Math.max(0, Math.min(200, 100 + value));
 }
 
-function loadImage(
-  imageUrl: string,
-  signal: AbortSignal,
-): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    const abort = () => {
-      image.src = '';
-      reject(new DOMException('Image adjustment was aborted.', 'AbortError'));
-    };
-    const cleanup = () => signal.removeEventListener('abort', abort);
-    image.decoding = 'async';
-    image.onload = () => {
-      cleanup();
-      resolve(image);
-    };
-    image.onerror = () => {
-      cleanup();
-      reject(new Error(
-        'The source image could not be loaded for local processing.',
-      ));
-    };
-    signal.addEventListener('abort', abort, { once: true });
-    if (signal.aborted) {
-      abort();
-      return;
-    }
-    image.src = imageUrl;
-  });
-}
-
-function throwIfAborted(signal: AbortSignal): void {
-  if (!signal.aborted) return;
-  throw new DOMException('Image adjustment was aborted.', 'AbortError');
-}
+import {
+  loadBrowserImage,
+  throwIfImageProcessingAborted,
+} from './browser-image';

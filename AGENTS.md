@@ -16,8 +16,9 @@ trusted Web PluginModule.
   write Board, Asset, or Execution data directly.
 - React state, DOM, Canvas 2D, WebGL, and local preview behavior stay inside
   the PluginModule and do not require a generic Host service.
-- Keep the first migration behavior-equivalent to the existing
-  `image.local_adjust` feature. Do not add new editing features during P9.
+- P9 migration is complete. Add P10 image capabilities as coherent vertical
+  slices with an explicit Capability contract, pure processor tests, exact
+  controlled-build verification, and disposable Whiteboard browser evidence.
 
 ## Branch workflow
 

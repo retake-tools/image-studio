@@ -30,6 +30,40 @@ export const adjustPanelStore = Object.freeze({
   },
 });
 
+export const cropPanelStore = createPanelStore();
+
+function createPanelStore(): typeof adjustPanelStore {
+  let snapshot: AdjustPanelSnapshot = Object.freeze({
+    block: null,
+    revision: 0,
+  });
+  const storeListeners = new Set<Listener>();
+  return Object.freeze({
+    close(): void {
+      if (!snapshot.block) return;
+      set(null);
+    },
+    getSnapshot(): AdjustPanelSnapshot {
+      return snapshot;
+    },
+    open(block: ImageToolbarBlockV1): void {
+      set(Object.freeze({ ...block }));
+    },
+    subscribe(listener: Listener): () => void {
+      storeListeners.add(listener);
+      return () => storeListeners.delete(listener);
+    },
+  });
+
+  function set(block: ImageToolbarBlockV1 | null): void {
+    snapshot = Object.freeze({
+      block,
+      revision: snapshot.revision + 1,
+    });
+    for (const listener of storeListeners) listener();
+  }
+}
+
 function update(block: ImageToolbarBlockV1 | null): void {
   current = Object.freeze({
     block,

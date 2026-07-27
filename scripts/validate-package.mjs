@@ -8,6 +8,10 @@ const capability = await readJson('definitions/image.local_adjust.json');
 const parameters = await readJson(
   'definitions/image.local_adjust.parameters.json',
 );
+const cropCapability = await readJson('definitions/image.local_crop.json');
+const cropParameters = await readJson(
+  'definitions/image.local_crop.parameters.json',
+);
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
 assert.equal(
@@ -21,6 +25,15 @@ assert.equal(
 assert.equal(
   packageManifest.components.pluginModules[0].definitionHash,
   pluginManifest.definitionHash,
+);
+assert.deepEqual(
+  packageManifest.components.pluginModules[0].resourcePaths,
+  [
+    'definitions/image.local_adjust.json',
+    'definitions/image.local_adjust.parameters.json',
+    'definitions/image.local_crop.json',
+    'definitions/image.local_crop.parameters.json',
+  ],
 );
 assert.deepEqual(
   [...packageManifest.files].sort(compareText),
@@ -40,7 +53,7 @@ assert.deepEqual(
 );
 
 const capabilityDescriptor = pluginManifest.contributions.find(
-  (entry) => entry.kind === 'capability',
+  (entry) => entry.definitionPath === 'definitions/image.local_adjust.json',
 );
 assert.ok(capabilityDescriptor);
 assert.equal(capabilityDescriptor.definitionHash, capability.definitionHash);
@@ -54,12 +67,42 @@ assert.deepEqual(parameters.required, [
 ]);
 assert.equal(parameters.additionalProperties, false);
 
+const cropCapabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => entry.definitionPath === 'definitions/image.local_crop.json',
+);
+assert.ok(cropCapabilityDescriptor);
+assert.equal(
+  cropCapabilityDescriptor.definitionHash,
+  cropCapability.definitionHash,
+);
+assert.equal(cropCapability.capabilityId, 'image.local_crop');
+assert.equal(
+  cropCapability.parametersSchemaRef,
+  'definitions/image.local_crop.parameters.json',
+);
+assert.deepEqual(cropParameters.required, [
+  'aspectPreset',
+  'height',
+  'outputHeight',
+  'outputWidth',
+  'sourceHeight',
+  'sourceWidth',
+  'width',
+  'x',
+  'y',
+]);
+assert.equal(cropParameters.additionalProperties, false);
+
 for (const filePath of packageManifest.files) {
   await readFile(new URL(filePath, packageRoot));
 }
 
 console.log(JSON.stringify({
   capabilityId: capability.capabilityId,
+  capabilityIds: [
+    capability.capabilityId,
+    cropCapability.capabilityId,
+  ],
   packageId: packageManifest.packageId,
   pluginModuleId: pluginManifest.pluginModuleId,
   sourceFiles: packageManifest.files.length,
