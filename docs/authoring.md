@@ -49,6 +49,10 @@ selection, normalized crop region, pointer interaction, preview, and Canvas 2D
 processor stay inside Image Studio, while its result uses the same atomic
 `host.execution.run` projection as `image.local_adjust`.
 
+`image.local_resize` uses the same boundary for aspect-preserving geometry and
+PNG, JPEG, or WebP encoding. Retake persists the returned Data URL as a standard
+Image Asset and continues to own generic download behavior.
+
 ## Version and contract rules
 
 The Root Package, authoring workspace, and current single PluginModule versions

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "allowUpscale": {
+      "type": "boolean"
+    },
+    "matteColor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "outputFormat": {
+      "enum": [
+        "png",
+        "jpeg",
+        "webp"
+      ],
+      "type": "string"
+    },
+    "outputHeight": {
+      "maximum": 8192,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "outputWidth": {
+      "maximum": 8192,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "quality": {
+      "maximum": 100,
+      "minimum": 60,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "resizeMode": {
+      "enum": [
+        "percentage",
+        "width",
+        "height"
+      ],
+      "type": "string"
+    },
+    "resizeValue": {
+      "exclusiveMinimum": 0,
+      "type": "number"
+    },
+    "sourceHeight": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "sourceWidth": {
+      "minimum": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "allowUpscale",
+    "matteColor",
+    "outputFormat",
+    "outputHeight",
+    "outputWidth",
+    "quality",
+    "resizeMode",
+    "resizeValue",
+    "sourceHeight",
+    "sourceWidth"
+  ],
+  "title": "Local image resize parameters",
+  "type": "object"
+}

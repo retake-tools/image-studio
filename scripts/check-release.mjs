@@ -45,7 +45,7 @@ for (const [index, capability] of capabilities.entries()) {
 }
 assert.deepEqual(
   capabilities.map((capability) => capability.capabilityId).sort(),
-  ['image.local_adjust', 'image.local_crop'],
+  ['image.local_adjust', 'image.local_crop', 'image.local_resize'],
 );
 
 const requiredPublicFiles = [

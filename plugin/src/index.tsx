@@ -11,6 +11,7 @@ import type {
   PluginPanelPropsV1,
 } from './contracts';
 import { ImageStudioCropPanel } from './crop-panel';
+import { ImageStudioResizePanel } from './resize-panel';
 import {
   defaultImageAdjustments,
   hasImageAdjustments,
@@ -18,12 +19,17 @@ import {
   renderAdjustedImage,
   type LocalImageAdjustments,
 } from './image-adjustments';
-import { adjustPanelStore, cropPanelStore } from './panel-store';
+import {
+  adjustPanelStore,
+  cropPanelStore,
+  resizePanelStore,
+} from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
 
 const capabilityId = 'image.local_adjust';
 const cropCapabilityId = 'image.local_crop';
+const resizeCapabilityId = 'image.local_resize';
 const resultSlotId = 'result_image';
 
 export const localAdjustCapability = definePluginContribution({
@@ -65,6 +71,7 @@ export const adjustImageAction = definePluginContribution({
   placement: 'image.toolbar',
   run({ block }: { block: ImageToolbarBlockV1 }) {
     cropPanelStore.close();
+    resizePanelStore.close();
     adjustPanelStore.open(block);
   },
 });
@@ -76,7 +83,20 @@ export const cropImageAction = definePluginContribution({
   placement: 'image.toolbar',
   run({ block }: { block: ImageToolbarBlockV1 }) {
     adjustPanelStore.close();
+    resizePanelStore.close();
     cropPanelStore.open(block);
+  },
+});
+
+export const resizeImageAction = definePluginContribution({
+  apiVersion: 1,
+  kind: 'action',
+  label: 'Resize image',
+  placement: 'image.toolbar',
+  run({ block }: { block: ImageToolbarBlockV1 }) {
+    adjustPanelStore.close();
+    cropPanelStore.close();
+    resizePanelStore.open(block);
   },
 });
 
@@ -112,6 +132,38 @@ export const localCropCapability = definePluginContribution({
   kind: 'capability',
 });
 
+export const localResizeCapability = definePluginContribution({
+  apiVersion: 1,
+  definition: {
+    capabilityId: resizeCapabilityId,
+    category: 'image_editing',
+    definitionHash: 'sha256:image-local-resize-v1',
+    displayName: 'Local image resize',
+    inputSlots: [{
+      artifactTypes: [],
+      bindingKinds: ['asset', 'block'],
+      cardinality: 'one',
+      dataTypes: ['image'],
+      required: true,
+      semanticRole: 'source',
+      slotId: 'source_image',
+    }],
+    outputSlots: [{
+      cardinality: 'one',
+      dataType: 'image',
+      projectionBlockTypes: ['image'],
+      semanticRole: 'resized_image',
+      slotId: resultSlotId,
+    }],
+    parametersSchemaRef: 'definitions/image.local_resize.parameters.json',
+    runtimeRequirements: ['browser.canvas_2d'],
+    schemaVersion: 1,
+    supportedAdapterClasses: ['local_canvas'],
+    version: '0.1.0',
+  },
+  kind: 'capability',
+});
+
 export const adjustImagePanel = definePluginContribution({
   apiVersion: 1,
   component: ImageStudioAdjustPanel,
@@ -126,12 +178,20 @@ export const cropImagePanel = definePluginContribution({
   placement: 'workspace.overlay',
 });
 
+export const resizeImagePanel = definePluginContribution({
+  apiVersion: 1,
+  component: ImageStudioResizePanel,
+  kind: 'panel',
+  placement: 'workspace.overlay',
+});
+
 export function activate(context: PluginActivationContextV1): {
   dispose(): void;
 } {
   const close = () => {
     adjustPanelStore.close();
     cropPanelStore.close();
+    resizePanelStore.close();
   };
   context.signal.addEventListener('abort', close, { once: true });
   return {

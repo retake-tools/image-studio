@@ -15,6 +15,13 @@
       "kind": "action"
     },
     {
+      "contributionId": "design.retake.image-studio.action.resize",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "resizeImageAction",
+      "kind": "action"
+    },
+    {
       "contributionId": "design.retake.image-studio.capability.local-adjust",
       "definitionHash": "sha256:image-local-adjust-v1",
       "definitionPath": "definitions/image.local_adjust.json",
@@ -26,6 +33,13 @@
       "definitionHash": "sha256:image-local-crop-v1",
       "definitionPath": "definitions/image.local_crop.json",
       "exportName": "localCropCapability",
+      "kind": "capability"
+    },
+    {
+      "contributionId": "design.retake.image-studio.capability.local-resize",
+      "definitionHash": "sha256:image-local-resize-v1",
+      "definitionPath": "definitions/image.local_resize.json",
+      "exportName": "localResizeCapability",
       "kind": "capability"
     },
     {
@@ -41,9 +55,16 @@
       "definitionPath": null,
       "exportName": "cropImagePanel",
       "kind": "panel"
+    },
+    {
+      "contributionId": "design.retake.image-studio.panel.resize",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "resizeImagePanel",
+      "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-v2",
+  "definitionHash": "sha256:image-studio-web-v3",
   "description": "Native Image Studio controls and browser image processors.",
   "name": "Retake Image Studio",
   "permissions": [
@@ -61,5 +82,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 1,
-  "version": "0.2.0"
+  "version": "0.3.0"
 }
