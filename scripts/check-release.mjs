@@ -45,7 +45,12 @@ for (const [index, capability] of capabilities.entries()) {
 }
 assert.deepEqual(
   capabilities.map((capability) => capability.capabilityId).sort(),
-  ['image.local_adjust', 'image.local_crop', 'image.local_resize'],
+  [
+    'image.local_adjust',
+    'image.local_crop',
+    'image.local_resize',
+    'image.local_selection_mask',
+  ],
 );
 
 const requiredPublicFiles = [
@@ -57,6 +62,7 @@ const requiredPublicFiles = [
   'docs/authoring.md',
   'docs/install.md',
   'docs/releasing.md',
+  'docs/selection-mask.md',
   '.github/workflows/ci.yml',
 ];
 for (const filePath of requiredPublicFiles) {
@@ -69,6 +75,7 @@ for (const expectedLink of [
   './docs/authoring.md',
   './docs/install.md',
   './docs/releasing.md',
+  './docs/selection-mask.md',
 ]) {
   assert.ok(
     readme.includes(expectedLink),

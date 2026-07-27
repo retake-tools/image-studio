@@ -23,13 +23,16 @@ import {
   adjustPanelStore,
   cropPanelStore,
   resizePanelStore,
+  selectionMaskPanelStore,
 } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
+import { ImageStudioSelectionMaskPanel } from './selection-mask-panel';
 import { imageStudioStyles } from './styles';
 
 const capabilityId = 'image.local_adjust';
 const cropCapabilityId = 'image.local_crop';
 const resizeCapabilityId = 'image.local_resize';
+const selectionMaskCapabilityId = 'image.local_selection_mask';
 const resultSlotId = 'result_image';
 
 export const localAdjustCapability = definePluginContribution({
@@ -72,6 +75,7 @@ export const adjustImageAction = definePluginContribution({
   run({ block }: { block: ImageToolbarBlockV1 }) {
     cropPanelStore.close();
     resizePanelStore.close();
+    selectionMaskPanelStore.close();
     adjustPanelStore.open(block);
   },
 });
@@ -84,6 +88,7 @@ export const cropImageAction = definePluginContribution({
   run({ block }: { block: ImageToolbarBlockV1 }) {
     adjustPanelStore.close();
     resizePanelStore.close();
+    selectionMaskPanelStore.close();
     cropPanelStore.open(block);
   },
 });
@@ -96,7 +101,21 @@ export const resizeImageAction = definePluginContribution({
   run({ block }: { block: ImageToolbarBlockV1 }) {
     adjustPanelStore.close();
     cropPanelStore.close();
+    selectionMaskPanelStore.close();
     resizePanelStore.open(block);
+  },
+});
+
+export const selectionMaskImageAction = definePluginContribution({
+  apiVersion: 1,
+  kind: 'action',
+  label: 'Create selection mask',
+  placement: 'image.toolbar',
+  run({ block }: { block: ImageToolbarBlockV1 }) {
+    adjustPanelStore.close();
+    cropPanelStore.close();
+    resizePanelStore.close();
+    selectionMaskPanelStore.open(block);
   },
 });
 
@@ -164,27 +183,63 @@ export const localResizeCapability = definePluginContribution({
   kind: 'capability',
 });
 
+export const localSelectionMaskCapability = definePluginContribution({
+  apiVersion: 1,
+  definition: {
+    capabilityId: selectionMaskCapabilityId,
+    category: 'image_editing',
+    definitionHash: 'sha256:image-local-selection-mask-v1',
+    displayName: 'Local selection mask authoring',
+    inputSlots: [{
+      artifactTypes: [],
+      bindingKinds: ['asset', 'block'],
+      cardinality: 'one',
+      dataTypes: ['image'],
+      required: true,
+      semanticRole: 'source',
+      slotId: 'source_image',
+    }],
+    outputSlots: [{
+      cardinality: 'one',
+      dataType: 'image',
+      projectionBlockTypes: ['image'],
+      semanticRole: 'selection_mask',
+      slotId: 'selection_mask',
+    }],
+    parametersSchemaRef:
+      'definitions/image.local_selection_mask.parameters.json',
+    runtimeRequirements: ['browser.canvas_2d'],
+    schemaVersion: 1,
+    supportedAdapterClasses: ['local_canvas'],
+    version: '0.1.0',
+  },
+  kind: 'capability',
+});
+
 export const adjustImagePanel = definePluginContribution({
   apiVersion: 1,
   component: ImageStudioAdjustPanel,
   kind: 'panel',
   placement: 'workspace.overlay',
 });
-
 export const cropImagePanel = definePluginContribution({
   apiVersion: 1,
   component: ImageStudioCropPanel,
   kind: 'panel',
   placement: 'workspace.overlay',
 });
-
 export const resizeImagePanel = definePluginContribution({
   apiVersion: 1,
   component: ImageStudioResizePanel,
   kind: 'panel',
   placement: 'workspace.overlay',
 });
-
+export const selectionMaskImagePanel = definePluginContribution({
+  apiVersion: 1,
+  component: ImageStudioSelectionMaskPanel,
+  kind: 'panel',
+  placement: 'workspace.overlay',
+});
 export function activate(context: PluginActivationContextV1): {
   dispose(): void;
 } {
@@ -192,6 +247,7 @@ export function activate(context: PluginActivationContextV1): {
     adjustPanelStore.close();
     cropPanelStore.close();
     resizePanelStore.close();
+    selectionMaskPanelStore.close();
   };
   context.signal.addEventListener('abort', close, { once: true });
   return {

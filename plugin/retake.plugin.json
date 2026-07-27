@@ -22,6 +22,13 @@
       "kind": "action"
     },
     {
+      "contributionId": "design.retake.image-studio.action.selection-mask",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "selectionMaskImageAction",
+      "kind": "action"
+    },
+    {
       "contributionId": "design.retake.image-studio.capability.local-adjust",
       "definitionHash": "sha256:image-local-adjust-v1",
       "definitionPath": "definitions/image.local_adjust.json",
@@ -40,6 +47,13 @@
       "definitionHash": "sha256:image-local-resize-v1",
       "definitionPath": "definitions/image.local_resize.json",
       "exportName": "localResizeCapability",
+      "kind": "capability"
+    },
+    {
+      "contributionId": "design.retake.image-studio.capability.local-selection-mask",
+      "definitionHash": "sha256:image-local-selection-mask-v1",
+      "definitionPath": "definitions/image.local_selection_mask.json",
+      "exportName": "localSelectionMaskCapability",
       "kind": "capability"
     },
     {
@@ -62,9 +76,16 @@
       "definitionPath": null,
       "exportName": "resizeImagePanel",
       "kind": "panel"
+    },
+    {
+      "contributionId": "design.retake.image-studio.panel.selection-mask",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "selectionMaskImagePanel",
+      "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-v3",
+  "definitionHash": "sha256:image-studio-web-v4",
   "description": "Native Image Studio controls and browser image processors.",
   "name": "Retake Image Studio",
   "permissions": [
@@ -82,5 +103,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 1,
-  "version": "0.3.0"
+  "version": "0.4.0"
 }

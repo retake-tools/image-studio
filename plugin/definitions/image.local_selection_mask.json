@@ -1,0 +1,42 @@
+{
+  "capabilityId": "image.local_selection_mask",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-local-selection-mask-v1",
+  "displayName": "Local selection mask authoring",
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "one",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "selection_mask",
+      "slotId": "selection_mask"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.local_selection_mask.parameters.json",
+  "runtimeRequirements": [
+    "browser.canvas_2d"
+  ],
+  "schemaVersion": 1,
+  "supportedAdapterClasses": [
+    "local_canvas"
+  ],
+  "version": "0.1.0"
+}

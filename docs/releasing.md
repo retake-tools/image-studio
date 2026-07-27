@@ -42,11 +42,14 @@ Verify in a disposable Retake Workspace:
 - install does not enable the PluginModule automatically;
 - permission review, code trust, enable, disable, safe mode, and reload work;
 - update and cached rollback preserve exact source identity;
-- **Adjust image** and **Crop image** each create one Operation, one Result
-  Image, one succeeded Execution, and one output Asset while leaving the source
-  unchanged;
+- **Adjust image**, **Crop image**, **Resize image**, and **Create selection
+  mask** each create one Operation, one Result Image, one succeeded Execution,
+  and one output Asset while leaving the source unchanged;
 - Crop aspect presets stay in bounds and the recorded output dimensions match
   the actual PNG;
+- Resize output dimensions, MIME type, extension, and file encoding agree;
+- Selection Mask output has the exact source dimensions and is an opaque PNG
+  using `grayscale_white_selected_v1` (white selected, black unselected);
 - missing or disabled Image Studio removes the action but preserves historical
   Operation, Execution, Result, Asset, and History projections;
 - the browser console has no warnings or errors during the lifecycle.

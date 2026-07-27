@@ -1,6 +1,6 @@
 {
   "name": "@retake-tools/image-studio-source",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Source and validation workspace for the Retake Image Studio plugin.",
   "type": "module",
