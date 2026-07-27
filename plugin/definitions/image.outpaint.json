@@ -1,0 +1,87 @@
+{
+  "capabilityId": "image.outpaint",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-outpaint-v1",
+  "displayName": {
+    "default": "AI image expand",
+    "locales": {
+      "zh-CN": "AI 扩图"
+    }
+  },
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "control_image",
+      "slotId": "outpaint_guide"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "inpaint_mask",
+      "slotId": "inpaint_mask"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "inline"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "text"
+      ],
+      "required": true,
+      "semanticRole": "prompt",
+      "slotId": "prompt"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "many",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "expanded_images",
+      "slotId": "expanded_images"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.outpaint.parameters.json",
+  "runtimeRequirements": [
+    "durable_asset_output",
+    "image_generation"
+  ],
+  "schemaVersion": 2,
+  "supportedAdapterClasses": [
+    "agent_runtime.media"
+  ],
+  "version": "0.1.0"
+}

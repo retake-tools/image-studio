@@ -49,6 +49,7 @@ export const resizePanelStore = createPanelStore();
 export const selectionMaskPanelStore = createPanelStore();
 export const maskedEditPanelStore = createSelectionPanelStore();
 export const annotationPanelStore = createAnnotationPanelStore();
+export const outpaintPanelStore = createPanelStore();
 
 function createPanelStore(): typeof adjustPanelStore {
   let snapshot: AdjustPanelSnapshot = Object.freeze({

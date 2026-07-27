@@ -52,6 +52,7 @@ assert.deepEqual(
     'image.local_resize',
     'image.local_selection_mask',
     'image.masked_edit',
+    'image.outpaint',
   ],
 );
 
@@ -65,6 +66,7 @@ const requiredPublicFiles = [
   'docs/annotation.md',
   'docs/install.md',
   'docs/masked-edit.md',
+  'docs/outpaint.md',
   'docs/releasing.md',
   'docs/selection-mask.md',
   '.github/workflows/ci.yml',
@@ -80,6 +82,7 @@ for (const expectedLink of [
   './docs/annotation.md',
   './docs/install.md',
   './docs/masked-edit.md',
+  './docs/outpaint.md',
   './docs/releasing.md',
   './docs/selection-mask.md',
 ]) {

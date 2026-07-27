@@ -2,11 +2,11 @@
 
 Image Studio is installed and managed from Retake Whiteboard. The current
 `image.local_adjust`, `image.local_crop`, `image.local_resize`, and
-`image.local_selection_mask` run entirely in the browser. `image.masked_edit`
-and `image.annotation_edit` use a Retake image Connection. With Codex App
-Server they use the user's existing local Codex account/plan; the manual
-Codex/MCP route remains available. Neither path requires a separate Image
-Studio CLI or bridge.
+`image.local_selection_mask` run entirely in the browser. `image.masked_edit`,
+`image.annotation_edit`, and `image.outpaint` use a Retake image Connection.
+With Codex App Server they use the user's existing local Codex account/plan;
+the manual Codex/MCP route remains available. Neither path requires a separate
+Image Studio CLI or bridge.
 
 ## Install from GitHub
 
@@ -21,7 +21,8 @@ Studio CLI or bridge.
 4. Review the exact code digest and requested permissions.
 5. Trust and enable the PluginModule.
 6. Select an Image Block and choose **Adjust image**, **Crop image**,
-   **Resize image**, **Create selection mask**, or **Annotate image**.
+   **Resize image**, **Create selection mask**, **Annotate image**, or
+   **Expand image**.
 7. For **Masked AI edit**, select exactly one source Image and one same-sized
    PNG Selection Mask, then use the multi-selection toolbar.
 
