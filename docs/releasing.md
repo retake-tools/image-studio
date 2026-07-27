@@ -61,6 +61,14 @@ Verify in a disposable Retake Workspace:
   Execution with one to four output Images;
 - reopening an `image.annotation_edit` Operation creates a temporary historical
   editing session without overwriting the current source draft;
+- **Expand image** starts with an executable target, supports ratio, expansion,
+  drag, keyboard and 3×3 anchor positioning, and records the exact target and
+  natural-size source rectangle;
+- the outpaint guide is transparent outside the source rectangle, its mask is
+  opaque black inside and white outside, and every returned PNG has the exact
+  target dimensions with the original source pixels copied back unchanged;
+- one outpaint execution can project one to four Result Images and records both
+  hidden input Assets without adding guide or mask Blocks to the Board;
 - changing the Whiteboard locale updates every open Image Studio panel and
   contributed Action label without reactivating the PluginModule;
 - missing or disabled Image Studio removes the action but preserves historical

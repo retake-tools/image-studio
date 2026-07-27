@@ -76,6 +76,14 @@ Block scope, imported composite Asset, execution lifecycle, multi-result
 projection, Board History, and historical Operation context. See
 [Annotation editing](./annotation.md).
 
+`image.outpaint` keeps target geometry and image preparation in the Plugin.
+Image Studio builds one transparent target-size guide and one opaque black/white
+mask, then sends them as typed bound Assets through the same connected
+execution boundary. Retake validates the frozen geometry, owns provider
+transport and durable writeback, and copies the original source pixels back
+into every normalized result. No generic geometry service or additional Host
+API is needed. See [AI image expand](./outpaint.md).
+
 ## Version and contract rules
 
 The Root Package, authoring workspace, and current single PluginModule versions

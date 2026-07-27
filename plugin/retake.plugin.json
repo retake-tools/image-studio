@@ -36,6 +36,13 @@
       "kind": "action"
     },
     {
+      "contributionId": "design.retake.image-studio.action.outpaint",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "outpaintImageAction",
+      "kind": "action"
+    },
+    {
       "contributionId": "design.retake.image-studio.action.resize",
       "definitionHash": null,
       "definitionPath": null,
@@ -92,6 +99,13 @@
       "kind": "capability"
     },
     {
+      "contributionId": "design.retake.image-studio.capability.outpaint",
+      "definitionHash": "sha256:image-outpaint-v1",
+      "definitionPath": "definitions/image.outpaint.json",
+      "exportName": "outpaintCapability",
+      "kind": "capability"
+    },
+    {
       "contributionId": "design.retake.image-studio.panel.adjust",
       "definitionHash": null,
       "definitionPath": null,
@@ -120,6 +134,13 @@
       "kind": "panel"
     },
     {
+      "contributionId": "design.retake.image-studio.panel.outpaint",
+      "definitionHash": null,
+      "definitionPath": null,
+      "exportName": "outpaintPanel",
+      "kind": "panel"
+    },
+    {
       "contributionId": "design.retake.image-studio.panel.resize",
       "definitionHash": null,
       "definitionPath": null,
@@ -134,7 +155,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-v6",
+  "definitionHash": "sha256:image-studio-web-v7",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -164,5 +185,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.6.0"
+  "version": "0.7.0"
 }

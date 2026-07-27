@@ -9,11 +9,13 @@ import type {
 } from './contracts';
 import { ImageStudioCropPanel } from './crop-panel';
 import { ImageStudioMaskedEditPanel } from './masked-edit-panel';
+import { ImageStudioOutpaintPanel } from './outpaint-panel';
 import {
   adjustPanelStore,
   annotationPanelStore,
   cropPanelStore,
   maskedEditPanelStore,
+  outpaintPanelStore,
   resizePanelStore,
   selectionMaskPanelStore,
 } from './panel-store';
@@ -143,6 +145,35 @@ export const annotationEditCapability = definePluginContribution({
   kind: 'capability',
 });
 
+export const outpaintCapability = definePluginContribution({
+  apiVersion: 2,
+  definition: {
+    capabilityId: 'image.outpaint',
+    category: 'image_editing',
+    definitionHash: 'sha256:image-outpaint-v1',
+    displayName: localized('AI image expand', 'AI 扩图'),
+    inputSlots: [
+      imageSourceInput(),
+      assetImageInput('outpaint_guide', 'control_image'),
+      assetImageInput('inpaint_mask', 'inpaint_mask'),
+      textInput(),
+    ],
+    outputSlots: [{
+      cardinality: 'many',
+      dataType: 'image',
+      projectionBlockTypes: ['image'],
+      semanticRole: 'expanded_images',
+      slotId: 'expanded_images',
+    }],
+    parametersSchemaRef: 'definitions/image.outpaint.parameters.json',
+    runtimeRequirements: ['durable_asset_output', 'image_generation'],
+    schemaVersion: 2,
+    supportedAdapterClasses: ['agent_runtime.media'],
+    version: '0.1.0',
+  },
+  kind: 'capability',
+});
+
 export const adjustImageAction = imageToolbarAction(
   localized('Adjust image', '调整图片'),
   adjustPanelStore,
@@ -179,6 +210,11 @@ export const maskedEditSelectionAction = definePluginContribution({
   },
 });
 
+export const outpaintImageAction = imageToolbarAction(
+  localized('Expand image', 'AI 扩图'),
+  outpaintPanelStore,
+);
+
 export const reopenAnnotationOperationAction = definePluginContribution({
   apiVersion: 2,
   kind: 'action',
@@ -198,6 +234,7 @@ export const annotationImagePanel = panelContribution(
 );
 export const cropImagePanel = panelContribution(ImageStudioCropPanel);
 export const maskedEditPanel = panelContribution(ImageStudioMaskedEditPanel);
+export const outpaintPanel = panelContribution(ImageStudioOutpaintPanel);
 export const resizeImagePanel = panelContribution(ImageStudioResizePanel);
 export const selectionMaskImagePanel = panelContribution(
   ImageStudioSelectionMaskPanel,
@@ -329,6 +366,7 @@ function closePanels(): void {
   annotationPanelStore.close();
   cropPanelStore.close();
   maskedEditPanelStore.close();
+  outpaintPanelStore.close();
   resizePanelStore.close();
   selectionMaskPanelStore.close();
 }

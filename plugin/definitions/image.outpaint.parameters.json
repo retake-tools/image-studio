@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aspectPreset": {
+      "enum": [
+        "1:1",
+        "4:3",
+        "3:4",
+        "16:9",
+        "9:16"
+      ],
+      "type": "string"
+    },
+    "contractVersion": {
+      "const": 1,
+      "type": "integer"
+    },
+    "guideHeight": {
+      "maximum": 4096,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "guideWidth": {
+      "maximum": 4096,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "maskEncoding": {
+      "const": "grayscale_white_expand_v1",
+      "type": "string"
+    },
+    "sourceHeight": {
+      "maximum": 4096,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "sourceWidth": {
+      "maximum": 4096,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "sourceX": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "sourceY": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "targetHeight": {
+      "maximum": 4096,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "targetWidth": {
+      "maximum": 4096,
+      "minimum": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "aspectPreset",
+    "contractVersion",
+    "guideHeight",
+    "guideWidth",
+    "maskEncoding",
+    "sourceHeight",
+    "sourceWidth",
+    "sourceX",
+    "sourceY",
+    "targetHeight",
+    "targetWidth"
+  ],
+  "title": "AI image expand parameters",
+  "type": "object"
+}

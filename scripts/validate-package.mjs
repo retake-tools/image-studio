@@ -34,6 +34,12 @@ const maskedEditCapability = await readJson(
 const maskedEditParameters = await readJson(
   'definitions/image.masked_edit.parameters.json',
 );
+const outpaintCapability = await readJson(
+  'definitions/image.outpaint.json',
+);
+const outpaintParameters = await readJson(
+  'definitions/image.outpaint.parameters.json',
+);
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
 assert.equal(
@@ -63,6 +69,8 @@ assert.deepEqual(
     'definitions/image.local_selection_mask.parameters.json',
     'definitions/image.masked_edit.json',
     'definitions/image.masked_edit.parameters.json',
+    'definitions/image.outpaint.json',
+    'definitions/image.outpaint.parameters.json',
   ],
 );
 assert.deepEqual(
@@ -193,6 +201,36 @@ assert.equal(
 assert.deepEqual(maskedEditParameters.required, ['maskEncoding']);
 assert.equal(maskedEditParameters.additionalProperties, false);
 
+const outpaintCapabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => entry.definitionPath === 'definitions/image.outpaint.json',
+);
+assert.ok(outpaintCapabilityDescriptor);
+assert.equal(
+  outpaintCapabilityDescriptor.definitionHash,
+  outpaintCapability.definitionHash,
+);
+assert.equal(outpaintCapability.capabilityId, 'image.outpaint');
+assert.equal(
+  outpaintCapability.parametersSchemaRef,
+  'definitions/image.outpaint.parameters.json',
+);
+assert.deepEqual(outpaintParameters.required, [
+  'aspectPreset',
+  'contractVersion',
+  'guideHeight',
+  'guideWidth',
+  'maskEncoding',
+  'sourceHeight',
+  'sourceWidth',
+  'sourceX',
+  'sourceY',
+  'targetHeight',
+  'targetWidth',
+]);
+assert.equal(outpaintParameters.additionalProperties, false);
+assert.equal(outpaintCapability.outputSlots[0]?.cardinality, 'many');
+assert.equal(outpaintCapability.outputSlots[0]?.slotId, 'expanded_images');
+
 const annotationCapabilityDescriptor = pluginManifest.contributions.find(
   (entry) => entry.definitionPath === 'definitions/image.annotation_edit.json',
 );
@@ -224,6 +262,7 @@ console.log(JSON.stringify({
     resizeCapability.capabilityId,
     selectionMaskCapability.capabilityId,
     maskedEditCapability.capabilityId,
+    outpaintCapability.capabilityId,
   ],
   packageId: packageManifest.packageId,
   pluginModuleId: pluginManifest.pluginModuleId,
