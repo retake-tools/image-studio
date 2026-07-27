@@ -33,6 +33,8 @@ export function ImageStudioAdjustPanel({
     host.getReadSnapshot,
     host.getReadSnapshot,
   );
+  const environment = usePluginEnvironment(host);
+  const copy = localizedCopy(environment.locale);
   const [adjustments, setAdjustments] = useState(defaultImageAdjustments);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -57,8 +59,6 @@ export function ImageStudioAdjustPanel({
   if (!block) return null;
   const asset = host.assets.getBound(block.assetId);
   const sourceUrl = asset?.previewUrl ?? block.previewUrl;
-  const environment = usePluginEnvironment(host);
-  const copy = localizedCopy(environment.locale);
 
   async function run(): Promise<void> {
     if (!block || !sourceUrl || pending) return;

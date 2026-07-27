@@ -57,6 +57,8 @@ export function ImageStudioCropPanel({
     host.getReadSnapshot,
     host.getReadSnapshot,
   );
+  const environment = usePluginEnvironment(host);
+  const copy = localizedCropCopy(environment.locale);
   const [center, setCenter] = useState({ x: 0.5, y: 0.5 });
   const [dimensions, setDimensions] = useState<ImageDimensions | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -95,8 +97,6 @@ export function ImageStudioCropPanel({
 
   if (!block) return null;
   const sourceUrl = asset?.previewUrl ?? block.previewUrl;
-  const environment = usePluginEnvironment(host);
-  const copy = localizedCropCopy(environment.locale);
   const region = dimensions
     ? cropRegionForPreset({
         centerX: center.x,
