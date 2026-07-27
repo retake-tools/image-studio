@@ -124,6 +124,156 @@ export const imageStudioStyles = `
   text-align: right;
 }
 
+.retake-image-studio-field {
+  align-items: center;
+  color: #475569;
+  display: grid;
+  font-size: 12px;
+  gap: 10px;
+  grid-template-columns: 82px minmax(0, 1fr);
+}
+
+.retake-image-studio-field select {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  color: #172033;
+  font: inherit;
+  min-height: 32px;
+  padding: 0 9px;
+}
+
+.retake-image-studio-crop-stage {
+  align-items: center;
+  background:
+    linear-gradient(45deg, #eef2f7 25%, transparent 25%),
+    linear-gradient(-45deg, #eef2f7 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #eef2f7 75%),
+    linear-gradient(-45deg, transparent 75%, #eef2f7 75%);
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-size: 16px 16px;
+  border: 1px solid #d8dee8;
+  border-radius: 9px;
+  display: flex;
+  justify-content: center;
+  min-height: 176px;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.retake-image-studio-crop-media {
+  display: inline-block;
+  line-height: 0;
+  max-height: 240px;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.retake-image-studio-crop-media img {
+  display: block;
+  height: auto;
+  max-height: 240px;
+  max-width: 100%;
+  user-select: none;
+  width: auto;
+}
+
+.retake-image-studio-crop-frame {
+  border: 2px solid #fff;
+  box-shadow:
+    0 0 0 1px rgb(15 118 110 / 90%),
+    0 0 0 9999px rgb(15 23 42 / 55%),
+    0 8px 20px rgb(15 23 42 / 22%);
+  cursor: move;
+  outline: 0;
+  position: absolute;
+  touch-action: none;
+}
+
+.retake-image-studio-crop-frame::before,
+.retake-image-studio-crop-frame::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+}
+
+.retake-image-studio-crop-frame::before {
+  border-left: 1px solid rgb(255 255 255 / 55%);
+  border-right: 1px solid rgb(255 255 255 / 55%);
+  inset: 0 33.333%;
+}
+
+.retake-image-studio-crop-frame::after {
+  border-bottom: 1px solid rgb(255 255 255 / 55%);
+  border-top: 1px solid rgb(255 255 255 / 55%);
+  inset: 33.333% 0;
+}
+
+.retake-image-studio-crop-frame:focus-visible {
+  box-shadow:
+    0 0 0 3px rgb(15 118 110 / 35%),
+    0 0 0 9999px rgb(15 23 42 / 55%),
+    0 0 0 1px #0f766e;
+}
+
+.retake-image-studio-crop-frame i {
+  background: #fff;
+  border: 1px solid #0f766e;
+  border-radius: 2px;
+  height: 8px;
+  pointer-events: none;
+  position: absolute;
+  width: 8px;
+}
+
+.retake-image-studio-crop-frame i:nth-child(1) {
+  left: -5px;
+  top: -5px;
+}
+
+.retake-image-studio-crop-frame i:nth-child(2) {
+  right: -5px;
+  top: -5px;
+}
+
+.retake-image-studio-crop-frame i:nth-child(3) {
+  bottom: -5px;
+  left: -5px;
+}
+
+.retake-image-studio-crop-frame i:nth-child(4) {
+  bottom: -5px;
+  right: -5px;
+}
+
+.retake-image-studio-range.is-crop {
+  grid-template-columns: 82px 24px minmax(0, 1fr) 24px 40px;
+}
+
+.retake-image-studio-crop-hint {
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.45;
+  margin: -4px 0 0;
+}
+
+.retake-image-studio-crop-output {
+  align-items: center;
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  color: #115e59;
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  padding: 8px 10px;
+}
+
+.retake-image-studio-crop-output strong {
+  font-variant-numeric: tabular-nums;
+}
+
 .retake-image-studio-panel__error {
   background: #fff1f2;
   border: 1px solid #fecdd3;

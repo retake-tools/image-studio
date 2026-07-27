@@ -8,9 +8,9 @@ import React, {
 import type {
   ImageToolbarBlockV1,
   PluginActivationContextV1,
-  PluginHostApiV1,
   PluginPanelPropsV1,
 } from './contracts';
+import { ImageStudioCropPanel } from './crop-panel';
 import {
   defaultImageAdjustments,
   hasImageAdjustments,
@@ -18,10 +18,12 @@ import {
   renderAdjustedImage,
   type LocalImageAdjustments,
 } from './image-adjustments';
-import { adjustPanelStore } from './panel-store';
+import { adjustPanelStore, cropPanelStore } from './panel-store';
+import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
 
 const capabilityId = 'image.local_adjust';
+const cropCapabilityId = 'image.local_crop';
 const resultSlotId = 'result_image';
 
 export const localAdjustCapability = definePluginContribution({
@@ -62,8 +64,52 @@ export const adjustImageAction = definePluginContribution({
   label: 'Adjust image',
   placement: 'image.toolbar',
   run({ block }: { block: ImageToolbarBlockV1 }) {
+    cropPanelStore.close();
     adjustPanelStore.open(block);
   },
+});
+
+export const cropImageAction = definePluginContribution({
+  apiVersion: 1,
+  kind: 'action',
+  label: 'Crop image',
+  placement: 'image.toolbar',
+  run({ block }: { block: ImageToolbarBlockV1 }) {
+    adjustPanelStore.close();
+    cropPanelStore.open(block);
+  },
+});
+
+export const localCropCapability = definePluginContribution({
+  apiVersion: 1,
+  definition: {
+    capabilityId: cropCapabilityId,
+    category: 'image_editing',
+    definitionHash: 'sha256:image-local-crop-v1',
+    displayName: 'Local image crop',
+    inputSlots: [{
+      artifactTypes: [],
+      bindingKinds: ['asset', 'block'],
+      cardinality: 'one',
+      dataTypes: ['image'],
+      required: true,
+      semanticRole: 'source',
+      slotId: 'source_image',
+    }],
+    outputSlots: [{
+      cardinality: 'one',
+      dataType: 'image',
+      projectionBlockTypes: ['image'],
+      semanticRole: 'cropped_image',
+      slotId: resultSlotId,
+    }],
+    parametersSchemaRef: 'definitions/image.local_crop.parameters.json',
+    runtimeRequirements: ['browser.canvas_2d'],
+    schemaVersion: 1,
+    supportedAdapterClasses: ['local_canvas'],
+    version: '0.1.0',
+  },
+  kind: 'capability',
 });
 
 export const adjustImagePanel = definePluginContribution({
@@ -73,10 +119,20 @@ export const adjustImagePanel = definePluginContribution({
   placement: 'workspace.overlay',
 });
 
+export const cropImagePanel = definePluginContribution({
+  apiVersion: 1,
+  component: ImageStudioCropPanel,
+  kind: 'panel',
+  placement: 'workspace.overlay',
+});
+
 export function activate(context: PluginActivationContextV1): {
   dispose(): void;
 } {
-  const close = () => adjustPanelStore.close();
+  const close = () => {
+    adjustPanelStore.close();
+    cropPanelStore.close();
+  };
   context.signal.addEventListener('abort', close, { once: true });
   return {
     dispose() {
@@ -103,22 +159,22 @@ function ImageStudioAdjustPanel({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const block = panel.block;
+  const blockId = block?.blockId;
+  const blockIsBound = blockId
+    ? hostSnapshot.boundBlockIds.includes(blockId)
+    : false;
 
   useEffect(() => {
     setAdjustments(defaultImageAdjustments);
     setError(null);
     setPending(false);
-  }, [block?.blockId]);
+  }, [blockId]);
 
   useEffect(() => {
-    if (
-      block
-      && !pending
-      && !hostSnapshot.boundBlockIds.includes(block.blockId)
-    ) {
+    if (blockId && !pending && !blockIsBound) {
       adjustPanelStore.close();
     }
-  }, [block, hostSnapshot.boundBlockIds, pending]);
+  }, [blockId, blockIsBound, pending]);
 
   if (!block) return null;
   const asset = host.assets.getBound(block.assetId);
@@ -169,19 +225,19 @@ function ImageStudioAdjustPanel({
         data-retake-image-studio="adjust"
       >
         <header className="retake-image-studio-panel__header">
-        <div>
-          <span>Image Studio</span>
-          <h2>{copy.title}</h2>
-        </div>
-        <button
-          aria-label={copy.close}
-          className="retake-image-studio-panel__close"
-          disabled={pending}
-          onClick={() => adjustPanelStore.close()}
-          type="button"
-        >
-          ×
-        </button>
+          <div>
+            <span>Image Studio</span>
+            <h2>{copy.title}</h2>
+          </div>
+          <button
+            aria-label={copy.close}
+            className="retake-image-studio-panel__close"
+            disabled={pending}
+            onClick={() => adjustPanelStore.close()}
+            type="button"
+          >
+            ×
+          </button>
         </header>
         {sourceUrl ? (
           <div className="retake-image-studio-preview">
@@ -201,7 +257,7 @@ function ImageStudioAdjustPanel({
           label={copy.brightness}
           value={adjustments.brightness}
           onChange={(brightness) => {
-            setAdjustments({ ...adjustments, brightness });
+            setAdjustments((current) => ({ ...current, brightness }));
           }}
         />
         <RangeControl
@@ -209,7 +265,7 @@ function ImageStudioAdjustPanel({
           label={copy.contrast}
           value={adjustments.contrast}
           onChange={(contrast) => {
-            setAdjustments({ ...adjustments, contrast });
+            setAdjustments((current) => ({ ...current, contrast }));
           }}
         />
         <RangeControl
@@ -217,7 +273,7 @@ function ImageStudioAdjustPanel({
           label={copy.saturation}
           value={adjustments.saturation}
           onChange={(saturation) => {
-            setAdjustments({ ...adjustments, saturation });
+            setAdjustments((current) => ({ ...current, saturation }));
           }}
         />
         {error ? (
@@ -287,22 +343,6 @@ function RangeControl({
       <output>{value > 0 ? `+${value}` : value}</output>
     </div>
   );
-}
-
-function exactSourceImage(
-  assets: readonly {
-    kind: string;
-    previewUrl: string;
-  }[],
-): {
-  previewUrl: string;
-} {
-  if (assets.length !== 1 || assets[0]?.kind !== 'image') {
-    throw new Error(
-      'Image Studio requires exactly one bound source image.',
-    );
-  }
-  return assets[0];
 }
 
 function localizedCopy(): {

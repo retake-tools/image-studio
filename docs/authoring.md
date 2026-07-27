@@ -44,15 +44,21 @@ Direct React state, DOM interaction, Canvas 2D, and local preview do not require
 new Host services. Add a Host API only when a capability needs Retake-owned
 state or an atomic Retake mutation that cannot remain inside the PluginModule.
 
+The first P10 capability, `image.local_crop`, follows this rule: its aspect
+selection, normalized crop region, pointer interaction, preview, and Canvas 2D
+processor stay inside Image Studio, while its result uses the same atomic
+`host.execution.run` projection as `image.local_adjust`.
+
 ## Version and contract rules
 
-The following versions must move together for the current single-module Root
-Package:
+The Root Package, authoring workspace, and current single PluginModule versions
+move together:
 
 - root authoring `package.json`;
 - `plugin/retake.package.json`;
 - `plugin/retake.plugin.json`;
-- contributed Capability definitions.
+- Capability definitions use their own contract versions and change only when
+  that specific Capability contract changes.
 
 Change a `definitionHash` whenever the corresponding public definition changes,
 and update every manifest reference to the same hash.

@@ -1,0 +1,42 @@
+{
+  "capabilityId": "image.local_crop",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-local-crop-v1",
+  "displayName": "Local image crop",
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "one",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "cropped_image",
+      "slotId": "result_image"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.local_crop.parameters.json",
+  "runtimeRequirements": [
+    "browser.canvas_2d"
+  ],
+  "schemaVersion": 1,
+  "supportedAdapterClasses": [
+    "local_canvas"
+  ],
+  "version": "0.1.0"
+}

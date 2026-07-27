@@ -20,7 +20,7 @@ npm test
 `release:check` includes Package validation and verifies:
 
 - synchronized semantic versions across the authoring package, Root Package,
-  PluginModule, and Capability definition;
+  and PluginModule, plus valid independent versions for Capability definitions;
 - exact Package and Plugin identities;
 - synchronized definition hashes;
 - required public documentation and repository policy files;
@@ -42,8 +42,11 @@ Verify in a disposable Retake Workspace:
 - install does not enable the PluginModule automatically;
 - permission review, code trust, enable, disable, safe mode, and reload work;
 - update and cached rollback preserve exact source identity;
-- **Adjust image** creates one Operation, one Result Image, one succeeded
-  Execution, and one output Asset while leaving the source unchanged;
+- **Adjust image** and **Crop image** each create one Operation, one Result
+  Image, one succeeded Execution, and one output Asset while leaving the source
+  unchanged;
+- Crop aspect presets stay in bounds and the recorded output dimensions match
+  the actual PNG;
 - missing or disabled Image Studio removes the action but preserves historical
   Operation, Execution, Result, Asset, and History projections;
 - the browser console has no warnings or errors during the lifecycle.
