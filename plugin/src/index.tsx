@@ -256,9 +256,18 @@ function RangeControl({
   value: number;
 }): ReactElement {
   return (
-    <label className="retake-image-studio-range">
+    <div className="retake-image-studio-range">
       <span>{label}</span>
+      <button
+        aria-label={`Decrease ${label}`}
+        disabled={disabled || value <= -100}
+        onClick={() => onChange(Math.max(-100, value - 5))}
+        type="button"
+      >
+        −
+      </button>
       <input
+        aria-label={label}
         disabled={disabled}
         max={100}
         min={-100}
@@ -267,8 +276,16 @@ function RangeControl({
         type="range"
         value={value}
       />
+      <button
+        aria-label={`Increase ${label}`}
+        disabled={disabled || value >= 100}
+        onClick={() => onChange(Math.min(100, value + 5))}
+        type="button"
+      >
+        +
+      </button>
       <output>{value > 0 ? `+${value}` : value}</output>
-    </label>
+    </div>
   );
 }
 

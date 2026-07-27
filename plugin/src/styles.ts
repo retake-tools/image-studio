@@ -83,13 +83,39 @@ export const imageStudioStyles = `
   color: #475569;
   display: grid;
   font-size: 12px;
-  gap: 10px;
-  grid-template-columns: 68px minmax(0, 1fr) 34px;
+  gap: 6px;
+  grid-template-columns: 68px 24px minmax(0, 1fr) 24px 34px;
 }
 
 .retake-image-studio-range input {
   accent-color: #0f766e;
   width: 100%;
+}
+
+.retake-image-studio-range button {
+  align-items: center;
+  background: #f1f5f9;
+  border: 0;
+  border-radius: 6px;
+  color: #334155;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 15px;
+  height: 24px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  width: 24px;
+}
+
+.retake-image-studio-range button:hover {
+  background: #e2e8f0;
+}
+
+.retake-image-studio-range button:disabled {
+  cursor: default;
+  opacity: 0.45;
 }
 
 .retake-image-studio-range output {
