@@ -12,6 +12,10 @@ const cropCapability = await readJson('definitions/image.local_crop.json');
 const cropParameters = await readJson(
   'definitions/image.local_crop.parameters.json',
 );
+const resizeCapability = await readJson('definitions/image.local_resize.json');
+const resizeParameters = await readJson(
+  'definitions/image.local_resize.parameters.json',
+);
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
 assert.equal(
@@ -33,6 +37,8 @@ assert.deepEqual(
     'definitions/image.local_adjust.parameters.json',
     'definitions/image.local_crop.json',
     'definitions/image.local_crop.parameters.json',
+    'definitions/image.local_resize.json',
+    'definitions/image.local_resize.parameters.json',
   ],
 );
 assert.deepEqual(
@@ -93,6 +99,33 @@ assert.deepEqual(cropParameters.required, [
 ]);
 assert.equal(cropParameters.additionalProperties, false);
 
+const resizeCapabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => entry.definitionPath === 'definitions/image.local_resize.json',
+);
+assert.ok(resizeCapabilityDescriptor);
+assert.equal(
+  resizeCapabilityDescriptor.definitionHash,
+  resizeCapability.definitionHash,
+);
+assert.equal(resizeCapability.capabilityId, 'image.local_resize');
+assert.equal(
+  resizeCapability.parametersSchemaRef,
+  'definitions/image.local_resize.parameters.json',
+);
+assert.deepEqual(resizeParameters.required, [
+  'allowUpscale',
+  'matteColor',
+  'outputFormat',
+  'outputHeight',
+  'outputWidth',
+  'quality',
+  'resizeMode',
+  'resizeValue',
+  'sourceHeight',
+  'sourceWidth',
+]);
+assert.equal(resizeParameters.additionalProperties, false);
+
 for (const filePath of packageManifest.files) {
   await readFile(new URL(filePath, packageRoot));
 }
@@ -102,6 +135,7 @@ console.log(JSON.stringify({
   capabilityIds: [
     capability.capabilityId,
     cropCapability.capabilityId,
+    resizeCapability.capabilityId,
   ],
   packageId: packageManifest.packageId,
   pluginModuleId: pluginManifest.pluginModuleId,

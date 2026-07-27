@@ -1,0 +1,42 @@
+{
+  "capabilityId": "image.local_resize",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-local-resize-v1",
+  "displayName": "Local image resize",
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "one",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "resized_image",
+      "slotId": "result_image"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.local_resize.parameters.json",
+  "runtimeRequirements": [
+    "browser.canvas_2d"
+  ],
+  "schemaVersion": 1,
+  "supportedAdapterClasses": [
+    "local_canvas"
+  ],
+  "version": "0.1.0"
+}

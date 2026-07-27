@@ -5,10 +5,11 @@
 Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布上提供可视化、流程化、可组合的
 真实图片处理能力。
 
-当前包含两个完整的浏览器原生能力：
+当前包含三个完整的浏览器原生能力：
 
 - `image.local_adjust`：实时预览和调整亮度、对比度、饱和度；
 - `image.local_crop`：比例预设、裁剪范围、拖动或键盘定位、精确输出尺寸；
+- `image.local_resize`：等比百分比或像素缩放、显式放大控制，以及 PNG / JPEG / WebP 输出；
 - 使用浏览器 Canvas 2D 在本地处理；
 - 通过 Retake Host API 创建新的标准 Image Asset、Operation、Execution 和 Result Block；
 - 不修改源图片。

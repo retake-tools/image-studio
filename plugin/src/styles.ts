@@ -133,7 +133,8 @@ export const imageStudioStyles = `
   grid-template-columns: 82px minmax(0, 1fr);
 }
 
-.retake-image-studio-field select {
+.retake-image-studio-field select,
+.retake-image-studio-field input {
   background: #fff;
   border: 1px solid #cbd5e1;
   border-radius: 7px;
@@ -141,6 +142,37 @@ export const imageStudioStyles = `
   font: inherit;
   min-height: 32px;
   padding: 0 9px;
+}
+
+.retake-image-studio-field input[type="color"] {
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+}
+
+.retake-image-studio-check {
+  align-items: center;
+  color: #475569;
+  display: flex;
+  font-size: 12px;
+  gap: 8px;
+}
+
+.retake-image-studio-check input {
+  accent-color: #0f766e;
+}
+
+.retake-image-studio-resize-source {
+  align-items: center;
+  color: #64748b;
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+}
+
+.retake-image-studio-resize-source strong {
+  color: #334155;
+  font-variant-numeric: tabular-nums;
 }
 
 .retake-image-studio-crop-stage {
