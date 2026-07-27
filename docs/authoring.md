@@ -53,6 +53,12 @@ processor stay inside Image Studio, while its result uses the same atomic
 PNG, JPEG, or WebP encoding. Retake persists the returned Data URL as a standard
 Image Asset and continues to own generic download behavior.
 
+`image.local_selection_mask` is a separate pixel-selection surface rather than
+an extension of semantic Annotation. Its normalized brush history stays in the
+live Plugin panel, while the exact source-sized black/white PNG is returned as
+the durable `selection_mask` output. See
+[Selection Mask authoring](./selection-mask.md).
+
 ## Version and contract rules
 
 The Root Package, authoring workspace, and current single PluginModule versions

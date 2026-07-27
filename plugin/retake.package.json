@@ -8,7 +8,7 @@
     "agentPresets": [],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-v3",
+        "definitionHash": "sha256:image-studio-web-v4",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
@@ -17,9 +17,11 @@
           "definitions/image.local_crop.json",
           "definitions/image.local_crop.parameters.json",
           "definitions/image.local_resize.json",
-          "definitions/image.local_resize.parameters.json"
+          "definitions/image.local_resize.parameters.json",
+          "definitions/image.local_selection_mask.json",
+          "definitions/image.local_selection_mask.parameters.json"
         ],
-        "version": "0.3.0"
+        "version": "0.4.0"
       }
     ],
     "skills": [],
@@ -35,6 +37,8 @@
     "definitions/image.local_crop.parameters.json",
     "definitions/image.local_resize.json",
     "definitions/image.local_resize.parameters.json",
+    "definitions/image.local_selection_mask.json",
+    "definitions/image.local_selection_mask.parameters.json",
     "retake.plugin.json",
     "src/browser-image.ts",
     "src/contracts.ts",
@@ -47,6 +51,8 @@
     "src/plugin-assets.ts",
     "src/resize-panel.tsx",
     "src/retake-plugin-api.d.ts",
+    "src/selection-mask-panel.tsx",
+    "src/selection-mask.ts",
     "src/styles.ts"
   ],
   "integrity": "sha256:auto",
@@ -62,5 +68,5 @@
   "retakeHostCompatibility": "^0.1.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.3.0"
+  "version": "0.4.0"
 }

@@ -16,6 +16,12 @@ const resizeCapability = await readJson('definitions/image.local_resize.json');
 const resizeParameters = await readJson(
   'definitions/image.local_resize.parameters.json',
 );
+const selectionMaskCapability = await readJson(
+  'definitions/image.local_selection_mask.json',
+);
+const selectionMaskParameters = await readJson(
+  'definitions/image.local_selection_mask.parameters.json',
+);
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
 assert.equal(
@@ -39,6 +45,8 @@ assert.deepEqual(
     'definitions/image.local_crop.parameters.json',
     'definitions/image.local_resize.json',
     'definitions/image.local_resize.parameters.json',
+    'definitions/image.local_selection_mask.json',
+    'definitions/image.local_selection_mask.parameters.json',
   ],
 );
 assert.deepEqual(
@@ -126,6 +134,33 @@ assert.deepEqual(resizeParameters.required, [
 ]);
 assert.equal(resizeParameters.additionalProperties, false);
 
+const selectionMaskCapabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => (
+    entry.definitionPath === 'definitions/image.local_selection_mask.json'
+  ),
+);
+assert.ok(selectionMaskCapabilityDescriptor);
+assert.equal(
+  selectionMaskCapabilityDescriptor.definitionHash,
+  selectionMaskCapability.definitionHash,
+);
+assert.equal(
+  selectionMaskCapability.capabilityId,
+  'image.local_selection_mask',
+);
+assert.equal(
+  selectionMaskCapability.parametersSchemaRef,
+  'definitions/image.local_selection_mask.parameters.json',
+);
+assert.deepEqual(selectionMaskParameters.required, [
+  'inverted',
+  'maskEncoding',
+  'sourceHeight',
+  'sourceWidth',
+  'strokeCount',
+]);
+assert.equal(selectionMaskParameters.additionalProperties, false);
+
 for (const filePath of packageManifest.files) {
   await readFile(new URL(filePath, packageRoot));
 }
@@ -136,6 +171,7 @@ console.log(JSON.stringify({
     capability.capabilityId,
     cropCapability.capabilityId,
     resizeCapability.capabilityId,
+    selectionMaskCapability.capabilityId,
   ],
   packageId: packageManifest.packageId,
   pluginModuleId: pluginManifest.pluginModuleId,

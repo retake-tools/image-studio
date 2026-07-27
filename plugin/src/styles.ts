@@ -334,4 +334,133 @@ export const imageStudioStyles = `
   cursor: default;
   opacity: 0.45;
 }
+
+.retake-image-studio-panel.is-selection-mask {
+  width: min(440px, calc(100vw - 32px));
+}
+
+.retake-image-studio-mask-stage {
+  align-items: center;
+  background:
+    linear-gradient(45deg, #eef2f7 25%, transparent 25%),
+    linear-gradient(-45deg, #eef2f7 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #eef2f7 75%),
+    linear-gradient(-45deg, transparent 75%, #eef2f7 75%);
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-size: 16px 16px;
+  border: 1px solid #d8dee8;
+  border-radius: 9px;
+  display: flex;
+  justify-content: center;
+  min-height: 220px;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.retake-image-studio-mask-media {
+  display: inline-block;
+  line-height: 0;
+  max-height: 360px;
+  max-width: 100%;
+  position: relative;
+}
+
+.retake-image-studio-mask-media img {
+  display: block;
+  height: auto;
+  max-height: 360px;
+  max-width: 100%;
+  pointer-events: none;
+  user-select: none;
+  width: auto;
+}
+
+.retake-image-studio-mask-canvas {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  touch-action: none;
+  width: 100%;
+}
+
+.retake-image-studio-mask-canvas.is-select {
+  cursor: crosshair;
+}
+
+.retake-image-studio-mask-canvas.is-erase {
+  cursor: cell;
+}
+
+.retake-image-studio-mask-toolbar,
+.retake-image-studio-mask-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.retake-image-studio-segmented {
+  background: #f1f5f9;
+  border-radius: 8px;
+  display: inline-flex;
+  padding: 3px;
+}
+
+.retake-image-studio-segmented button,
+.retake-image-studio-mask-history button,
+.retake-image-studio-mask-actions button {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #475569;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  min-height: 30px;
+  padding: 0 10px;
+}
+
+.retake-image-studio-segmented button.is-active {
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 12%);
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.retake-image-studio-mask-history {
+  display: flex;
+  gap: 4px;
+}
+
+.retake-image-studio-mask-history button,
+.retake-image-studio-mask-actions button {
+  background: #f1f5f9;
+}
+
+.retake-image-studio-segmented button:disabled,
+.retake-image-studio-mask-history button:disabled,
+.retake-image-studio-mask-actions button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.retake-image-studio-mask-size {
+  align-items: center;
+  color: #475569;
+  display: grid;
+  font-size: 12px;
+  gap: 10px;
+  grid-template-columns: 72px minmax(0, 1fr) 48px;
+}
+
+.retake-image-studio-mask-size input {
+  accent-color: #0f766e;
+  width: 100%;
+}
+
+.retake-image-studio-mask-size output {
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
 `;

@@ -32,6 +32,7 @@ export const adjustPanelStore = Object.freeze({
 
 export const cropPanelStore = createPanelStore();
 export const resizePanelStore = createPanelStore();
+export const selectionMaskPanelStore = createPanelStore();
 
 function createPanelStore(): typeof adjustPanelStore {
   let snapshot: AdjustPanelSnapshot = Object.freeze({

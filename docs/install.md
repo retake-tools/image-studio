@@ -1,9 +1,9 @@
 # Install and manage Image Studio
 
 Image Studio is installed and managed from Retake Whiteboard. The current
-`image.local_adjust`, `image.local_crop`, and `image.local_resize` run entirely
-in the browser, so they do not require a separate CLI, desktop bridge, provider
-account, or API key.
+`image.local_adjust`, `image.local_crop`, `image.local_resize`, and
+`image.local_selection_mask` run entirely in the browser, so they do not
+require a separate CLI, desktop bridge, provider account, or API key.
 
 ## Install from GitHub
 
@@ -17,8 +17,8 @@ account, or API key.
 3. Install the Package.
 4. Review the exact code digest and requested permissions.
 5. Trust and enable the PluginModule.
-6. Select an Image Block and choose **Adjust image**, **Crop image**, or
-   **Resize image**.
+6. Select an Image Block and choose **Adjust image**, **Crop image**,
+   **Resize image**, or **Create selection mask**.
 
 Use a full commit ID for a reproducible install. Use a version tag only after
 that tag appears in this repository. A branch name is convenient for testing
