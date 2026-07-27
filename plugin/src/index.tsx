@@ -1,5 +1,5 @@
 import { definePluginContribution } from '@retake/plugin-api';
-import {
+import React, {
   useEffect,
   useState,
   useSyncExternalStore,
