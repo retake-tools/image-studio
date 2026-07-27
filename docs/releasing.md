@@ -50,6 +50,11 @@ Verify in a disposable Retake Workspace:
 - Resize output dimensions, MIME type, extension, and file encoding agree;
 - Selection Mask output has the exact source dimensions and is an opaque PNG
   using `grayscale_white_selected_v1` (white selected, black unselected);
+- selecting exactly one source Image and one matching Selection Mask exposes
+  **Masked AI edit**, resolves the disposable Project's current image
+  Connection, and records both typed inputs without exposing credentials;
+- a completed connected edit produces one durable edited Image, while the
+  manual Codex/MCP route remains queued for explicit execution;
 - missing or disabled Image Studio removes the action but preserves historical
   Operation, Execution, Result, Asset, and History projections;
 - the browser console has no warnings or errors during the lifecycle.

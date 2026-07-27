@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "maskEncoding": {
+      "const": "grayscale_white_selected_v1",
+      "type": "string"
+    }
+  },
+  "required": [
+    "maskEncoding"
+  ],
+  "title": "Masked AI image edit parameters",
+  "type": "object"
+}

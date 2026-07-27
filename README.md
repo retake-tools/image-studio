@@ -5,7 +5,8 @@
 Image Studio is the official Retake plugin for deep, workflow-native image
 editing on the infinite canvas.
 
-The current package provides four browser-native capabilities:
+The current package provides four browser-native capabilities and one
+Retake-connected AI capability:
 
 - `image.local_adjust`: live brightness, contrast, and saturation preview.
 - `image.local_crop`: aspect presets, crop-size control, drag or keyboard
@@ -14,6 +15,9 @@ The current package provides four browser-native capabilities:
   upscale control, and PNG, JPEG, or WebP output.
 - `image.local_selection_mask`: source-sized pixel mask authoring with add,
   erase, undo, redo, invert, and a provider-neutral black/white PNG output.
+- `image.masked_edit`: bind one source image and one matching Selection Mask,
+  then run a local-account Codex image edit through Retake's current image
+  Connection.
 
 All processors create a new result asset and block through the Retake Host
 API, leaving the source image unchanged.
@@ -43,9 +47,9 @@ review permissions and trust that exact code digest before enabling it.
 Using a full commit ID gives a reproducible install. A branch or version tag
 can be used when following updates intentionally.
 
-No CLI or local bridge is required for these browser-native capabilities. Retake
-asks for code trust and the three declared, bound-resource permissions before
-the PluginModule can be enabled.
+No CLI or local bridge is required. Browser-native processing stays in the
+Plugin; connected AI editing uses Retake's existing Codex App Server or manual
+Codex/MCP route without exposing credentials or local paths to Plugin code.
 
 See the [installation and lifecycle guide](./docs/install.md) for updates,
 rollback, disable, safe mode, and removal behavior.
@@ -55,6 +59,7 @@ rollback, disable, safe mode, and removal behavior.
 - [Install and manage Image Studio](./docs/install.md)
 - [Package layout and authoring boundaries](./docs/authoring.md)
 - [Selection Mask authoring](./docs/selection-mask.md)
+- [Masked AI editing](./docs/masked-edit.md)
 - [Release process and checklist](./docs/releasing.md)
 - [Contributing](./CONTRIBUTING.md)
 

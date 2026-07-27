@@ -5,6 +5,11 @@ export interface AdjustPanelSnapshot {
   readonly revision: number;
 }
 
+export interface SelectionPanelSnapshot {
+  readonly blocks: readonly ImageToolbarBlockV1[];
+  readonly revision: number;
+}
+
 type Listener = () => void;
 
 let current: AdjustPanelSnapshot = Object.freeze({
@@ -33,6 +38,7 @@ export const adjustPanelStore = Object.freeze({
 export const cropPanelStore = createPanelStore();
 export const resizePanelStore = createPanelStore();
 export const selectionMaskPanelStore = createPanelStore();
+export const maskedEditPanelStore = createSelectionPanelStore();
 
 function createPanelStore(): typeof adjustPanelStore {
   let snapshot: AdjustPanelSnapshot = Object.freeze({
@@ -72,4 +78,36 @@ function update(block: ImageToolbarBlockV1 | null): void {
     revision: current.revision + 1,
   });
   for (const listener of listeners) listener();
+}
+
+function createSelectionPanelStore() {
+  let snapshot: SelectionPanelSnapshot = Object.freeze({
+    blocks: Object.freeze([]) as readonly ImageToolbarBlockV1[],
+    revision: 0,
+  });
+  const storeListeners = new Set<Listener>();
+  return Object.freeze({
+    close(): void {
+      if (snapshot.blocks.length === 0) return;
+      set([]);
+    },
+    getSnapshot() {
+      return snapshot;
+    },
+    open(blocks: readonly ImageToolbarBlockV1[]): void {
+      set(blocks.map((block) => Object.freeze({ ...block })));
+    },
+    subscribe(listener: Listener): () => void {
+      storeListeners.add(listener);
+      return () => storeListeners.delete(listener);
+    },
+  });
+
+  function set(blocks: readonly ImageToolbarBlockV1[]): void {
+    snapshot = Object.freeze({
+      blocks: Object.freeze([...blocks]),
+      revision: snapshot.revision + 1,
+    });
+    for (const listener of storeListeners) listener();
+  }
 }

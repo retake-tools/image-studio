@@ -52,6 +52,24 @@ export interface PluginHostApiV1 {
       outputBlockIds: readonly string[];
       status: 'succeeded';
     }>;
+    runConnected?: (input: {
+      capabilityId: string;
+      connectionId?: string;
+      inputs: readonly {
+        blockId: string;
+        slotId: string;
+      }[];
+      parameters: Readonly<
+        Record<string, boolean | null | number | string>
+      >;
+      prompt: string;
+    }) => Promise<{
+      capabilityId: string;
+      connectionId: string;
+      executionId: string;
+      outputBlockIds: readonly string[];
+      status: 'queued' | 'running';
+    }>;
   };
   getReadSnapshot(): PluginHostReadSnapshotV1;
   subscribeReadSnapshot(
@@ -69,4 +87,9 @@ export interface PluginActivationContextV1 {
   readonly packageDigest: string;
   readonly pluginModuleId: string;
   readonly signal: AbortSignal;
+}
+
+export interface ImageSelectionToolbarContextV1 {
+  readonly blocks: readonly ImageToolbarBlockV1[];
+  readonly host: PluginHostApiV1;
 }

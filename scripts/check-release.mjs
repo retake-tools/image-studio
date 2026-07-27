@@ -50,6 +50,7 @@ assert.deepEqual(
     'image.local_crop',
     'image.local_resize',
     'image.local_selection_mask',
+    'image.masked_edit',
   ],
 );
 
@@ -61,6 +62,7 @@ const requiredPublicFiles = [
   'README.zh-CN.md',
   'docs/authoring.md',
   'docs/install.md',
+  'docs/masked-edit.md',
   'docs/releasing.md',
   'docs/selection-mask.md',
   '.github/workflows/ci.yml',
@@ -74,6 +76,7 @@ for (const expectedLink of [
   './README.zh-CN.md',
   './docs/authoring.md',
   './docs/install.md',
+  './docs/masked-edit.md',
   './docs/releasing.md',
   './docs/selection-mask.md',
 ]) {
