@@ -8,8 +8,8 @@ import React, {
   type ReactElement,
 } from 'react';
 import type {
-  PluginPanelPropsV2,
-} from './contracts';
+  PluginPanelProps as PluginPanelPropsV2,
+} from '@retake/plugin-api';
 import {
   cropOutputGeometry,
   cropRegionCenter,

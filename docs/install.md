@@ -34,8 +34,9 @@ intentional updates but is not immutable.
 
 The GitHub repository is the authoring workspace. The portable Retake Package
 source is the [`plugin/`](../plugin) directory. Repository-only files such as
-`.git`, CI configuration, tests, and authoring dependencies are deliberately
-outside the distributed Package.
+`.git`, CI configuration, and tests stay outside that source. Pinned
+controlled-build dependencies live inside `plugin/`, but Retake strips their
+npm metadata and vendored tarballs from the final Materialized Package.
 
 Retake handles this boundary automatically once the source string includes
 `#subdirectory=plugin`; users do not need to copy or build files manually.

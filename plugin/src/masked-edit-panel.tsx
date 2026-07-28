@@ -5,10 +5,10 @@ import React, {
   type ReactElement,
 } from 'react';
 import type {
-  ImageToolbarBlockV2,
+  PluginImageBlock as ImageToolbarBlockV2,
   PluginAssetV2,
-  PluginPanelPropsV2,
-} from './contracts';
+  PluginPanelProps as PluginPanelPropsV2,
+} from '@retake/plugin-api';
 import { isChineseLocale, usePluginEnvironment } from './localization';
 import { maskedEditStyles } from './masked-edit-styles';
 import { validateMaskedEditImages } from './masked-edit';

@@ -1,7 +1,7 @@
 import type {
-  ImageToolbarBlockV2,
+  PluginImageBlock as ImageToolbarBlockV2,
   PluginOperationInspectorViewV2,
-} from './contracts';
+} from '@retake/plugin-api';
 
 export interface AdjustPanelSnapshot {
   readonly block: ImageToolbarBlockV2 | null;
