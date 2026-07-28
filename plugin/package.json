@@ -1,11 +1,12 @@
 {
   "name": "@retake-tools/image-studio-plugin-source",
-  "version": "0.10.0",
+  "version": "0.10.1",
+  "license": "Apache-2.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@retake-tools/package-contracts": "file:vendor/npm/retake-tools-package-contracts-0.1.0.tgz",
-    "@retake-tools/plugin-runtime": "file:vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz",
-    "@retake/plugin-api": "file:vendor/npm/retake-plugin-api-0.1.0.tgz"
+    "@retake-tools/package-contracts": "file:vendor/npm/retake-tools-package-contracts-0.1.2.tgz",
+    "@retake-tools/plugin-runtime": "file:vendor/npm/retake-tools-plugin-runtime-0.1.2.tgz",
+    "@retake/plugin-api": "file:vendor/npm/retake-plugin-api-0.1.2.tgz"
   }
 }

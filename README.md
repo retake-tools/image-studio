@@ -105,3 +105,9 @@ also exercised by the Whiteboard integration workflow before release.
 The current `develop` branch is an integration candidate. A public version tag
 or GitHub release is created only after the verified `develop` state is
 explicitly approved for promotion to `main`.
+
+## License
+
+Retake Image Studio is available under the
+[Apache License 2.0](./LICENSE). Required attribution notices are provided in
+[NOTICE](./NOTICE).

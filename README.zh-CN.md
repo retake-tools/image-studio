@@ -74,3 +74,8 @@ npm run release:check
 
 `develop` 是稳定集成分支。只有在完整验证并得到明确发布确认后，才会将 `develop` 提升到 `main`
 并创建公开版本标签或 GitHub Release。
+
+## 开源协议
+
+Retake Image Studio 使用 [Apache License 2.0](./LICENSE)，需要保留的署名信息见
+[NOTICE](./NOTICE)。

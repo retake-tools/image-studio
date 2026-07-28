@@ -16,7 +16,7 @@
     ],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-v13",
+        "definitionHash": "sha256:image-studio-web-license-v14",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
@@ -37,7 +37,7 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.10.0"
+        "version": "0.10.1"
       }
     ],
     "skills": [
@@ -97,6 +97,7 @@
   ],
   "files": [
     "LICENSE",
+    "NOTICE",
     "README.md",
     "agents/guided-image-operator/retake.agent.json",
     "definitions/image.annotation_edit.json",
@@ -149,13 +150,13 @@
     "src/settings.ts",
     "src/styles.ts",
     "src/theme.ts",
-    "vendor/npm/retake-plugin-api-0.1.0.tgz",
-    "vendor/npm/retake-tools-package-contracts-0.1.0.tgz",
-    "vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz",
+    "vendor/npm/retake-plugin-api-0.1.2.tgz",
+    "vendor/npm/retake-tools-package-contracts-0.1.2.tgz",
+    "vendor/npm/retake-tools-plugin-runtime-0.1.2.tgz",
     "workflows/guided-image-review/retake.workflow.json"
   ],
   "integrity": "sha256:auto",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "name": "Retake Image Studio",
   "optionalDependencies": [],
   "packageId": "design.retake.image-studio",
@@ -167,5 +168,5 @@
   "retakeHostCompatibility": "^0.1.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.10.0"
+  "version": "0.10.1"
 }
