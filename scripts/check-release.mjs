@@ -147,9 +147,9 @@ const portableSourceFiles = rootPackage.files.filter(
 for (const requiredBuildFile of [
   'package-lock.json',
   'package.json',
-  'vendor/npm/retake-plugin-api-0.1.0.tgz',
-  'vendor/npm/retake-tools-package-contracts-0.1.0.tgz',
-  'vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz',
+  'vendor/npm/retake-plugin-api-0.1.2.tgz',
+  'vendor/npm/retake-tools-package-contracts-0.1.2.tgz',
+  'vendor/npm/retake-tools-plugin-runtime-0.1.2.tgz',
 ]) {
   assert.ok(
     rootPackage.files.includes(requiredBuildFile),
