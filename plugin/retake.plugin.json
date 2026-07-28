@@ -125,7 +125,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-v8",
+  "definitionHash": "sha256:image-studio-web-v9",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -155,5 +155,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.7.0"
+  "version": "0.8.0"
 }

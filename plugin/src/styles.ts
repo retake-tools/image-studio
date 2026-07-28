@@ -1,14 +1,22 @@
+import { imageStudioTheme as theme } from './theme';
+
 export const imageStudioStyles = `
 .retake-image-studio-panel {
-  background: color-mix(in srgb, var(--retake-surface, #fff) 96%, transparent);
-  border: 1px solid color-mix(in srgb, var(--retake-border, #d8dee8) 88%, transparent);
-  border-radius: 14px;
+  --retake-accent: ${theme.accent};
+  --retake-border: ${theme.border};
+  --retake-surface: ${theme.surface};
+  --retake-surface-muted: ${theme.background};
+  --retake-text: ${theme.foreground};
+  --retake-text-muted: ${theme.muted};
+  background: color-mix(in srgb, ${theme.surface} 96%, transparent);
+  border: 1px solid color-mix(in srgb, ${theme.border} 88%, transparent);
+  border-radius: ${theme.radiusMedium};
   box-shadow: 0 20px 44px rgb(15 23 42 / 18%);
-  color: var(--retake-text, #172033);
+  color: ${theme.foreground};
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 14px;
+  gap: ${theme.spaceMedium};
+  padding: ${theme.spaceMedium};
   width: min(340px, calc(100vw - 32px));
 }
 
@@ -19,7 +27,7 @@ export const imageStudioStyles = `
 }
 
 .retake-image-studio-panel__header span {
-  color: #0f766e;
+  color: ${theme.accent};
   display: block;
   font-size: 11px;
   font-weight: 750;
@@ -39,7 +47,7 @@ export const imageStudioStyles = `
   background: transparent;
   border: 0;
   border-radius: 7px;
-  color: #64748b;
+  color: ${theme.muted};
   cursor: pointer;
   display: inline-flex;
   font-size: 22px;
@@ -51,8 +59,8 @@ export const imageStudioStyles = `
 }
 
 .retake-image-studio-panel__close:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: ${theme.background};
+  color: ${theme.foreground};
 }
 
 .retake-image-studio-preview {
@@ -63,8 +71,8 @@ export const imageStudioStyles = `
     linear-gradient(-45deg, transparent 75%, #eef2f7 75%);
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   background-size: 16px 16px;
-  border: 1px solid #d8dee8;
-  border-radius: 9px;
+  border: 1px solid ${theme.border};
+  border-radius: ${theme.radiusMedium};
   display: grid;
   height: 176px;
   overflow: hidden;
@@ -80,7 +88,7 @@ export const imageStudioStyles = `
 
 .retake-image-studio-range {
   align-items: center;
-  color: #475569;
+  color: ${theme.muted};
   display: grid;
   font-size: 12px;
   gap: 6px;
@@ -88,16 +96,16 @@ export const imageStudioStyles = `
 }
 
 .retake-image-studio-range input {
-  accent-color: #0f766e;
+  accent-color: ${theme.accent};
   width: 100%;
 }
 
 .retake-image-studio-range button {
   align-items: center;
-  background: #f1f5f9;
+  background: ${theme.background};
   border: 0;
   border-radius: 6px;
-  color: #334155;
+  color: ${theme.foreground};
   cursor: pointer;
   display: inline-flex;
   font: inherit;
@@ -119,14 +127,14 @@ export const imageStudioStyles = `
 }
 
 .retake-image-studio-range output {
-  color: #64748b;
+  color: ${theme.muted};
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
 
 .retake-image-studio-field {
   align-items: center;
-  color: #475569;
+  color: ${theme.muted};
   display: grid;
   font-size: 12px;
   gap: 10px;
@@ -135,10 +143,10 @@ export const imageStudioStyles = `
 
 .retake-image-studio-field select,
 .retake-image-studio-field input {
-  background: #fff;
-  border: 1px solid #cbd5e1;
+  background: ${theme.surface};
+  border: 1px solid ${theme.border};
   border-radius: 7px;
-  color: #172033;
+  color: ${theme.foreground};
   font: inherit;
   min-height: 32px;
   padding: 0 9px;
@@ -152,26 +160,26 @@ export const imageStudioStyles = `
 
 .retake-image-studio-check {
   align-items: center;
-  color: #475569;
+  color: ${theme.muted};
   display: flex;
   font-size: 12px;
   gap: 8px;
 }
 
 .retake-image-studio-check input {
-  accent-color: #0f766e;
+  accent-color: ${theme.accent};
 }
 
 .retake-image-studio-resize-source {
   align-items: center;
-  color: #64748b;
+  color: ${theme.muted};
   display: flex;
   font-size: 12px;
   justify-content: space-between;
 }
 
 .retake-image-studio-resize-source strong {
-  color: #334155;
+  color: ${theme.foreground};
   font-variant-numeric: tabular-nums;
 }
 
@@ -184,7 +192,7 @@ export const imageStudioStyles = `
     linear-gradient(-45deg, transparent 75%, #eef2f7 75%);
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   background-size: 16px 16px;
-  border: 1px solid #d8dee8;
+  border: 1px solid ${theme.border};
   border-radius: 9px;
   display: flex;
   justify-content: center;
@@ -317,7 +325,7 @@ export const imageStudioStyles = `
 }
 
 .retake-image-studio-panel__run {
-  background: #0f766e;
+  background: ${theme.accent};
   border: 0;
   border-radius: 8px;
   color: #fff;

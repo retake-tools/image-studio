@@ -6,7 +6,8 @@ import React, {
   type PointerEvent,
   type ReactElement,
 } from 'react';
-import type {
+import {
+  defineMessages,
   PluginPanelProps as PluginPanelPropsV2,
 } from '@retake/plugin-api';
 import { selectionMaskPanelStore } from './panel-store';
@@ -23,7 +24,7 @@ import {
   type SelectionMaskTool,
 } from './selection-mask';
 import { imageStudioStyles } from './styles';
-import { isChineseLocale, usePluginEnvironment } from './localization';
+import { usePluginTranslator } from './localization';
 
 const capabilityId = 'image.local_selection_mask';
 const resultSlotId = 'selection_mask';
@@ -65,8 +66,8 @@ export function ImageStudioSelectionMaskPanel({
   const blockIsBound = blockId
     ? hostSnapshot.boundBlockIds.includes(blockId)
     : false;
-  const environment = usePluginEnvironment(host);
-  const copy = localizedSelectionMaskCopy(environment.locale);
+  const translator = usePluginTranslator(host, selectionMaskMessages);
+  const copy = localizedSelectionMaskCopy(translator);
   const maskState: SelectionMaskState = { inverted, strokes };
 
   useEffect(() => {
@@ -396,45 +397,43 @@ function validDimension(value: number | undefined): number | null {
     : null;
 }
 
-function localizedSelectionMaskCopy(locale: string) {
-  if (isChineseLocale(locale)) {
-    return {
-      brushSize: '画笔大小',
-      canvas: '选区蒙版画布',
-      clear: '清空',
-      close: '关闭',
-      erase: '擦除选区',
-      failed: '选区蒙版生成失败',
-      hint: '青色区域会写入蒙版。输出为与原图等大的 PNG：白色代表选中，黑色代表未选。',
-      invert: '反选',
-      output: '蒙版输出',
-      redo: '重做',
-      run: '创建蒙版',
-      running: '生成中…',
-      select: '添加选区',
-      sourceUnavailable: '当前图片已不在插件可访问范围内。',
-      title: '创建选区蒙版',
-      tool: '选区工具',
-      undo: '撤销',
-    };
-  }
-  return {
-    brushSize: 'Brush size',
-    canvas: 'Selection mask canvas',
-    clear: 'Clear',
-    close: 'Close',
-    erase: 'Erase selection',
-    failed: 'Selection mask generation failed',
-    hint: 'Teal areas become the mask. Output is a source-sized PNG: white is selected and black is unselected.',
-    invert: 'Invert',
-    output: 'Mask output',
-    redo: 'Redo',
-    run: 'Create mask',
-    running: 'Creating…',
-    select: 'Add selection',
-    sourceUnavailable: 'The source image is no longer available to the plugin.',
-    title: 'Create selection mask',
-    tool: 'Selection tool',
-    undo: 'Undo',
-  };
+const selectionMaskMessages = defineMessages({
+  brushSize: localized('Brush size', '画笔大小'),
+  canvas: localized('Selection mask canvas', '选区蒙版画布'),
+  clear: localized('Clear', '清空'),
+  close: localized('Close', '关闭'),
+  erase: localized('Erase selection', '擦除选区'),
+  failed: localized('Selection mask generation failed', '选区蒙版生成失败'),
+  hint: localized(
+    'Teal areas become the mask. Output is a source-sized PNG: white is selected and black is unselected.',
+    '青色区域会写入蒙版。输出为与原图等大的 PNG：白色代表选中，黑色代表未选。',
+  ),
+  invert: localized('Invert', '反选'),
+  output: localized('Mask output', '蒙版输出'),
+  redo: localized('Redo', '重做'),
+  run: localized('Create mask', '创建蒙版'),
+  running: localized('Creating…', '生成中…'),
+  select: localized('Add selection', '添加选区'),
+  sourceUnavailable: localized(
+    'The source image is no longer available to the plugin.',
+    '当前图片已不在插件可访问范围内。',
+  ),
+  title: localized('Create selection mask', '创建选区蒙版'),
+  tool: localized('Selection tool', '选区工具'),
+  undo: localized('Undo', '撤销'),
+});
+
+function localizedSelectionMaskCopy(translator: {
+  t(messageId: keyof typeof selectionMaskMessages): string;
+}) {
+  return Object.fromEntries(
+    Object.keys(selectionMaskMessages).map((messageId) => [
+      messageId,
+      translator.t(messageId as keyof typeof selectionMaskMessages),
+    ]),
+  ) as Record<keyof typeof selectionMaskMessages, string>;
+}
+
+function localized(english: string, chinese: string) {
+  return { default: english, locales: { 'zh-CN': chinese } };
 }

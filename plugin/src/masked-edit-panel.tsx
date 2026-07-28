@@ -4,12 +4,13 @@ import React, {
   useSyncExternalStore,
   type ReactElement,
 } from 'react';
-import type {
+import {
+  defineMessages,
   PluginImageBlock as ImageToolbarBlockV2,
   PluginAssetV2,
   PluginPanelProps as PluginPanelPropsV2,
 } from '@retake/plugin-api';
-import { isChineseLocale, usePluginEnvironment } from './localization';
+import { usePluginTranslator } from './localization';
 import { maskedEditStyles } from './masked-edit-styles';
 import { validateMaskedEditImages } from './masked-edit';
 import { maskedEditPanelStore } from './panel-store';
@@ -34,8 +35,8 @@ export function ImageStudioMaskedEditPanel({
   const [pending, setPending] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [sourceIndex, setSourceIndex] = useState(0);
-  const environment = usePluginEnvironment(host);
-  const copy = localizedMaskedEditCopy(environment.locale);
+  const translator = usePluginTranslator(host, maskedEditMessages);
+  const copy = localizedMaskedEditCopy(translator);
   const blocks = panel.blocks;
   const sourceBlock = blocks[sourceIndex];
   const maskBlock = blocks[sourceIndex === 0 ? 1 : 0];
@@ -231,41 +232,53 @@ function validateInputs(
   return null;
 }
 
-function localizedMaskedEditCopy(locale: string) {
-  if (isChineseLocale(locale)) {
-    return {
-      close: '关闭',
-      connectionNote: '将使用 Retake 当前图片默认连接。可在设置中修改或测试连接。',
-      dimensionMismatch: '选区蒙版必须与源图像素尺寸完全一致。',
-      failed: '局部 AI 编辑启动失败',
-      mask: '选区蒙版',
-      maskPng: '选区蒙版必须是不透明 PNG。',
-      prompt: '编辑要求',
-      promptPlaceholder: '例如：只把选区内的外套改成深蓝色，其他内容保持不变。',
-      run: '执行局部 AI 编辑',
-      running: '正在启动…',
-      source: '源图',
-      swap: '交换源图与蒙版',
-      title: '局部 AI 编辑',
-      twoImages: '请在画布上只选择一个源图和一个选区蒙版。',
-      unavailable: '当前图片已不在插件可访问范围内。',
-    };
-  }
-  return {
-    close: 'Close',
-    connectionNote: 'Uses the current Retake image default Connection. Change or test it in Settings.',
-    dimensionMismatch: 'The Selection Mask must match the source pixel dimensions.',
-    failed: 'Failed to start masked AI edit',
-    mask: 'Selection Mask',
-    maskPng: 'The Selection Mask must be an opaque PNG.',
-    prompt: 'Edit instruction',
-    promptPlaceholder: 'For example: change only the selected jacket to dark blue and preserve everything else.',
-    run: 'Run masked AI edit',
-    running: 'Starting…',
-    source: 'Source',
-    swap: 'Swap source and mask',
-    title: 'Masked AI edit',
-    twoImages: 'Select exactly one source image and one Selection Mask on the canvas.',
-    unavailable: 'The selected images are no longer available to the Plugin.',
-  };
+const maskedEditMessages = defineMessages({
+  close: localized('Close', '关闭'),
+  connectionNote: localized(
+    'Uses the current Retake image default Connection. Change or test it in Settings.',
+    '将使用 Retake 当前图片默认连接。可在设置中修改或测试连接。',
+  ),
+  dimensionMismatch: localized(
+    'The Selection Mask must match the source pixel dimensions.',
+    '选区蒙版必须与源图像素尺寸完全一致。',
+  ),
+  failed: localized('Failed to start masked AI edit', '局部 AI 编辑启动失败'),
+  mask: localized('Selection Mask', '选区蒙版'),
+  maskPng: localized(
+    'The Selection Mask must be an opaque PNG.',
+    '选区蒙版必须是不透明 PNG。',
+  ),
+  prompt: localized('Edit instruction', '编辑要求'),
+  promptPlaceholder: localized(
+    'For example: change only the selected jacket to dark blue and preserve everything else.',
+    '例如：只把选区内的外套改成深蓝色，其他内容保持不变。',
+  ),
+  run: localized('Run masked AI edit', '执行局部 AI 编辑'),
+  running: localized('Starting…', '正在启动…'),
+  source: localized('Source', '源图'),
+  swap: localized('Swap source and mask', '交换源图与蒙版'),
+  title: localized('Masked AI edit', '局部 AI 编辑'),
+  twoImages: localized(
+    'Select exactly one source image and one Selection Mask on the canvas.',
+    '请在画布上只选择一个源图和一个选区蒙版。',
+  ),
+  unavailable: localized(
+    'The selected images are no longer available to the Plugin.',
+    '当前图片已不在插件可访问范围内。',
+  ),
+});
+
+function localizedMaskedEditCopy(translator: {
+  t(messageId: keyof typeof maskedEditMessages): string;
+}) {
+  return Object.fromEntries(
+    Object.keys(maskedEditMessages).map((messageId) => [
+      messageId,
+      translator.t(messageId as keyof typeof maskedEditMessages),
+    ]),
+  ) as Record<keyof typeof maskedEditMessages, string>;
+}
+
+function localized(english: string, chinese: string) {
+  return { default: english, locales: { 'zh-CN': chinese } };
 }

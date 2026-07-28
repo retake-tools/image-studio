@@ -7,6 +7,7 @@ import React, {
 import type {
   PluginPanelProps as PluginPanelPropsV2,
 } from '@retake/plugin-api';
+import { defineMessages } from '@retake/plugin-api';
 import {
   defaultImageAdjustments,
   hasImageAdjustments,
@@ -17,7 +18,7 @@ import {
 import { adjustPanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
-import { isChineseLocale, usePluginEnvironment } from './localization';
+import { usePluginTranslator } from './localization';
 
 const capabilityId = 'image.local_adjust';
 const resultSlotId = 'result_image';
@@ -35,8 +36,8 @@ export function ImageStudioAdjustPanel({
     host.getReadSnapshot,
     host.getReadSnapshot,
   );
-  const environment = usePluginEnvironment(host);
-  const copy = localizedCopy(environment.locale);
+  const translator = usePluginTranslator(host, adjustMessages);
+  const copy = localizedCopy(translator);
   const [adjustments, setAdjustments] = useState(defaultImageAdjustments);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -226,7 +227,24 @@ function RangeControl({
   );
 }
 
-function localizedCopy(locale: string): {
+const adjustMessages = defineMessages({
+  brightness: localized('Brightness', '亮度'),
+  close: localized('Close', '关闭'),
+  contrast: localized('Contrast', '对比度'),
+  failed: localized('Image processing failed', '图片处理失败'),
+  run: localized('Apply adjustments', '应用调整'),
+  running: localized('Processing…', '处理中…'),
+  saturation: localized('Saturation', '饱和度'),
+  sourceUnavailable: localized(
+    'The source image is no longer available to the plugin.',
+    '当前图片已不在插件可访问范围内。',
+  ),
+  title: localized('Adjust image', '调整图片'),
+});
+
+function localizedCopy(translator: {
+  t(messageId: keyof typeof adjustMessages): string;
+}): {
   brightness: string;
   close: string;
   contrast: string;
@@ -237,28 +255,22 @@ function localizedCopy(locale: string): {
   sourceUnavailable: string;
   title: string;
 } {
-  if (isChineseLocale(locale)) {
-    return {
-      brightness: '亮度',
-      close: '关闭',
-      contrast: '对比度',
-      failed: '图片处理失败',
-      run: '应用调整',
-      running: '处理中…',
-      saturation: '饱和度',
-      sourceUnavailable: '当前图片已不在插件可访问范围内。',
-      title: '调整图片',
-    };
-  }
   return {
-    brightness: 'Brightness',
-    close: 'Close',
-    contrast: 'Contrast',
-    failed: 'Image processing failed',
-    run: 'Apply adjustments',
-    running: 'Processing…',
-    saturation: 'Saturation',
-    sourceUnavailable: 'The source image is no longer available to the plugin.',
-    title: 'Adjust image',
+    brightness: translator.t('brightness'),
+    close: translator.t('close'),
+    contrast: translator.t('contrast'),
+    failed: translator.t('failed'),
+    run: translator.t('run'),
+    running: translator.t('running'),
+    saturation: translator.t('saturation'),
+    sourceUnavailable: translator.t('sourceUnavailable'),
+    title: translator.t('title'),
+  };
+}
+
+function localized(english: string, chinese: string) {
+  return {
+    default: english,
+    locales: { 'zh-CN': chinese },
   };
 }

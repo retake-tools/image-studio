@@ -1,3 +1,5 @@
+import { imageStudioTheme as theme } from './theme';
+
 export const maskedEditStyles = `
   .retake-image-studio-panel.is-masked-edit {
     width: min(430px, calc(100vw - 32px));
@@ -9,7 +11,7 @@ export const maskedEditStyles = `
     border-radius: 10px;
     background: rgba(120, 119, 198, 0.08);
     padding: 9px 10px;
-    color: #555572;
+    color: ${theme.muted};
     font-size: 12px;
     line-height: 1.45;
   }
@@ -31,7 +33,7 @@ export const maskedEditStyles = `
   }
 
   .retake-image-studio-masked-input figcaption {
-    color: #30303d;
+    color: ${theme.foreground};
     font-size: 12px;
     font-weight: 700;
   }
@@ -40,13 +42,13 @@ export const maskedEditStyles = `
     width: 100%;
     aspect-ratio: 1;
     border-radius: 8px;
-    background: #ececf0;
+    background: ${theme.background};
     object-fit: contain;
   }
 
   .retake-image-studio-masked-input small {
     overflow: hidden;
-    color: #777782;
+    color: ${theme.muted};
     font-size: 11px;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -56,7 +58,7 @@ export const maskedEditStyles = `
     align-self: center;
     border: 0;
     background: transparent;
-    color: #5c55a5;
+    color: ${theme.accent};
     cursor: pointer;
     font: inherit;
     font-size: 12px;
@@ -66,7 +68,7 @@ export const maskedEditStyles = `
   .retake-image-studio-prompt {
     display: grid;
     gap: 7px;
-    color: #30303d;
+    color: ${theme.foreground};
     font-size: 12px;
     font-weight: 700;
   }
@@ -77,8 +79,8 @@ export const maskedEditStyles = `
     border: 1px solid rgba(38, 38, 48, 0.16);
     border-radius: 10px;
     padding: 10px;
-    background: white;
-    color: #20202a;
+    background: ${theme.surface};
+    color: ${theme.foreground};
     font: inherit;
     font-weight: 400;
     line-height: 1.5;

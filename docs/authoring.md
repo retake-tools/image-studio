@@ -46,6 +46,13 @@ output must be returned through `host.execution.run`. Provider-backed
 Capabilities use the narrow, Retake-owned `host.execution.runConnected`
 operation boundary.
 
+Action placement uses public Command and Surface contributions. User-facing
+copy uses `defineMessages` with the Host Translator; normal panel chrome uses
+public Theme tokens; behavior configuration uses typed `defineSettings`
+contracts. Theme and toolbar state are not Plugin settings. The current
+workspace setting, `defaultOutputFormat`, only controls the initial Resize
+encoding and is read through `host.settings`.
+
 Direct React state, DOM interaction, Canvas 2D, and local preview do not require
 new Host services. Add a Host API only when a capability needs Retake-owned
 state or an atomic Retake mutation that cannot remain inside the PluginModule.
