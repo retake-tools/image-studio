@@ -73,7 +73,10 @@ rollback, disable, safe mode, and removal behavior.
 
 ## Develop and verify
 
-Requires Node.js 22 or later.
+Canonical development, CI, and release checks use Node.js 24.18.0. Node.js
+22.12 or later remains a supported compatibility runtime. Node.js 26 is
+experimental until it reaches LTS and Retake's Package archive codec is
+runtime-independent.
 
 ```bash
 npm ci

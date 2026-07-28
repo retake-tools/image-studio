@@ -47,7 +47,8 @@ Codex App Server 或手动 Codex/MCP 路由，Plugin 不接触凭据与本地路
 
 ## 开发与验证
 
-需要 Node.js 22 或更新版本：
+canonical 开发、CI 与发布检查使用 Node.js 24.18.0。Node.js 22.12 或更高版本继续作为
+兼容运行时；Node.js 26 在进入 LTS 且 Retake Package 归档 codec 与运行时解耦前仅作实验性验证：
 
 ```bash
 npm ci
