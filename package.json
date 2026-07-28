@@ -14,6 +14,9 @@
     "validate": "node scripts/validate-package.mjs"
   },
   "devDependencies": {
+    "@retake-tools/package-contracts": "file:plugin/vendor/npm/retake-tools-package-contracts-0.1.0.tgz",
+    "@retake-tools/plugin-runtime": "file:plugin/vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz",
+    "@retake/plugin-api": "file:plugin/vendor/npm/retake-plugin-api-0.1.0.tgz",
     "@types/node": "22.19.7",
     "@types/react": "19.2.17",
     "react": "19.2.7",

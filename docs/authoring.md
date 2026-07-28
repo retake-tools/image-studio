@@ -10,6 +10,9 @@ image-studio/
 ├── plugin/                     Portable Retake Package source
 │   ├── definitions/            Capability and parameter contracts
 │   ├── src/                    Trusted Web PluginModule source
+│   ├── vendor/npm/             Pinned build-time authoring artifacts
+│   ├── package.json            Controlled-build dependencies
+│   ├── package-lock.json       Exact dependency versions and integrity
 │   ├── retake.package.json     Root Package manifest
 │   └── retake.plugin.json      PluginModule manifest
 ├── test/                       Repository-level tests
@@ -17,9 +20,10 @@ image-studio/
 └── docs/                       Public authoring and lifecycle docs
 ```
 
-Only files listed by `plugin/retake.package.json` are eligible for the
-Materialized Package. Tests, local dependencies, Git metadata, and repository
-automation are not distributed.
+Only files listed by `plugin/retake.package.json` enter the portable source
+snapshot. Retake uses the pinned npm metadata and vendored tarballs during the
+controlled build, then removes those build-only files from the Materialized
+Package. Tests, Git metadata, and repository automation are not distributed.
 
 ## Ownership boundary
 
@@ -111,7 +115,9 @@ toolchain.
 
 Runtime dependencies intentionally remain bare imports when the Host owns their
 singleton identity, including React, React DOM, JSX Runtime, and
-`@retake/plugin-api`.
+`@retake/plugin-api`. Image Studio pins the real `@retake/plugin-api` artifact
+for authoring and controlled-build type resolution; it does not carry a local
+ambient declaration or a copied Host contract.
 
 The first Image Studio slice embeds scoped CSS in the PluginModule. A dedicated
 controlled-build stylesheet entry is a future Host enhancement for larger

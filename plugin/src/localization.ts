@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 import type {
   PluginHostApiV2,
   PluginHostEnvironmentSnapshotV2,
-} from './contracts';
+} from '@retake/plugin-api';
 
 export function usePluginEnvironment(
   host: PluginHostApiV2,

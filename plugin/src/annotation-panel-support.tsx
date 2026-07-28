@@ -1,4 +1,9 @@
 import React, { type ReactElement } from 'react';
+import type {
+  PluginAssetV2,
+  PluginJsonValueV2,
+  PluginPanelProps as PluginPanelPropsV2,
+} from '@retake/plugin-api';
 import {
   annotationDraftFromUnknown,
   type AnnotationDraft,
@@ -6,11 +11,6 @@ import {
   type AnnotationMark,
 } from './annotation';
 import { annotationPanelStore } from './panel-store';
-import type {
-  PluginAssetV2,
-  PluginJsonValueV2,
-  PluginPanelPropsV2,
-} from './contracts';
 
 const capabilityId = 'image.annotation_edit';
 

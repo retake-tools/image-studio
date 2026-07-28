@@ -8,6 +8,9 @@ import React, {
   type PointerEvent,
   type ReactElement,
 } from 'react';
+import type {
+  PluginPanelProps as PluginPanelPropsV2,
+} from '@retake/plugin-api';
 import {
   annotationColorOptions,
   annotationLimits,
@@ -46,9 +49,6 @@ import {
   initialAnnotationDraft,
 } from './annotation-panel-support';
 import { annotationPanelStore } from './panel-store';
-import type {
-  PluginPanelPropsV2,
-} from './contracts';
 import { usePluginEnvironment } from './localization';
 import { annotationStyles } from './annotation-styles';
 import { imageStudioStyles } from './styles';

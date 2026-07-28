@@ -7,7 +7,9 @@ import React, {
   type PointerEvent,
   type ReactElement,
 } from 'react';
-import type { PluginPanelPropsV2 } from './contracts';
+import type {
+  PluginPanelProps as PluginPanelPropsV2,
+} from '@retake/plugin-api';
 import { usePluginEnvironment } from './localization';
 import { outpaintCopy } from './outpaint-copy';
 import {

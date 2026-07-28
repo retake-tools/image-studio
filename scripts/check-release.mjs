@@ -128,6 +128,32 @@ const forbiddenSourcePatterns = [
 const portableSourceFiles = rootPackage.files.filter(
   (filePath) => /\.(?:ts|tsx|js|jsx|mjs|cjs)$/.test(filePath),
 );
+for (const requiredBuildFile of [
+  'package-lock.json',
+  'package.json',
+  'vendor/npm/retake-plugin-api-0.1.0.tgz',
+  'vendor/npm/retake-tools-package-contracts-0.1.0.tgz',
+  'vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz',
+]) {
+  assert.ok(
+    rootPackage.files.includes(requiredBuildFile),
+    `Portable source must include ${requiredBuildFile}.`,
+  );
+}
+assert.equal(rootPackage.files.includes('src/contracts.ts'), false);
+assert.equal(rootPackage.files.includes('src/retake-plugin-api.d.ts'), false);
+const pluginEntrypoint = await readText('src/index.tsx', packageRoot);
+for (const authoringHelper of [
+  'defineCapability',
+  'defineCommand',
+  'definePanel',
+  'definePlugin',
+]) {
+  assert.ok(
+    pluginEntrypoint.includes(authoringHelper),
+    `Plugin entrypoint must use ${authoringHelper}.`,
+  );
+}
 for (const filePath of portableSourceFiles) {
   const source = await readText(filePath, packageRoot);
   for (const pattern of forbiddenSourcePatterns) {

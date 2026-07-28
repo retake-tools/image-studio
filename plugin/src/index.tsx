@@ -1,12 +1,18 @@
-import { definePluginContribution } from '@retake/plugin-api';
+import {
+  defineCapability,
+  defineCommand,
+  definePanel,
+  definePlugin,
+  type PluginActivationContext as PluginActivationContextV2,
+  type PluginComponent,
+  type PluginImageBlock as ImageToolbarBlockV2,
+  type PluginImageSelectionCommandContext as ImageSelectionToolbarContextV2,
+  type PluginOperationActionContextV2,
+  type PluginPanelProps,
+  type RetakeCapabilityContributionV2,
+} from '@retake/plugin-api';
 import { ImageStudioAdjustPanel } from './adjust-panel';
 import { ImageStudioAnnotationPanel } from './annotation-panel';
-import type {
-  ImageSelectionToolbarContextV2,
-  ImageToolbarBlockV2,
-  PluginActivationContextV2,
-  PluginOperationActionContextV2,
-} from './contracts';
 import { ImageStudioCropPanel } from './crop-panel';
 import { ImageStudioMaskedEditPanel } from './masked-edit-panel';
 import { ImageStudioOutpaintPanel } from './outpaint-panel';
@@ -60,7 +66,7 @@ export const localResizeCapability = capabilityContribution({
   version: '0.2.0',
 });
 
-export const localSelectionMaskCapability = definePluginContribution({
+export const localSelectionMaskCapability = defineCapability({
   apiVersion: 2,
   definition: {
     capabilityId: 'image.local_selection_mask',
@@ -88,7 +94,7 @@ export const localSelectionMaskCapability = definePluginContribution({
   kind: 'capability',
 });
 
-export const maskedEditCapability = definePluginContribution({
+export const maskedEditCapability = defineCapability({
   apiVersion: 2,
   definition: {
     capabilityId: 'image.masked_edit',
@@ -116,7 +122,7 @@ export const maskedEditCapability = definePluginContribution({
   kind: 'capability',
 });
 
-export const annotationEditCapability = definePluginContribution({
+export const annotationEditCapability = defineCapability({
   apiVersion: 2,
   definition: {
     capabilityId: 'image.annotation_edit',
@@ -145,7 +151,7 @@ export const annotationEditCapability = definePluginContribution({
   kind: 'capability',
 });
 
-export const outpaintCapability = definePluginContribution({
+export const outpaintCapability = defineCapability({
   apiVersion: 2,
   definition: {
     capabilityId: 'image.outpaint',
@@ -195,7 +201,7 @@ export const selectionMaskImageAction = imageToolbarAction(
   selectionMaskPanelStore,
 );
 
-export const maskedEditSelectionAction = definePluginContribution({
+export const maskedEditSelectionAction = defineCommand({
   apiVersion: 2,
   kind: 'action',
   label: localized('Masked AI edit', '局部 AI 编辑'),
@@ -215,7 +221,7 @@ export const outpaintImageAction = imageToolbarAction(
   outpaintPanelStore,
 );
 
-export const reopenAnnotationOperationAction = definePluginContribution({
+export const reopenAnnotationOperationAction = defineCommand({
   apiVersion: 2,
   kind: 'action',
   label: localized('Reopen annotation edit', '重新打开标注编辑'),
@@ -240,6 +246,34 @@ export const selectionMaskImagePanel = panelContribution(
   ImageStudioSelectionMaskPanel,
 );
 
+export const imageStudioPlugin = definePlugin({
+  contributions: {
+    adjustImageAction,
+    adjustImagePanel,
+    annotationEditCapability,
+    annotationImageAction,
+    annotationImagePanel,
+    cropImageAction,
+    cropImagePanel,
+    localAdjustCapability,
+    localCropCapability,
+    localResizeCapability,
+    localSelectionMaskCapability,
+    maskedEditCapability,
+    maskedEditPanel,
+    maskedEditSelectionAction,
+    outpaintCapability,
+    outpaintImageAction,
+    outpaintPanel,
+    reopenAnnotationOperationAction,
+    resizeImageAction,
+    resizeImagePanel,
+    selectionMaskImageAction,
+    selectionMaskImagePanel,
+  },
+  setup: activate,
+});
+
 export function activate(context: PluginActivationContextV2): {
   dispose(): void;
 } {
@@ -258,11 +292,13 @@ function capabilityContribution(input: {
   displayName: LocalizedText;
   outputRole: string;
   parametersSchemaRef: string;
-  runtimeRequirements: string[];
-  supportedAdapterClasses: string[];
+  runtimeRequirements:
+    RetakeCapabilityContributionV2['definition']['runtimeRequirements'];
+  supportedAdapterClasses:
+    RetakeCapabilityContributionV2['definition']['supportedAdapterClasses'];
   version: string;
 }) {
-  return definePluginContribution({
+  return defineCapability({
     apiVersion: 2,
     definition: {
       capabilityId: input.capabilityId,
@@ -291,7 +327,13 @@ function imageSourceInput() {
   return imageInput('source_image', 'source');
 }
 
-function imageInput(slotId: string, semanticRole: string) {
+type CapabilityInputSlot =
+  RetakeCapabilityContributionV2['definition']['inputSlots'][number];
+
+function imageInput(
+  slotId: string,
+  semanticRole: string,
+): CapabilityInputSlot {
   return {
     artifactTypes: [],
     bindingKinds: ['asset', 'block'],
@@ -303,14 +345,17 @@ function imageInput(slotId: string, semanticRole: string) {
   };
 }
 
-function assetImageInput(slotId: string, semanticRole: string) {
+function assetImageInput(
+  slotId: string,
+  semanticRole: string,
+): CapabilityInputSlot {
   return {
     ...imageInput(slotId, semanticRole),
     bindingKinds: ['asset'],
   };
 }
 
-function textInput() {
+function textInput(): CapabilityInputSlot {
   return {
     artifactTypes: [],
     bindingKinds: ['inline'],
@@ -340,7 +385,7 @@ function imageToolbarAction(
     open(block: ImageToolbarBlockV2): void;
   },
 ) {
-  return definePluginContribution({
+  return defineCommand({
     apiVersion: 2,
     kind: 'action',
     label,
@@ -352,8 +397,10 @@ function imageToolbarAction(
   });
 }
 
-function panelContribution(component: unknown) {
-  return definePluginContribution({
+function panelContribution(
+  component: PluginComponent<PluginPanelProps>,
+) {
+  return definePanel({
     apiVersion: 1,
     component,
     kind: 'panel',
