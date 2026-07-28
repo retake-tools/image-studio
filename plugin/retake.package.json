@@ -8,7 +8,7 @@
     "agentPresets": [],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-v8",
+        "definitionHash": "sha256:image-studio-web-v9",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
@@ -27,7 +27,7 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.7.0"
+        "version": "0.8.0"
       }
     ],
     "skills": [],
@@ -80,7 +80,9 @@
     "src/resize-panel.tsx",
     "src/selection-mask-panel.tsx",
     "src/selection-mask.ts",
+    "src/settings.ts",
     "src/styles.ts",
+    "src/theme.ts",
     "vendor/npm/retake-plugin-api-0.1.0.tgz",
     "vendor/npm/retake-tools-package-contracts-0.1.0.tgz",
     "vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz"
@@ -98,5 +100,5 @@
   "retakeHostCompatibility": "^0.1.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.7.0"
+  "version": "0.8.0"
 }

@@ -71,6 +71,10 @@ Verify in a disposable Retake Workspace:
   hidden input Assets without adding guide or mask Blocks to the Board;
 - changing the Whiteboard locale updates every open Image Studio panel and
   contributed Action label without reactivating the PluginModule;
+- changing the Host Theme updates normal panel surfaces, text, borders, and
+  actions through public Theme tokens;
+- changing the workspace-level default Resize format in Plugin Settings is
+  reflected in a newly opened or reset Resize panel and survives reload;
 - missing or disabled Image Studio removes the action but preserves historical
   Operation, Execution, Result, Asset, and History projections;
 - the browser console has no warnings or errors during the lifecycle.

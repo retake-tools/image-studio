@@ -1,3 +1,5 @@
+import { imageStudioTheme as theme } from './theme';
+
 export const outpaintStyles = `
 .retake-image-studio-panel.is-outpaint {
   width: min(420px, calc(100vw - 32px));
@@ -5,8 +7,8 @@ export const outpaintStyles = `
 
 .retake-outpaint-stage-shell {
   align-items: center;
-  background: #e2e8f0;
-  border: 1px solid #cbd5e1;
+  background: ${theme.background};
+  border: 1px solid ${theme.border};
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -46,7 +48,7 @@ export const outpaintStyles = `
 .retake-outpaint-source:focus-visible {
   box-shadow:
     0 0 0 3px rgb(15 118 110 / 30%),
-    0 0 0 1px #0f766e;
+    0 0 0 1px ${theme.accent};
 }
 
 .retake-outpaint-source img {
@@ -69,7 +71,7 @@ export const outpaintStyles = `
 }
 
 .retake-outpaint-anchors button {
-  background: #e2e8f0;
+  background: ${theme.background};
   border: 0;
   border-radius: 4px;
   cursor: pointer;
@@ -79,7 +81,7 @@ export const outpaintStyles = `
 }
 
 .retake-outpaint-anchors button.is-active {
-  background: #0f766e;
+  background: ${theme.accent};
   box-shadow: inset 0 0 0 5px #ccfbf1;
 }
 
@@ -89,17 +91,17 @@ export const outpaintStyles = `
 }
 
 .retake-outpaint-prompt {
-  color: #475569;
+  color: ${theme.muted};
   display: grid;
   font-size: 12px;
   gap: 6px;
 }
 
 .retake-outpaint-prompt textarea {
-  background: #fff;
-  border: 1px solid #cbd5e1;
+  background: ${theme.surface};
+  border: 1px solid ${theme.border};
   border-radius: 8px;
-  color: #172033;
+  color: ${theme.foreground};
   font: inherit;
   line-height: 1.45;
   min-height: 76px;
@@ -114,17 +116,17 @@ export const outpaintStyles = `
 }
 
 .retake-outpaint-run-options label {
-  color: #475569;
+  color: ${theme.muted};
   display: grid;
   font-size: 12px;
   gap: 5px;
 }
 
 .retake-outpaint-run-options select {
-  background: #fff;
-  border: 1px solid #cbd5e1;
+  background: ${theme.surface};
+  border: 1px solid ${theme.border};
   border-radius: 7px;
-  color: #172033;
+  color: ${theme.foreground};
   font: inherit;
   min-height: 32px;
   min-width: 0;

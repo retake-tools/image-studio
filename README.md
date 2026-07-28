@@ -28,6 +28,11 @@ Retake-connected AI capabilities:
 All processors create a new result asset and block through the Retake Host
 API, leaving the source image unchanged.
 
+Image Studio uses the public Retake Command, Surface, Translator, Theme, and
+Settings facades. The workspace-level default resize format is a typed Plugin
+setting; locale and Theme changes flow from the Host without Plugin-specific
+Core access.
+
 Retake Whiteboard remains responsible for canvas state, assets, executions,
 history, package lifecycle, trust, fallback UI, and persistence. This
 repository owns the image-specific capability, action, panel, preview,

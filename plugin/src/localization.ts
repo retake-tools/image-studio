@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from 'react';
-import type {
+import {
+  createPluginTranslator,
+  type PluginMessages,
   PluginHostApiV2,
   PluginHostEnvironmentSnapshotV2,
 } from '@retake/plugin-api';
@@ -14,6 +16,10 @@ export function usePluginEnvironment(
   );
 }
 
-export function isChineseLocale(locale: string): boolean {
-  return locale.toLowerCase().startsWith('zh');
+export function usePluginTranslator<const Messages extends PluginMessages>(
+  host: PluginHostApiV2,
+  messages: Messages,
+) {
+  const environment = usePluginEnvironment(host);
+  return createPluginTranslator(messages, environment.locale);
 }

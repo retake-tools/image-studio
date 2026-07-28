@@ -3,6 +3,7 @@ import {
   defineCommand,
   definePanel,
   definePlugin,
+  defineMessages,
   type PluginActivationContext as PluginActivationContextV2,
   type PluginComponent,
   type PluginImageBlock as ImageToolbarBlockV2,
@@ -11,6 +12,7 @@ import {
   type PluginSelectionCommandContext,
   type RetakeCapabilityContributionV2,
 } from '@retake/plugin-api';
+import { imageStudioSettings } from './settings';
 import { ImageStudioAdjustPanel } from './adjust-panel';
 import { ImageStudioAnnotationPanel } from './annotation-panel';
 import { ImageStudioCropPanel } from './crop-panel';
@@ -29,6 +31,14 @@ import { ImageStudioResizePanel } from './resize-panel';
 import { ImageStudioSelectionMaskPanel } from './selection-mask-panel';
 
 const resultSlotId = 'result_image';
+
+export const imageStudioMessages = defineMessages({
+  pluginDescription: localized(
+    'First-party image authoring tools for Retake.',
+    'Retake 官方图片创作工具。',
+  ),
+  pluginName: localized('Image Studio', '图片工作室'),
+});
 
 export const localAdjustCapability = capabilityContribution({
   capabilityId: 'image.local_adjust',
@@ -294,6 +304,8 @@ export const imageStudioPlugin = definePlugin({
     selectionMaskImageCommand,
     selectionMaskImagePanel,
   },
+  messages: imageStudioMessages,
+  settings: imageStudioSettings,
   setup: activate,
 });
 

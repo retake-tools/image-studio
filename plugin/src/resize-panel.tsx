@@ -7,6 +7,7 @@ import React, {
 import type {
   PluginPanelProps as PluginPanelPropsV2,
 } from '@retake/plugin-api';
+import { defineMessages } from '@retake/plugin-api';
 import {
   normalizedResizeEncoding,
   renderResizedImage,
@@ -17,7 +18,8 @@ import {
 import { resizePanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
-import { isChineseLocale, usePluginEnvironment } from './localization';
+import { usePluginTranslator } from './localization';
+import { useDefaultOutputFormat } from './settings';
 
 const capabilityId = 'image.local_resize';
 const resultSlotId = 'result_image';
@@ -41,7 +43,10 @@ export function ImageStudioResizePanel({
     width: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [format, setFormat] = useState<ResizeOutputFormat>('png');
+  const defaultOutputFormat = useDefaultOutputFormat(host);
+  const [format, setFormat] = useState<ResizeOutputFormat>(
+    defaultOutputFormat,
+  );
   const [matteColor, setMatteColor] = useState('#ffffff');
   const [mode, setMode] = useState<ResizeMode>('percentage');
   const [pending, setPending] = useState(false);
@@ -56,8 +61,8 @@ export function ImageStudioResizePanel({
   const blockIsBound = blockId
     ? hostSnapshot.boundBlockIds.includes(blockId)
     : false;
-  const environment = usePluginEnvironment(host);
-  const copy = localizedResizeCopy(environment.locale);
+  const translator = usePluginTranslator(host, resizeMessages);
+  const copy = localizedResizeCopy(translator);
 
   useEffect(() => {
     setAllowUpscale(false);
@@ -67,13 +72,13 @@ export function ImageStudioResizePanel({
         : null,
     );
     setError(null);
-    setFormat('png');
+    setFormat(defaultOutputFormat);
     setMatteColor('#ffffff');
     setMode('percentage');
     setPending(false);
     setQuality(90);
     setValue(50);
-  }, [assetHeight, assetId, assetWidth, blockId]);
+  }, [assetHeight, assetId, assetWidth, blockId, defaultOutputFormat]);
 
   useEffect(() => {
     if (blockId && !pending && !blockIsBound) {
@@ -324,7 +329,35 @@ function validDimension(value: number | undefined): number | null {
     : null;
 }
 
-function localizedResizeCopy(locale: string): {
+const resizeMessages = defineMessages({
+  allowUpscale: localized('Allow image upscale', '允许放大图片'),
+  background: localized('Alpha background', '透明背景'),
+  close: localized('Close', '关闭'),
+  failed: localized('Image resize failed', '图片缩放失败'),
+  format: localized('File format', '文件格式'),
+  height: localized('By height', '按高度'),
+  mode: localized('Resize by', '调整方式'),
+  output: localized('Output size', '输出尺寸'),
+  percentage: localized('Percentage', '按百分比'),
+  pixels: localized('Target pixels', '目标像素'),
+  quality: localized('Quality', '图片质量'),
+  run: localized('Create new image', '创建新图片'),
+  running: localized('Processing…', '处理中…'),
+  scale: localized('Scale %', '缩放比例 %'),
+  source: localized('Source size', '原图尺寸'),
+  sourceUnavailable: localized(
+    'The source image is no longer available to the plugin.',
+    '当前图片已不在插件可访问范围内。',
+  ),
+  title: localized('Resize and format', '调整尺寸与格式'),
+  width: localized('By width', '按宽度'),
+});
+
+function localizedResizeCopy(
+  translator: {
+    t(messageId: keyof typeof resizeMessages): string;
+  },
+): {
   allowUpscale: string;
   background: string;
   close: string;
@@ -344,46 +377,31 @@ function localizedResizeCopy(locale: string): {
   title: string;
   width: string;
 } {
-  if (isChineseLocale(locale)) {
-    return {
-      allowUpscale: '允许放大图片',
-      background: '透明背景',
-      close: '关闭',
-      failed: '图片缩放失败',
-      format: '文件格式',
-      height: '按高度',
-      mode: '调整方式',
-      output: '输出尺寸',
-      percentage: '按百分比',
-      pixels: '目标像素',
-      quality: '图片质量',
-      run: '创建新图片',
-      running: '处理中…',
-      scale: '缩放比例 %',
-      source: '原图尺寸',
-      sourceUnavailable: '当前图片已不在插件可访问范围内。',
-      title: '调整尺寸与格式',
-      width: '按宽度',
-    };
-  }
   return {
-    allowUpscale: 'Allow image upscale',
-    background: 'Alpha background',
-    close: 'Close',
-    failed: 'Image resize failed',
-    format: 'File format',
-    height: 'By height',
-    mode: 'Resize by',
-    output: 'Output size',
-    percentage: 'Percentage',
-    pixels: 'Target pixels',
-    quality: 'Quality',
-    run: 'Create new image',
-    running: 'Processing…',
-    scale: 'Scale %',
-    source: 'Source size',
-    sourceUnavailable: 'The source image is no longer available to the plugin.',
-    title: 'Resize and format',
-    width: 'By width',
+    allowUpscale: translator.t('allowUpscale'),
+    background: translator.t('background'),
+    close: translator.t('close'),
+    failed: translator.t('failed'),
+    format: translator.t('format'),
+    height: translator.t('height'),
+    mode: translator.t('mode'),
+    output: translator.t('output'),
+    percentage: translator.t('percentage'),
+    pixels: translator.t('pixels'),
+    quality: translator.t('quality'),
+    run: translator.t('run'),
+    running: translator.t('running'),
+    scale: translator.t('scale'),
+    source: translator.t('source'),
+    sourceUnavailable: translator.t('sourceUnavailable'),
+    title: translator.t('title'),
+    width: translator.t('width'),
+  };
+}
+
+function localized(english: string, chinese: string) {
+  return {
+    default: english,
+    locales: { 'zh-CN': chinese },
   };
 }

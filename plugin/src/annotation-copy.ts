@@ -1,4 +1,7 @@
-import { isChineseLocale } from './localization';
+import {
+  createPluginTranslator,
+  defineMessages,
+} from '@retake/plugin-api';
 import type { AnnotationMarkKind } from './annotation';
 
 export interface AnnotationCopy {
@@ -46,97 +49,87 @@ export interface AnnotationCopy {
   yellow: string;
 }
 
+export const annotationMessages = defineMessages({
+  arrow: localized('Arrow', '箭头'),
+  blue: localized('Blue', '蓝色'),
+  brush: localized('Region brush', '区域画笔'),
+  candidateCount: localized('Candidates', '候选数量'),
+  clear: localized('Clear', '清空'),
+  close: localized('Close', '关闭'),
+  color: localized('Color', '颜色'),
+  connection: localized('Connection', '连接'),
+  draftFailed: localized('Failed to save draft', '草稿保存失败'),
+  deleteMark: localized('Delete mark', '删除标记'),
+  ellipse: localized('Ellipse', '椭圆'),
+  eraser: localized('Eraser', '橡皮擦'),
+  failed: localized('Failed to start annotation edit', '标注编辑启动失败'),
+  globalInstruction: localized('Global instruction', '全局要求'),
+  globalPlaceholder: localized(
+    'For example: preserve the subject and composition; change only marked areas.',
+    '例如：保持人物和构图，只修改标记区域。',
+  ),
+  green: localized('Green', '绿色'),
+  historical: localized(
+    'Historical temporary session. Changes do not overwrite the current image draft.',
+    '历史临时会话；修改不会覆盖当前图片草稿。',
+  ),
+  intent: localized('Mark instruction', '标记要求'),
+  intentPlaceholder: localized(
+    'Describe the edit for this marked location',
+    '说明这个标记位置要如何修改',
+  ),
+  markLimit: localized(
+    'One annotation session supports up to 256 marks.',
+    '单次标注最多支持 256 个标记。',
+  ),
+  marker: localized('Marker', '定位点'),
+  missingIntent: localized(
+    'Add an instruction for these marks',
+    '请为这些标记补充要求',
+  ),
+  noConnection: localized(
+    'No image Connection is ready. Configure one in Settings.',
+    '没有可用的图片连接，请先在设置中配置。',
+  ),
+  noMarks: localized('No marks yet.', '还没有标记。'),
+  panHint: localized(
+    'Drag empty space to pan after zooming in.',
+    '放大后在空白处拖动可平移。',
+  ),
+  pen: localized('Pen', '画笔'),
+  purple: localized('Purple', '紫色'),
+  promptPreview: localized('Execution prompt', '执行提示词'),
+  rect: localized('Rectangle', '矩形'),
+  red: localized('Red', '红色'),
+  redo: localized('Redo', '重做'),
+  run: localized('Run annotation edit', '执行标注编辑'),
+  running: localized('Starting…', '正在启动…'),
+  select: localized('Select', '选择'),
+  sourceUnavailable: localized(
+    'The source image is outside the current Plugin scope.',
+    '源图已不在当前插件授权范围内。',
+  ),
+  stroke: localized('Stroke', '粗细'),
+  title: localized('Annotation edit', '标注编辑'),
+  undo: localized('Undo', '撤销'),
+  zoomIn: localized('Zoom in', '放大'),
+  zoomOut: localized('Zoom out', '缩小'),
+  zoomReset: localized('Reset view', '重置视图'),
+  yellow: localized('Yellow', '黄色'),
+});
+
 export function annotationCopy(locale: string): AnnotationCopy {
-  if (isChineseLocale(locale)) {
-    return {
-      arrow: '箭头',
-      blue: '蓝色',
-      brush: '区域画笔',
-      candidateCount: '候选数量',
-      clear: '清空',
-      close: '关闭',
-      color: '颜色',
-      connection: '连接',
-      draftFailed: '草稿保存失败',
-      deleteMark: '删除标记',
-      ellipse: '椭圆',
-      eraser: '橡皮擦',
-      failed: '标注编辑启动失败',
-      globalInstruction: '全局要求',
-      globalPlaceholder: '例如：保持人物和构图，只修改标记区域。',
-      green: '绿色',
-      historical: '历史临时会话；修改不会覆盖当前图片草稿。',
-      intent: '标记要求',
-      intentPlaceholder: '说明这个标记位置要如何修改',
-      markLimit: '单次标注最多支持 256 个标记。',
-      marker: '定位点',
-      missingIntent: '请为这些标记补充要求',
-      noConnection: '没有可用的图片连接，请先在设置中配置。',
-      noMarks: '还没有标记。',
-      panHint: '放大后在空白处拖动可平移。',
-      pen: '画笔',
-      purple: '紫色',
-      promptPreview: '执行提示词',
-      rect: '矩形',
-      red: '红色',
-      redo: '重做',
-      run: '执行标注编辑',
-      running: '正在启动…',
-      select: '选择',
-      sourceUnavailable: '源图已不在当前插件授权范围内。',
-      stroke: '粗细',
-      title: '标注编辑',
-      undo: '撤销',
-      zoomIn: '放大',
-      zoomOut: '缩小',
-      zoomReset: '重置视图',
-      yellow: '黄色',
-    };
-  }
-  return {
-    arrow: 'Arrow',
-    blue: 'Blue',
-    brush: 'Region brush',
-    candidateCount: 'Candidates',
-    clear: 'Clear',
-    close: 'Close',
-    color: 'Color',
-    connection: 'Connection',
-    draftFailed: 'Failed to save draft',
-    deleteMark: 'Delete mark',
-    ellipse: 'Ellipse',
-    eraser: 'Eraser',
-    failed: 'Failed to start annotation edit',
-    globalInstruction: 'Global instruction',
-    globalPlaceholder: 'For example: preserve the subject and composition; change only marked areas.',
-    green: 'Green',
-    historical: 'Historical temporary session. Changes do not overwrite the current image draft.',
-    intent: 'Mark instruction',
-    intentPlaceholder: 'Describe the edit for this marked location',
-    markLimit: 'One annotation session supports up to 256 marks.',
-    marker: 'Marker',
-    missingIntent: 'Add an instruction for these marks',
-    noConnection: 'No image Connection is ready. Configure one in Settings.',
-    noMarks: 'No marks yet.',
-    panHint: 'Drag empty space to pan after zooming in.',
-    pen: 'Pen',
-    purple: 'Purple',
-    promptPreview: 'Execution prompt',
-    rect: 'Rectangle',
-    red: 'Red',
-    redo: 'Redo',
-    run: 'Run annotation edit',
-    running: 'Starting…',
-    select: 'Select',
-    sourceUnavailable: 'The source image is outside the current Plugin scope.',
-    stroke: 'Stroke',
-    title: 'Annotation edit',
-    undo: 'Undo',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
-    zoomReset: 'Reset view',
-    yellow: 'Yellow',
-  };
+  const translator = createPluginTranslator(annotationMessages, locale);
+  return Object.fromEntries(
+    Object.keys(annotationMessages).map((messageId) => [
+      messageId,
+      translator.t(messageId as keyof typeof annotationMessages),
+    ]),
+  ) as unknown as AnnotationCopy;
+}
+
+function localized(english: string, chinese: string) {
+  return { default: english, locales: { 'zh-CN': chinese } };
 }
 
 export function annotationColorLabel(

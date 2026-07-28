@@ -7,7 +7,8 @@ import React, {
   type PointerEvent,
   type ReactElement,
 } from 'react';
-import type {
+import {
+  defineMessages,
   PluginPanelProps as PluginPanelPropsV2,
 } from '@retake/plugin-api';
 import {
@@ -22,7 +23,7 @@ import {
 import { cropPanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
-import { isChineseLocale, usePluginEnvironment } from './localization';
+import { usePluginTranslator } from './localization';
 
 const capabilityId = 'image.local_crop';
 const resultSlotId = 'result_image';
@@ -57,8 +58,8 @@ export function ImageStudioCropPanel({
     host.getReadSnapshot,
     host.getReadSnapshot,
   );
-  const environment = usePluginEnvironment(host);
-  const copy = localizedCropCopy(environment.locale);
+  const translator = usePluginTranslator(host, cropMessages);
+  const copy = localizedCropCopy(translator);
   const [center, setCenter] = useState({ x: 0.5, y: 0.5 });
   const [dimensions, setDimensions] = useState<ImageDimensions | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -367,7 +368,35 @@ export function ImageStudioCropPanel({
   );
 }
 
-function localizedCropCopy(locale: string): {
+const cropMessages = defineMessages({
+  aspectRatio: localized('Aspect ratio', '画面比例'),
+  close: localized('Close', '关闭'),
+  cropArea: localized(
+    'Crop area; drag or use arrow keys to position',
+    '裁剪区域，可拖动或使用方向键定位',
+  ),
+  cropSize: localized('Crop size', '裁剪范围'),
+  decreaseCropSize: localized('Decrease crop size', '缩小裁剪范围'),
+  failed: localized('Image crop failed', '图片裁剪失败'),
+  increaseCropSize: localized('Increase crop size', '扩大裁剪范围'),
+  original: localized('Original', '原图比例'),
+  output: localized('Output size', '输出尺寸'),
+  positionHint: localized(
+    'Drag to position. Use arrow keys for fine movement and Shift + arrow keys for larger steps.',
+    '拖动裁剪框定位；方向键微调，Shift + 方向键快速移动。',
+  ),
+  run: localized('Apply crop', '应用裁剪'),
+  running: localized('Processing…', '处理中…'),
+  sourceUnavailable: localized(
+    'The source image is no longer available to the plugin.',
+    '当前图片已不在插件可访问范围内。',
+  ),
+  title: localized('Crop image', '裁剪图片'),
+});
+
+function localizedCropCopy(translator: {
+  t(messageId: keyof typeof cropMessages): string;
+}): {
   aspectRatio: string;
   close: string;
   cropArea: string;
@@ -383,40 +412,23 @@ function localizedCropCopy(locale: string): {
   sourceUnavailable: string;
   title: string;
 } {
-  if (isChineseLocale(locale)) {
-    return {
-      aspectRatio: '画面比例',
-      close: '关闭',
-      cropArea: '裁剪区域，可拖动或使用方向键定位',
-      cropSize: '裁剪范围',
-      decreaseCropSize: '缩小裁剪范围',
-      failed: '图片裁剪失败',
-      increaseCropSize: '扩大裁剪范围',
-      original: '原图比例',
-      output: '输出尺寸',
-      positionHint: '拖动裁剪框定位；方向键微调，Shift + 方向键快速移动。',
-      run: '应用裁剪',
-      running: '处理中…',
-      sourceUnavailable: '当前图片已不在插件可访问范围内。',
-      title: '裁剪图片',
-    };
-  }
-  return {
-    aspectRatio: 'Aspect ratio',
-    close: 'Close',
-    cropArea: 'Crop area; drag or use arrow keys to position',
-    cropSize: 'Crop size',
-    decreaseCropSize: 'Decrease crop size',
-    failed: 'Image crop failed',
-    increaseCropSize: 'Increase crop size',
-    original: 'Original',
-    output: 'Output size',
-    positionHint: 'Drag to position. Use arrow keys for fine movement and Shift + arrow keys for larger steps.',
-    run: 'Apply crop',
-    running: 'Processing…',
-    sourceUnavailable: 'The source image is no longer available to the plugin.',
-    title: 'Crop image',
-  };
+  return translateCopy(cropMessages, translator);
+}
+
+function translateCopy<const Messages extends Record<string, unknown>>(
+  messages: Messages,
+  translator: { t(messageId: keyof Messages & string): string },
+): Record<keyof Messages, string> {
+  return Object.fromEntries(
+    Object.keys(messages).map((messageId) => [
+      messageId,
+      translator.t(messageId as keyof Messages & string),
+    ]),
+  ) as Record<keyof Messages, string>;
+}
+
+function localized(english: string, chinese: string) {
+  return { default: english, locales: { 'zh-CN': chinese } };
 }
 
 function rounded(value: number): number {
