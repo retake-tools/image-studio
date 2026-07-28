@@ -30,6 +30,11 @@ const capabilities = await Promise.all(
     readJson(entry.definitionPath, packageRoot)
   )),
 );
+const declarativeComponentCounts = {
+  agentPresets: rootPackage.components.agentPresets.length,
+  skills: rootPackage.components.skills.length,
+  workflows: rootPackage.components.workflows.length,
+};
 
 assert.match(
   authoringPackage.version,
@@ -47,6 +52,16 @@ const moduleDescriptor = rootPackage.components.pluginModules.find(
 assert.ok(moduleDescriptor, 'Root Package must declare the PluginModule.');
 assert.equal(moduleDescriptor.version, pluginModule.version);
 assert.equal(moduleDescriptor.definitionHash, pluginModule.definitionHash);
+assert.deepEqual(
+  declarativeComponentCounts,
+  {
+    agentPresets: 1,
+    skills: 1,
+    workflows: 1,
+  },
+  'The single Image Studio Package must carry its Guided Image definitions.',
+);
+assert.deepEqual(rootPackage.dependencies, []);
 
 for (const [index, capability] of capabilities.entries()) {
   const descriptor = capabilityDescriptors[index];
@@ -174,6 +189,7 @@ console.log(JSON.stringify({
   packageId: rootPackage.packageId,
   pluginModuleId: pluginModule.pluginModuleId,
   portableSourceFiles: portableSourceFiles.length,
+  declarativeComponentCounts,
   version: authoringPackage.version,
 }));
 

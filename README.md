@@ -36,12 +36,17 @@ Settings facades. The workspace-level default resize format is a typed Plugin
 setting; locale and Theme changes flow from the Host without Plugin-specific
 Core access.
 
+The same single Retake Package also contributes the Guided Image Skill,
+manual-review Workflow, and bounded Guided Image Operator AgentPreset. Guided
+Image is a workflow entrypoint into Image Studio, not a second Plugin or a
+separately installed product.
+
 Retake Whiteboard remains responsible for canvas state, assets, executions,
 history, package lifecycle, trust, fallback UI, and persistence. This
 repository owns the image-specific capability, action, panel, preview,
 parameters, and browser processor.
 
-The portable Retake Package source lives in [`plugin/`](./plugin). Keeping the
+The portable, single Retake Package source lives in [`plugin/`](./plugin). Keeping the
 package boundary in its own directory lets the local Package Manager validate
 only declared files while repository-level tests and authoring dependencies
 stay outside the distributed artifact.

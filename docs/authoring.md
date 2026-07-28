@@ -8,9 +8,12 @@ two boundaries are related but not identical.
 ```text
 image-studio/
 ├── plugin/                     Portable Retake Package source
+│   ├── agents/                 Guided Image AgentPreset
 │   ├── definitions/            Capability and parameter contracts
+│   ├── skills/                 Guided Image Skill
 │   ├── src/                    Trusted Web PluginModule source
 │   ├── vendor/npm/             Pinned build-time authoring artifacts
+│   ├── workflows/              Guided Image Workflow
 │   ├── package.json            Controlled-build dependencies
 │   ├── package-lock.json       Exact dependency versions and integrity
 │   ├── retake.package.json     Root Package manifest
@@ -30,6 +33,7 @@ Package. Tests, Git metadata, and repository automation are not distributed.
 Image Studio owns:
 
 - image-specific Capabilities and parameter schemas;
+- its image-specific Skills, Workflows, and AgentPresets;
 - toolbar Actions and native React Panels;
 - local preview state;
 - Canvas 2D, WebGL, Worker, or WASM processors when a real feature needs them.
@@ -88,9 +92,12 @@ projection, Board History, and historical Operation context. See
 [Annotation editing](./annotation.md).
 
 `image.guided_edit` is the narrow composable counterpart for Package-authored
-Skills and Workflows. Its public contract accepts one source Image, one inline
-instruction, and one optional guidance Image (reference or mask). The manual
-Image Toolbar Command uses the same Capability without requiring guidance.
+Skills and Workflows. The same Image Studio Package now carries its Guided
+Image Skill, manual-review Workflow, and bounded AgentPreset; these definitions
+are not a second Package or Plugin. Its public contract accepts one source
+Image, one inline instruction, and one optional guidance Image (reference or
+mask). The manual Image Toolbar Command uses the same Capability without
+requiring guidance.
 
 `image.outpaint` keeps target geometry and image preparation in the Plugin.
 Image Studio builds one transparent target-size guide and one opaque black/white
