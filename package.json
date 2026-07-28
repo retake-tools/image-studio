@@ -4,6 +4,9 @@
   "private": true,
   "description": "Source and validation workspace for the Retake Image Studio plugin.",
   "type": "module",
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0"
+  },
   "scripts": {
     "release:check": "npm run validate && node scripts/check-release.mjs",
     "test": "tsx --test test/*.test.ts",
@@ -11,7 +14,7 @@
     "validate": "node scripts/validate-package.mjs"
   },
   "devDependencies": {
-    "@types/node": "26.1.0",
+    "@types/node": "22.19.7",
     "@types/react": "19.2.17",
     "react": "19.2.7",
     "tsx": "4.22.4",
