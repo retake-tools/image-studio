@@ -4,6 +4,7 @@ import { ImageStudioAnnotationPanel } from './annotation-panel';
 import type {
   ImageSelectionToolbarContextV2,
   ImageToolbarBlockV2,
+  ImageToolbarIconV2,
   PluginActivationContextV2,
   PluginOperationActionContextV2,
 } from './contracts';
@@ -176,27 +177,33 @@ export const outpaintCapability = definePluginContribution({
 
 export const adjustImageAction = imageToolbarAction(
   localized('Adjust image', '调整图片'),
+  'adjustments',
   adjustPanelStore,
 );
 export const annotationImageAction = imageToolbarAction(
   localized('Annotate image', '标注图片'),
+  'annotation',
   annotationPanelStore,
 );
 export const cropImageAction = imageToolbarAction(
   localized('Crop image', '裁剪图片'),
+  'crop',
   cropPanelStore,
 );
 export const resizeImageAction = imageToolbarAction(
   localized('Resize image', '缩放图片'),
+  'resize',
   resizePanelStore,
 );
 export const selectionMaskImageAction = imageToolbarAction(
   localized('Create selection mask', '创建选区蒙版'),
+  'selection-mask',
   selectionMaskPanelStore,
 );
 
 export const maskedEditSelectionAction = definePluginContribution({
   apiVersion: 2,
+  icon: 'smart-edit',
   kind: 'action',
   label: localized('Masked AI edit', '局部 AI 编辑'),
   placement: 'selection.toolbar',
@@ -212,6 +219,7 @@ export const maskedEditSelectionAction = definePluginContribution({
 
 export const outpaintImageAction = imageToolbarAction(
   localized('Expand image', 'AI 扩图'),
+  'outpaint',
   outpaintPanelStore,
 );
 
@@ -336,12 +344,14 @@ function localized(english: string, chinese: string): LocalizedText {
 
 function imageToolbarAction(
   label: LocalizedText,
+  icon: ImageToolbarIconV2,
   panelStore: {
     open(block: ImageToolbarBlockV2): void;
   },
 ) {
   return definePluginContribution({
     apiVersion: 2,
+    icon,
     kind: 'action',
     label,
     placement: 'image.toolbar',

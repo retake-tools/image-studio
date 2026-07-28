@@ -14,6 +14,15 @@ export interface ImageToolbarBlockV2 {
   readonly type: 'image';
 }
 
+export type ImageToolbarIconV2 =
+  | 'adjustments'
+  | 'annotation'
+  | 'crop'
+  | 'outpaint'
+  | 'resize'
+  | 'selection-mask'
+  | 'smart-edit';
+
 export interface PluginAssetV2 {
   readonly assetId: string;
   readonly createdAt: string;

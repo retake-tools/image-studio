@@ -51,6 +51,8 @@
     "definitions/image.masked_edit.parameters.json",
     "definitions/image.outpaint.json",
     "definitions/image.outpaint.parameters.json",
+    "package-lock.json",
+    "package.json",
     "retake.plugin.json",
     "src/adjust-panel.tsx",
     "src/annotation-copy.ts",

@@ -7,6 +7,7 @@ export interface AnnotationCopy {
   brush: string;
   candidateCount: string;
   clear: string;
+  clearConfirm: string;
   close: string;
   color: string;
   connection: string;
@@ -54,6 +55,7 @@ export function annotationCopy(locale: string): AnnotationCopy {
       brush: '区域画笔',
       candidateCount: '候选数量',
       clear: '清空',
+      clearConfirm: '确定要清空所有标记吗？此操作可以通过撤销恢复。',
       close: '关闭',
       color: '颜色',
       connection: '连接',
@@ -99,6 +101,7 @@ export function annotationCopy(locale: string): AnnotationCopy {
     brush: 'Region brush',
     candidateCount: 'Candidates',
     clear: 'Clear',
+    clearConfirm: 'Clear every mark? You can restore them with Undo.',
     close: 'Close',
     color: 'Color',
     connection: 'Connection',

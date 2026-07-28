@@ -4,10 +4,30 @@ import React, {
   useRef,
   useState,
   useSyncExternalStore,
+  type CSSProperties,
   type KeyboardEvent,
   type PointerEvent,
   type ReactElement,
+  type WheelEvent,
 } from 'react';
+import {
+  ArrowUpRight,
+  Circle,
+  Eraser,
+  MapPin,
+  Maximize2,
+  MousePointer2,
+  Paintbrush,
+  PenLine,
+  RectangleHorizontal,
+  Redo2,
+  RotateCcw,
+  Trash2,
+  Undo2,
+  X,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react';
 import {
   annotationColorOptions,
   annotationLimits,
@@ -16,6 +36,7 @@ import {
   createAnnotatedComposite,
   createAnnotationMark,
   finalizeDrawingAnnotationMark,
+  fitAnnotationStage,
   hasExecutableAnnotationIntent,
   hitTestAnnotationEndpoint,
   hitTestAnnotationMark,
@@ -111,6 +132,10 @@ export function ImageStudioAnnotationPanel({
   const [pending, setPending] = useState(false);
   const [selectedMarkId, setSelectedMarkId] = useState<string | null>(null);
   const [strokeSize, setStrokeSize] = useState<AnnotationStrokeSize>('m');
+  const [stageShellSize, setStageShellSize] = useState({
+    height: 0,
+    width: 0,
+  });
   const [zoom, setZoom] = useState(1);
   const gestureRef = useRef<Gesture>(null);
   const intentRefs = useRef(new Map<string, HTMLTextAreaElement>());
@@ -119,6 +144,7 @@ export function ImageStudioAnnotationPanel({
     past: AnnotationMark[][];
   }>({ future: [], past: [] });
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const stageShellRef = useRef<HTMLDivElement | null>(null);
   const connections = sourceBlockId
     ? host.execution.listConnections({ capabilityId })
     : [];
@@ -222,6 +248,36 @@ export function ImageStudioAnnotationPanel({
     }
   }, [panel.block, pending, sourceBlockId, sourceIsBound]);
 
+  useEffect(() => {
+    const shell = stageShellRef.current;
+    if (!shell) return;
+    const stageShell = shell;
+
+    function updateStageShellSize(): void {
+      setStageShellSize((current) => {
+        const next = {
+          height: stageShell.clientHeight,
+          width: stageShell.clientWidth,
+        };
+        return (
+          Math.abs(current.height - next.height) < 0.5
+          && Math.abs(current.width - next.width) < 0.5
+        ) ? current : next;
+      });
+    }
+
+    updateStageShellSize();
+    const observer = typeof ResizeObserver === 'undefined'
+      ? null
+      : new ResizeObserver(updateStageShellSize);
+    observer?.observe(stageShell);
+    window.addEventListener('resize', updateStageShellSize);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', updateStageShellSize);
+    };
+  }, [sourceBlockId]);
+
   const manifest = useMemo<AnnotationManifest>(() => ({
     globalInstruction,
     marks,
@@ -243,6 +299,15 @@ export function ImageStudioAnnotationPanel({
     && missingIntentIds.length === 0
     && !pending,
   );
+  const selectedMark = marks.find((mark) => mark.id === selectedMarkId);
+  const hoveredMark = marks.find((mark) => mark.id === hoveredMarkId);
+  const overlayActionMark = hoveredMark ?? selectedMark;
+  const displayedSelectedMarkId = hoveredMarkId ?? selectedMarkId;
+  const stageSize = fitAnnotationStage(
+    imageAspectRatio,
+    stageShellSize.width,
+    stageShellSize.height,
+  );
 
   if (!source.blockId) return null;
 
@@ -258,6 +323,14 @@ export function ImageStudioAnnotationPanel({
       future: [],
       past: [...historyRef.current.past, structuredClone(marks)].slice(-80),
     };
+  }
+
+  function selectMark(markId: string | null): void {
+    setSelectedMarkId(markId);
+    const mark = marks.find((candidate) => candidate.id === markId);
+    if (!mark) return;
+    setColor(mark.color);
+    setStrokeSize(mark.strokeSize);
   }
 
   function undo(): void {
@@ -339,7 +412,7 @@ export function ImageStudioAnnotationPanel({
       return;
     }
     if (activeTool === 'select') {
-      setSelectedMarkId(hit?.id ?? null);
+      selectMark(hit?.id ?? null);
       if (hit) {
         recordHistory();
         event.currentTarget.setPointerCapture(event.pointerId);
@@ -372,6 +445,8 @@ export function ImageStudioAnnotationPanel({
     );
     updateMarks((current) => [...current, mark]);
     setSelectedMarkId(mark.id);
+    setColor(mark.color);
+    setStrokeSize(mark.strokeSize);
     event.currentTarget.setPointerCapture(event.pointerId);
     gestureRef.current = { kind: 'draw', markId: mark.id };
   }
@@ -482,6 +557,18 @@ export function ImageStudioAnnotationPanel({
     }
   }
 
+  function onStageWheel(event: WheelEvent<HTMLDivElement>): void {
+    event.preventDefault();
+    event.stopPropagation();
+    setZoom((current) => {
+      const next = Math.min(5, Math.max(1, (
+        current * Math.exp(-event.deltaY * 0.0014)
+      )));
+      if (next <= 1.001) setPan({ x: 0, y: 0 });
+      return next;
+    });
+  }
+
   async function run(): Promise<void> {
     if (!canRun || !source.url || !sourceBlockId) return;
     setError(null);
@@ -520,6 +607,7 @@ export function ImageStudioAnnotationPanel({
   return (
     <>
       <style>{imageStudioStyles + annotationStyles}</style>
+      <div aria-hidden="true" className="retake-annotation-modal-layer" />
       <section
         aria-label={copy.title}
         aria-busy={pending}
@@ -539,7 +627,7 @@ export function ImageStudioAnnotationPanel({
             onClick={() => annotationPanelStore.close()}
             type="button"
           >
-            ×
+            <X aria-hidden="true" size={16} />
           </button>
         </header>
 
@@ -547,343 +635,512 @@ export function ImageStudioAnnotationPanel({
           <p className="retake-annotation-notice">{copy.historical}</p>
         ) : null}
 
-        <div className="retake-annotation-tools">
-          <AnnotationToolButton
-            active={activeTool === 'select'}
-            disabled={pending}
-            label={copy.select}
-            onClick={() => setActiveTool('select')}
-          />
-          {tools.map((tool) => (
-            <AnnotationToolButton
-              active={activeTool === tool}
-              disabled={pending}
-              key={tool}
-              label={annotationKindLabel(tool, copy)}
-              onClick={() => setActiveTool(tool)}
-            />
-          ))}
-          <AnnotationToolButton
-            active={activeTool === 'eraser'}
-            disabled={pending}
-            label={copy.eraser}
-            onClick={() => setActiveTool('eraser')}
-          />
-          <AnnotationToolButton
-            disabled={pending || historyRef.current.past.length === 0}
-            label={copy.undo}
-            onClick={undo}
-          />
-          <AnnotationToolButton
-            disabled={pending || historyRef.current.future.length === 0}
-            label={copy.redo}
-            onClick={redo}
-          />
-          <AnnotationToolButton
-            disabled={pending || marks.length === 0}
-            label={copy.clear}
-            onClick={() => {
-              if (marks.length === 0) return;
-              recordHistory();
-              updateMarks(() => []);
-              setSelectedMarkId(null);
-            }}
-          />
-        </div>
-
-        <div className="retake-annotation-workspace">
-          <div className="retake-annotation-stage-shell">
-            {source.url ? (
-              <div
-                className="retake-annotation-stage"
-                style={{
-                  aspectRatio: imageAspectRatio ?? 1,
-                  transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-                  width: imageAspectRatio
-                    ? `min(100%, 620px, ${62 * imageAspectRatio}vh)`
-                    : 'min(100%, 620px)',
+        <div className="retake-annotation-editor">
+          <div className="retake-annotation-editor-shell">
+            <div
+              aria-label={copy.title}
+              className="retake-annotation-tools"
+            >
+              <AnnotationToolButton
+                active={activeTool === 'select'}
+                disabled={pending}
+                label={copy.select}
+                onClick={() => setActiveTool('select')}
+              >
+                <MousePointer2 aria-hidden="true" size={15} />
+              </AnnotationToolButton>
+              {tools.map((tool) => (
+                <AnnotationToolButton
+                  active={activeTool === tool}
+                  disabled={pending}
+                  key={tool}
+                  label={annotationKindLabel(tool, copy)}
+                  onClick={() => setActiveTool(tool)}
+                >
+                  <AnnotationKindIcon kind={tool} />
+                </AnnotationToolButton>
+              ))}
+              <AnnotationToolButton
+                active={activeTool === 'eraser'}
+                disabled={pending}
+                label={copy.eraser}
+                onClick={() => setActiveTool('eraser')}
+              >
+                <Eraser aria-hidden="true" size={15} />
+              </AnnotationToolButton>
+              <span className="retake-annotation-tool-separator" />
+              <AnnotationToolButton
+                disabled={pending || historyRef.current.past.length === 0}
+                label={copy.undo}
+                onClick={undo}
+              >
+                <Undo2 aria-hidden="true" size={15} />
+              </AnnotationToolButton>
+              <AnnotationToolButton
+                disabled={pending || historyRef.current.future.length === 0}
+                label={copy.redo}
+                onClick={redo}
+              >
+                <Redo2 aria-hidden="true" size={15} />
+              </AnnotationToolButton>
+              <AnnotationToolButton
+                disabled={pending || marks.length === 0}
+                label={copy.clear}
+                onClick={() => {
+                  if (
+                    marks.length === 0
+                    || !window.confirm(copy.clearConfirm)
+                  ) return;
+                  recordHistory();
+                  updateMarks(() => []);
+                  setSelectedMarkId(null);
                 }}
               >
-                <img
-                  alt={source.title}
-                  draggable={false}
-                  onLoad={(event) => {
-                    const image = event.currentTarget;
-                    if (image.naturalWidth && image.naturalHeight) {
-                      setImageAspectRatio(
-                        image.naturalWidth / image.naturalHeight,
-                      );
-                    }
-                  }}
-                  src={source.url}
-                />
-                <div
-                  className="retake-annotation-pointer-layer"
-                  onPointerCancel={finishGesture}
-                  onPointerDown={onStagePointerDown}
-                  onPointerMove={onStagePointerMove}
-                  onPointerLeave={() => setHoveredMarkId(null)}
-                  onPointerUp={finishGesture}
-                  ref={stageRef}
-                  role="application"
-                  tabIndex={0}
-                >
-                  <svg
-                    aria-hidden="true"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 1 1"
+                <RotateCcw aria-hidden="true" size={15} />
+              </AnnotationToolButton>
+            </div>
+
+            <div className="retake-annotation-workspace">
+              <div
+                className="retake-annotation-stage-shell"
+                ref={stageShellRef}
+              >
+                {source.url ? (
+                  <div
+                    className={`retake-annotation-stage is-${activeTool}-tool`}
+                    style={{
+                      ...(stageSize
+                        ? {
+                            height: stageSize.height,
+                            width: stageSize.width,
+                          }
+                        : {
+                            aspectRatio: imageAspectRatio ?? 1,
+                            width: '100%',
+                          }),
+                      transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                    }}
                   >
-                    <AnnotationArrowDefinitions />
-                    {marks.map((mark) => (
-                      <AnnotationOverlayMark
-                        key={mark.id}
-                        mark={mark}
-                        selected={
-                          selectedMarkId === mark.id
-                          || hoveredMarkId === mark.id
+                    <img
+                      alt={source.title}
+                      draggable={false}
+                      onLoad={(event) => {
+                        const image = event.currentTarget;
+                        if (image.naturalWidth && image.naturalHeight) {
+                          setImageAspectRatio(
+                            image.naturalWidth / image.naturalHeight,
+                          );
                         }
-                      />
+                      }}
+                      src={source.url}
+                    />
+                    <div
+                      className="retake-annotation-pointer-layer"
+                      onPointerCancel={finishGesture}
+                      onPointerDown={onStagePointerDown}
+                      onPointerMove={onStagePointerMove}
+                      onPointerLeave={(event) => {
+                        if (gestureRef.current) return;
+                        const relatedTarget = event.relatedTarget;
+                        if (
+                          relatedTarget instanceof Node
+                          && event.currentTarget.parentElement?.contains(
+                            relatedTarget,
+                          )
+                        ) return;
+                        setHoveredMarkId(null);
+                      }}
+                      onPointerUp={finishGesture}
+                      onWheel={onStageWheel}
+                      ref={stageRef}
+                      role="application"
+                      tabIndex={0}
+                    >
+                      <svg
+                        aria-hidden="true"
+                        preserveAspectRatio="none"
+                        viewBox="0 0 1 1"
+                      >
+                        <AnnotationArrowDefinitions />
+                        {marks.map((mark) => (
+                          <AnnotationOverlayMark
+                            imageHeight={stageSize?.height ?? 1}
+                            imageWidth={stageSize?.width ?? 1}
+                            key={mark.id}
+                            mark={mark}
+                            selected={
+                              selectedMarkId === mark.id
+                              || hoveredMarkId === mark.id
+                            }
+                          />
+                        ))}
+                      </svg>
+                    </div>
+                    {hoveredMark?.intent.trim() ? (
+                      <div
+                        className="retake-annotation-hover-prompt"
+                        role="tooltip"
+                        style={annotationAnchorStyle(hoveredMark)}
+                      >
+                        <strong>{hoveredMark.id}</strong>
+                        <span>{hoveredMark.intent.trim()}</span>
+                      </div>
+                    ) : null}
+                    {overlayActionMark ? (
+                      <button
+                        aria-label={`${copy.deleteMark} ${overlayActionMark.id}`}
+                        className="retake-annotation-quick-delete"
+                        disabled={pending}
+                        onClick={() => {
+                          recordHistory();
+                          updateMarks((current) => current.filter(
+                            (mark) => mark.id !== overlayActionMark.id,
+                          ));
+                          if (selectedMarkId === overlayActionMark.id) {
+                            setSelectedMarkId(null);
+                          }
+                          setHoveredMarkId(null);
+                        }}
+                        onPointerEnter={() => {
+                          setHoveredMarkId(overlayActionMark.id);
+                        }}
+                        onPointerLeave={() => {
+                          if (selectedMarkId !== overlayActionMark.id) {
+                            setHoveredMarkId(null);
+                          }
+                        }}
+                        style={annotationQuickDeleteStyle(
+                          overlayActionMark,
+                          stageSize?.width ?? 1,
+                          stageSize?.height ?? 1,
+                        )}
+                        type="button"
+                      >
+                        <Trash2 aria-hidden="true" size={13} />
+                      </button>
+                    ) : null}
+                  </div>
+                ) : (
+                  <p className="retake-image-studio-panel__error">
+                    {copy.sourceUnavailable}
+                  </p>
+                )}
+                <div className="retake-annotation-zoom">
+                  <button
+                    aria-label={copy.zoomOut}
+                    disabled={pending || zoom <= 1}
+                    onClick={() => {
+                      setZoom((current) => Math.max(1, current / 1.2));
+                      if (zoom <= 1.2) setPan({ x: 0, y: 0 });
+                    }}
+                    type="button"
+                  >
+                    <ZoomOut aria-hidden="true" size={14} />
+                  </button>
+                  <span>{Math.round(zoom * 100)}%</span>
+                  <button
+                    aria-label={copy.zoomIn}
+                    disabled={pending || zoom >= 5}
+                    onClick={() => setZoom((current) => (
+                      Math.min(5, current * 1.2)
                     ))}
-                  </svg>
+                    type="button"
+                  >
+                    <ZoomIn aria-hidden="true" size={14} />
+                  </button>
+                  <button
+                    aria-label={copy.zoomReset}
+                    disabled={pending}
+                    onClick={() => {
+                      setPan({ x: 0, y: 0 });
+                      setZoom(1);
+                    }}
+                    type="button"
+                  >
+                    <Maximize2 aria-hidden="true" size={14} />
+                  </button>
                 </div>
               </div>
-            ) : (
+              <small className="retake-annotation-pan-hint">
+                {copy.panHint}
+              </small>
+            </div>
+
+            <aside className="retake-annotation-side-panel">
+              <div className="retake-annotation-settings">
+                <fieldset disabled={pending}>
+                  <legend>
+                    {selectedMark
+                      ? `${selectedMark.id} · ${copy.color}`
+                      : copy.color}
+                  </legend>
+                  <div className="retake-annotation-swatches">
+                    {annotationColorOptions.map((option) => (
+                      <button
+                        aria-label={annotationColorLabel(option.value, copy)}
+                        className={color === option.value ? 'is-active' : ''}
+                        key={option.value}
+                        onClick={() => {
+                          setColor(option.value);
+                          if (!selectedMarkId) return;
+                          recordHistory();
+                          updateMarks((current) => current.map((mark) => (
+                            mark.id === selectedMarkId
+                              ? { ...mark, color: option.value }
+                              : mark
+                          )));
+                        }}
+                        style={{ background: option.value }}
+                        type="button"
+                      />
+                    ))}
+                  </div>
+                </fieldset>
+                <fieldset disabled={pending}>
+                  <legend>{copy.stroke}</legend>
+                  <div className="retake-annotation-strokes">
+                    {strokeSizes.map((size) => (
+                      <button
+                        className={strokeSize === size ? 'is-active' : ''}
+                        key={size}
+                        onClick={() => {
+                          setStrokeSize(size);
+                          if (!selectedMarkId) return;
+                          recordHistory();
+                          updateMarks((current) => current.map((mark) => (
+                            mark.id === selectedMarkId
+                              ? { ...mark, strokeSize: size }
+                              : mark
+                          )));
+                        }}
+                        type="button"
+                      >
+                        {size.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              </div>
+
+              <div className="retake-annotation-intents">
+                <strong>{copy.intent}</strong>
+                {marks.length === 0 ? <p>{copy.noMarks}</p> : marks.map((mark) => (
+                  <label
+                    className={
+                      displayedSelectedMarkId === mark.id
+                        ? 'is-selected'
+                        : ''
+                    }
+                    key={mark.id}
+                  >
+                    <button
+                      disabled={pending}
+                      onClick={() => selectMark(mark.id)}
+                      type="button"
+                    >
+                      <i style={{ background: mark.color }} />
+                      {mark.id} · {annotationKindLabel(mark.kind, copy)}
+                    </button>
+                    <button
+                      aria-label={`${copy.deleteMark} ${mark.id}`}
+                      className="retake-annotation-delete"
+                      disabled={pending}
+                      onClick={() => {
+                        recordHistory();
+                        updateMarks((current) => (
+                          current.filter((candidate) => candidate.id !== mark.id)
+                        ));
+                        if (selectedMarkId === mark.id) setSelectedMarkId(null);
+                      }}
+                      type="button"
+                    >
+                      <Trash2 aria-hidden="true" size={12} />
+                    </button>
+                    <textarea
+                      disabled={pending}
+                      maxLength={annotationLimits.markIntentLength}
+                      name={`annotation-intent-${mark.id}`}
+                      onChange={(event) => {
+                        const intent = event.target.value;
+                        updateMarks((current) => current.map((candidate) => (
+                          candidate.id === mark.id
+                            ? { ...candidate, intent }
+                            : candidate
+                        )));
+                      }}
+                      onFocus={() => selectMark(mark.id)}
+                      placeholder={copy.intentPlaceholder}
+                      ref={(element) => {
+                        if (element) intentRefs.current.set(mark.id, element);
+                        else intentRefs.current.delete(mark.id);
+                      }}
+                      rows={2}
+                      value={mark.intent}
+                    />
+                  </label>
+                ))}
+              </div>
+
+              <label className="retake-annotation-global">
+                <span>{copy.globalInstruction}</span>
+                <textarea
+                  disabled={pending}
+                  maxLength={annotationLimits.globalInstructionLength}
+                  name="annotation-global-instruction"
+                  onChange={(event) => {
+                    setGlobalInstruction(event.target.value);
+                    setDraftRevision((revision) => revision + 1);
+                  }}
+                  placeholder={copy.globalPlaceholder}
+                  rows={3}
+                  value={globalInstruction}
+                />
+              </label>
+
+              <details className="retake-annotation-prompt">
+                <summary>{copy.promptPreview}</summary>
+                <pre>{compiledInstruction}</pre>
+              </details>
+            </aside>
+          </div>
+
+          <div className="retake-annotation-errors">
+            {connections.length === 0 ? (
+              <p className="retake-image-studio-panel__error">
+                {copy.noConnection}
+              </p>
+            ) : null}
+            {!sourceIsBound ? (
               <p className="retake-image-studio-panel__error">
                 {copy.sourceUnavailable}
               </p>
-            )}
+            ) : null}
+            {missingIntentIds.length > 0 ? (
+              <p className="retake-image-studio-panel__error">
+                {copy.missingIntent}: {missingIntentIds.join(', ')}
+              </p>
+            ) : null}
+            {error ? (
+              <p className="retake-image-studio-panel__error" role="alert">
+                {error}
+              </p>
+            ) : null}
           </div>
-          <div className="retake-annotation-zoom">
-            <button
-              aria-label={copy.zoomOut}
-              disabled={pending || zoom <= 1}
-              onClick={() => {
-                setZoom((current) => Math.max(1, current - 0.25));
-                if (zoom <= 1.25) setPan({ x: 0, y: 0 });
-              }}
-              type="button"
-            >
-              −
-            </button>
-            <span>{Math.round(zoom * 100)}%</span>
-            <button
-              aria-label={copy.zoomIn}
-              disabled={pending || zoom >= 4}
-              onClick={() => setZoom((current) => Math.min(4, current + 0.25))}
-              type="button"
-            >
-              +
-            </button>
-            <button
-              disabled={pending}
-              onClick={() => {
-                setPan({ x: 0, y: 0 });
-                setZoom(1);
-              }}
-              type="button"
-            >
-              {copy.zoomReset}
-            </button>
-          </div>
-          <small className="retake-annotation-pan-hint">{copy.panHint}</small>
-        </div>
 
-        <div className="retake-annotation-settings">
-          <fieldset disabled={pending}>
-            <legend>{copy.color}</legend>
-            <div className="retake-annotation-swatches">
-              {annotationColorOptions.map((option) => (
+          <div className="retake-annotation-run-controls">
+            <label>
+              <span>{copy.connection}</span>
+              <select
+                disabled={pending || connections.length === 0}
+                name="annotation-connection"
+                onChange={(event) => setConnectionId(event.target.value)}
+                value={connectionId}
+              >
+                {connections.map((connection) => (
+                  <option
+                    key={connection.connectionId}
+                    value={connection.connectionId}
+                  >
+                    {connection.displayName}
+                    {connection.modelLabel ? ` · ${connection.modelLabel}` : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div
+              aria-label={copy.candidateCount}
+              className="retake-annotation-result-count"
+            >
+              <span>{copy.candidateCount}</span>
+              {[1, 2, 3, 4].map((count) => (
                 <button
-                  aria-label={annotationColorLabel(option.value, copy)}
-                  className={color === option.value ? 'is-active' : ''}
-                  key={option.value}
-                  onClick={() => {
-                    setColor(option.value);
-                    if (!selectedMarkId) return;
-                    recordHistory();
-                    updateMarks((current) => current.map((mark) => (
-                      mark.id === selectedMarkId
-                        ? { ...mark, color: option.value }
-                        : mark
-                    )));
-                  }}
-                  style={{ background: option.value }}
-                  type="button"
-                />
-              ))}
-            </div>
-          </fieldset>
-          <fieldset disabled={pending}>
-            <legend>{copy.stroke}</legend>
-            <div className="retake-annotation-strokes">
-              {strokeSizes.map((size) => (
-                <button
-                  className={strokeSize === size ? 'is-active' : ''}
-                  key={size}
-                  onClick={() => {
-                    setStrokeSize(size);
-                    if (!selectedMarkId) return;
-                    recordHistory();
-                    updateMarks((current) => current.map((mark) => (
-                      mark.id === selectedMarkId
-                        ? { ...mark, strokeSize: size }
-                        : mark
-                    )));
-                  }}
+                  aria-pressed={outputCount === count}
+                  className={outputCount === count ? 'is-active' : ''}
+                  disabled={pending}
+                  key={count}
+                  onClick={() => setOutputCount(count as 1 | 2 | 3 | 4)}
                   type="button"
                 >
-                  {size.toUpperCase()}
+                  {count}
                 </button>
               ))}
             </div>
-          </fieldset>
-        </div>
-
-        <div className="retake-annotation-intents">
-          <strong>{copy.intent}</strong>
-          {marks.length === 0 ? <p>{copy.noMarks}</p> : marks.map((mark) => (
-            <label
-              className={selectedMarkId === mark.id ? 'is-selected' : ''}
-              key={mark.id}
+            <button
+              className="retake-image-studio-panel__run"
+              disabled={!canRun}
+              onClick={() => void run()}
+              type="button"
             >
-              <button
-                disabled={pending}
-                onClick={() => setSelectedMarkId(mark.id)}
-                type="button"
-              >
-                <i style={{ background: mark.color }} />
-                {mark.id} · {annotationKindLabel(mark.kind, copy)}
-              </button>
-              <button
-                aria-label={`${copy.deleteMark} ${mark.id}`}
-                className="retake-annotation-delete"
-                disabled={pending}
-                onClick={() => {
-                  recordHistory();
-                  updateMarks((current) => (
-                    current.filter((candidate) => candidate.id !== mark.id)
-                  ));
-                  if (selectedMarkId === mark.id) setSelectedMarkId(null);
-                }}
-                type="button"
-              >
-                ×
-              </button>
-              <textarea
-                disabled={pending}
-                maxLength={annotationLimits.markIntentLength}
-                name={`annotation-intent-${mark.id}`}
-                onChange={(event) => {
-                  const intent = event.target.value;
-                  updateMarks((current) => current.map((candidate) => (
-                    candidate.id === mark.id
-                      ? { ...candidate, intent }
-                      : candidate
-                  )));
-                }}
-                onFocus={() => setSelectedMarkId(mark.id)}
-                placeholder={copy.intentPlaceholder}
-                ref={(element) => {
-                  if (element) intentRefs.current.set(mark.id, element);
-                  else intentRefs.current.delete(mark.id);
-                }}
-                rows={2}
-                value={mark.intent}
-              />
-            </label>
-          ))}
+              {pending ? copy.running : copy.run}
+            </button>
+          </div>
         </div>
-
-        <label className="retake-annotation-global">
-          <span>{copy.globalInstruction}</span>
-          <textarea
-            disabled={pending}
-            maxLength={annotationLimits.globalInstructionLength}
-            name="annotation-global-instruction"
-            onChange={(event) => {
-              setGlobalInstruction(event.target.value);
-              setDraftRevision((revision) => revision + 1);
-            }}
-            placeholder={copy.globalPlaceholder}
-            rows={3}
-            value={globalInstruction}
-          />
-        </label>
-
-        <div className="retake-annotation-execution">
-          <label>
-            <span>{copy.connection}</span>
-            <select
-              disabled={pending || connections.length === 0}
-              name="annotation-connection"
-              onChange={(event) => setConnectionId(event.target.value)}
-              value={connectionId}
-            >
-              {connections.map((connection) => (
-                <option
-                  key={connection.connectionId}
-                  value={connection.connectionId}
-                >
-                  {connection.displayName}
-                  {connection.modelLabel ? ` · ${connection.modelLabel}` : ''}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            <span>{copy.candidateCount}</span>
-            <select
-              disabled={pending}
-              name="annotation-candidate-count"
-              onChange={(event) => {
-                setOutputCount(
-                  Number(event.target.value) as 1 | 2 | 3 | 4,
-                );
-              }}
-              value={outputCount}
-            >
-              {[1, 2, 3, 4].map((count) => (
-                <option key={count} value={count}>{count}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        {connections.length === 0 ? (
-          <p className="retake-image-studio-panel__error">
-            {copy.noConnection}
-          </p>
-        ) : null}
-        {!sourceIsBound ? (
-          <p className="retake-image-studio-panel__error">
-            {copy.sourceUnavailable}
-          </p>
-        ) : null}
-        {missingIntentIds.length > 0 ? (
-          <p className="retake-image-studio-panel__error">
-            {copy.missingIntent}: {missingIntentIds.join(', ')}
-          </p>
-        ) : null}
-        {error ? (
-          <p className="retake-image-studio-panel__error" role="alert">
-            {error}
-          </p>
-        ) : null}
-
-        <details className="retake-annotation-prompt">
-          <summary>{copy.promptPreview}</summary>
-          <pre>{compiledInstruction}</pre>
-        </details>
-
-        <button
-          className="retake-image-studio-panel__run"
-          disabled={!canRun}
-          onClick={() => void run()}
-          type="button"
-        >
-          {pending ? copy.running : copy.run}
-        </button>
       </section>
     </>
   );
+}
+
+function AnnotationKindIcon({
+  kind,
+}: {
+  kind: AnnotationMarkKind;
+}): ReactElement {
+  if (kind === 'marker') return <MapPin aria-hidden="true" size={15} />;
+  if (kind === 'arrow') return <ArrowUpRight aria-hidden="true" size={15} />;
+  if (kind === 'pen') return <PenLine aria-hidden="true" size={15} />;
+  if (kind === 'brush') return <Paintbrush aria-hidden="true" size={15} />;
+  if (kind === 'rect') {
+    return <RectangleHorizontal aria-hidden="true" size={15} />;
+  }
+  return <Circle aria-hidden="true" size={15} />;
+}
+
+function annotationAnchorStyle(mark: AnnotationMark): CSSProperties {
+  const point = annotationMarkAnchor(mark);
+  return {
+    left: `${point.x * 100}%`,
+    top: `${point.y * 100}%`,
+  };
+}
+
+function annotationQuickDeleteStyle(
+  mark: AnnotationMark,
+  imageWidth: number,
+  imageHeight: number,
+): CSSProperties {
+  const anchor = annotationMarkAnchor(mark);
+  const fixedShapeYScale = imageWidth / imageHeight;
+  const badgeCenter = mark.kind === 'marker'
+    ? { x: mark.point.x, y: mark.point.y - 0.04 }
+    : anchor;
+  const radius = 0.014;
+  const x = clamp(
+    badgeCenter.x - 0.018,
+    radius,
+    1 - radius,
+  );
+  const y = clamp(
+    badgeCenter.y - 0.018 * fixedShapeYScale,
+    radius * fixedShapeYScale,
+    1 - radius * fixedShapeYScale,
+  );
+  return {
+    left: `${x * 100}%`,
+    top: `${y * 100}%`,
+  };
+}
+
+function annotationMarkAnchor(mark: AnnotationMark): AnnotationPoint {
+  if (mark.kind === 'marker') return mark.point;
+  if (mark.kind === 'pen' || mark.kind === 'brush') {
+    return mark.points[0] ?? { x: 0.5, y: 0.5 };
+  }
+  return {
+    x: (mark.start.x + mark.end.x) / 2,
+    y: (mark.start.y + mark.end.y) / 2,
+  };
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
 }

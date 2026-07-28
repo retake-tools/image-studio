@@ -95,6 +95,45 @@ export const strokeBySize = {
   xs: 0.8,
 } satisfies Record<AnnotationStrokeSize, number>;
 
+export function annotationBrushStrokeWidthPixels(
+  strokeSize: AnnotationStrokeSize,
+  imageWidth: number,
+  imageHeight: number,
+): number {
+  return strokeBySize[strokeSize]
+    * 9
+    * Math.max(imageWidth, imageHeight)
+    / 900;
+}
+
+export function fitAnnotationStage(
+  imageAspectRatio: number | null,
+  availableWidth: number,
+  availableHeight: number,
+): { height: number; width: number } | null {
+  if (
+    !imageAspectRatio
+    || !Number.isFinite(imageAspectRatio)
+    || imageAspectRatio <= 0
+    || !Number.isFinite(availableWidth)
+    || !Number.isFinite(availableHeight)
+    || availableWidth <= 0
+    || availableHeight <= 0
+  ) return null;
+
+  const availableAspectRatio = availableWidth / availableHeight;
+  if (availableAspectRatio > imageAspectRatio) {
+    return {
+      height: availableHeight,
+      width: availableHeight * imageAspectRatio,
+    };
+  }
+  return {
+    height: availableWidth / imageAspectRatio,
+    width: availableWidth,
+  };
+}
+
 const markPrefixes = {
   arrow: 'A',
   brush: 'B',

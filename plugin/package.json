@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "lucide-react": "1.22.0"
+  },
+  "name": "@retake-tools/image-studio-plugin",
+  "private": true,
+  "version": "0.7.0"
+}

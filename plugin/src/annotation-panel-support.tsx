@@ -1,4 +1,4 @@
-import React, { type ReactElement } from 'react';
+import React, { type ReactElement, type ReactNode } from 'react';
 import {
   annotationDraftFromUnknown,
   type AnnotationDraft,
@@ -49,11 +49,13 @@ function annotationMarkJson(mark: AnnotationMark): PluginJsonValueV2 {
 
 export function AnnotationToolButton({
   active,
+  children,
   disabled,
   label,
   onClick,
 }: {
   active?: boolean;
+  children?: ReactNode;
   disabled?: boolean;
   label: string;
   onClick(): void;
@@ -63,11 +65,12 @@ export function AnnotationToolButton({
       aria-pressed={active}
       className={active ? 'is-active' : undefined}
       disabled={disabled}
+      aria-label={label}
       onClick={onClick}
       title={label}
       type="button"
     >
-      {label}
+      {children ?? label}
     </button>
   );
 }
