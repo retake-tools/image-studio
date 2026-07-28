@@ -25,7 +25,11 @@ Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布�
 Retake Whiteboard 继续负责画布、Block / Edge、AssetStore、Execution、History、Package 生命周期、
 信任和持久化；本仓库只拥有图片专业能力、界面、参数和处理器。
 
-可分发的 Retake Package 源码位于 [`plugin/`](./plugin)。仓库根目录的测试、依赖和 Git 元数据不会
+同一个 Retake Package 还包含 Guided Image Skill、人工审阅 Workflow 和受限 Guided Image
+Operator AgentPreset。Guided Image 是进入 Image Studio 的流程入口，不是第二个 Plugin，也不是
+需要单独安装的产品。
+
+可分发的单一 Retake Package 源码位于 [`plugin/`](./plugin)。仓库根目录的测试、依赖和 Git 元数据不会
 进入安装产物。
 
 ## 从 Web 安装

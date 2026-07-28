@@ -46,6 +46,15 @@ const outpaintCapability = await readJson(
 const outpaintParameters = await readJson(
   'definitions/image.outpaint.parameters.json',
 );
+const guidedImageAgent = await readJson(
+  'agents/guided-image-operator/retake.agent.json',
+);
+const guidedImageSkill = await readJson(
+  'skills/guided-image-edit/retake.skill.json',
+);
+const guidedImageWorkflow = await readJson(
+  'workflows/guided-image-review/retake.workflow.json',
+);
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
 assert.equal(
@@ -299,6 +308,53 @@ assert.equal(
 );
 assert.equal(guidedEditCapability.outputSlots[0]?.cardinality, 'many');
 assert.equal(guidedEditCapability.outputSlots[0]?.slotId, 'edited_images');
+assert.deepEqual(packageManifest.dependencies, []);
+assert.deepEqual(
+  packageManifest.components.agentPresets.map((entry) => entry.agentPresetId),
+  ['retake.agent.guided-image-operator'],
+);
+assert.deepEqual(
+  packageManifest.components.skills.map((entry) => entry.skillId),
+  ['retake.image.guided-edit'],
+);
+assert.deepEqual(
+  packageManifest.components.workflows.map(
+    (entry) => entry.workflowDefinitionId,
+  ),
+  ['retake.workflow.guided-image-review'],
+);
+assert.equal(
+  guidedImageAgent.allowedCapabilityIds[0],
+  guidedEditCapability.capabilityId,
+);
+assert.equal(
+  guidedImageAgent.skillPolicy.allowedSkillIds[0],
+  guidedImageSkill.skillId,
+);
+assert.equal(
+  guidedImageSkill.capabilityBindings[0]?.capabilityId,
+  guidedEditCapability.capabilityId,
+);
+assert.equal(
+  guidedImageWorkflow.steps[0]?.capabilityLock.capabilityId,
+  guidedEditCapability.capabilityId,
+);
+assert.equal(
+  guidedImageWorkflow.steps[0]?.skillLock.skillId,
+  guidedImageSkill.skillId,
+);
+assert.equal(
+  guidedImageWorkflow.steps[0]?.outputAcceptancePolicy,
+  'manual_single',
+);
+assert.equal(guidedImageWorkflow.gates[0]?.subject.kind, 'artifact_revision');
+assert.deepEqual(
+  packageManifest.entrypoints.map((entry) => entry.entrypointId),
+  [
+    'agent:retake.agent.guided-image-operator',
+    'workflow:retake.workflow.guided-image-review',
+  ],
+);
 
 for (const filePath of packageManifest.files) {
   await readFile(new URL(filePath, packageRoot));
@@ -319,6 +375,9 @@ console.log(JSON.stringify({
   packageId: packageManifest.packageId,
   pluginModuleId: pluginManifest.pluginModuleId,
   sourceFiles: packageManifest.files.length,
+  agentPresetIds: [guidedImageAgent.agentPresetId],
+  skillIds: [guidedImageSkill.skillId],
+  workflowIds: [guidedImageWorkflow.workflowId],
 }));
 
 async function readJson(filePath) {

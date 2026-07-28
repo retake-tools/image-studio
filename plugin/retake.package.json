@@ -5,10 +5,18 @@
     "toolchain": "retake_web_plugin_v1@2+esbuild@0.28.1"
   },
   "components": {
-    "agentPresets": [],
+    "agentPresets": [
+      {
+        "agentPresetId": "retake.agent.guided-image-operator",
+        "definitionHash": "sha256:retake-agent-guided-image-operator-v1",
+        "definitionPath": "agents/guided-image-operator/retake.agent.json",
+        "resourcePaths": [],
+        "version": "0.1.0"
+      }
+    ],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-v12",
+        "definitionHash": "sha256:image-studio-web-v13",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
@@ -29,16 +37,68 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.9.1"
+        "version": "0.10.0"
       }
     ],
-    "skills": [],
-    "workflows": []
+    "skills": [
+      {
+        "definitionHash": "sha256:retake-image-guided-edit-skill-v1",
+        "definitionPath": "skills/guided-image-edit/retake.skill.json",
+        "resourcePaths": [],
+        "skillId": "retake.image.guided-edit",
+        "version": "0.1.0"
+      }
+    ],
+    "workflows": [
+      {
+        "definitionHash": "sha256:retake-workflow-guided-image-review-v3",
+        "definitionPath": "workflows/guided-image-review/retake.workflow.json",
+        "resourcePaths": [],
+        "version": "0.1.1",
+        "workflowDefinitionId": "retake.workflow.guided-image-review"
+      }
+    ]
   },
   "dependencies": [],
   "description": "Retake Image Studio tools for workflow-native image editing.",
-  "entrypoints": [],
+  "entrypoints": [
+    {
+      "schemaVersion": 1,
+      "entrypointId": "agent:retake.agent.guided-image-operator",
+      "kind": "agent_preset",
+      "name": "Guided Image Operator",
+      "description": "Advance one ready guided Image edit step and stop at dependencies or human gates.",
+      "ref": {
+        "agentPresetId": "retake.agent.guided-image-operator"
+      },
+      "compatibleStageIds": [
+        "media_generation"
+      ],
+      "requiredInputSlotIds": []
+    },
+    {
+      "schemaVersion": 1,
+      "entrypointId": "workflow:retake.workflow.guided-image-review",
+      "kind": "workflow",
+      "name": "Guided image edit and review",
+      "description": "Edit one Image and require human approval of the accepted result.",
+      "ref": {
+        "workflowDefinitionId": "retake.workflow.guided-image-review"
+      },
+      "compatibleStageIds": [
+        "media_generation"
+      ],
+      "requiredInputSlotIds": [
+        "source_image",
+        "prompt"
+      ],
+      "recommended": true
+    }
+  ],
   "files": [
+    "LICENSE",
+    "README.md",
+    "agents/guided-image-operator/retake.agent.json",
     "definitions/image.annotation_edit.json",
     "definitions/image.annotation_edit.parameters.json",
     "definitions/image.guided_edit.json",
@@ -58,6 +118,7 @@
     "package-lock.json",
     "package.json",
     "retake.plugin.json",
+    "skills/guided-image-edit/retake.skill.json",
     "src/adjust-panel.tsx",
     "src/annotation-copy.ts",
     "src/annotation-overlay.tsx",
@@ -90,7 +151,8 @@
     "src/theme.ts",
     "vendor/npm/retake-plugin-api-0.1.0.tgz",
     "vendor/npm/retake-tools-package-contracts-0.1.0.tgz",
-    "vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz"
+    "vendor/npm/retake-tools-plugin-runtime-0.1.0.tgz",
+    "workflows/guided-image-review/retake.workflow.json"
   ],
   "integrity": "sha256:auto",
   "license": "MIT",
@@ -105,5 +167,5 @@
   "retakeHostCompatibility": "^0.1.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.9.1"
+  "version": "0.10.0"
 }
