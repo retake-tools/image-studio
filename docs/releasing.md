@@ -45,6 +45,9 @@ Verify in a disposable Retake Workspace:
 - **Adjust image**, **Crop image**, **Resize image**, and **Create selection
   mask** each create one Operation, one Result Image, one succeeded Execution,
   and one output Asset while leaving the source unchanged;
+- **Guided edit** accepts source plus instruction without a guidance Image,
+  while the same Capability accepts an optional reference or mask from a
+  Package-authored Workflow;
 - Crop aspect presets stay in bounds and the recorded output dimensions match
   the actual PNG;
 - Resize output dimensions, MIME type, extension, and file encoding agree;

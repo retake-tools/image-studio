@@ -8,12 +8,14 @@
     "agentPresets": [],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-v9",
+        "definitionHash": "sha256:image-studio-web-v10",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
           "definitions/image.annotation_edit.json",
           "definitions/image.annotation_edit.parameters.json",
+          "definitions/image.guided_edit.json",
+          "definitions/image.guided_edit.parameters.json",
           "definitions/image.local_adjust.json",
           "definitions/image.local_adjust.parameters.json",
           "definitions/image.local_crop.json",
@@ -27,7 +29,7 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.8.0"
+        "version": "0.9.0"
       }
     ],
     "skills": [],
@@ -39,6 +41,8 @@
   "files": [
     "definitions/image.annotation_edit.json",
     "definitions/image.annotation_edit.parameters.json",
+    "definitions/image.guided_edit.json",
+    "definitions/image.guided_edit.parameters.json",
     "definitions/image.local_adjust.json",
     "definitions/image.local_adjust.parameters.json",
     "definitions/image.local_crop.json",
@@ -63,6 +67,7 @@
     "src/annotation.ts",
     "src/browser-image.ts",
     "src/crop-panel.tsx",
+    "src/guided-edit-panel.tsx",
     "src/image-adjustments.ts",
     "src/image-crop.ts",
     "src/image-resize.ts",
@@ -100,5 +105,5 @@
   "retakeHostCompatibility": "^0.1.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.8.0"
+  "version": "0.9.0"
 }

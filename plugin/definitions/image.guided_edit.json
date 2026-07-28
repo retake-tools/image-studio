@@ -1,0 +1,79 @@
+{
+  "capabilityId": "image.guided_edit",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-guided-edit-v1",
+  "displayName": {
+    "default": "Guided image edit",
+    "locales": {
+      "zh-CN": "引导式图片编辑"
+    }
+  },
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    },
+    {
+      "artifactTypes": [
+        "image",
+        "reference",
+        "selection_mask"
+      ],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "optional",
+      "dataTypes": [
+        "image"
+      ],
+      "required": false,
+      "semanticRole": "guidance",
+      "slotId": "guidance_image"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "inline"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "text"
+      ],
+      "required": true,
+      "semanticRole": "prompt",
+      "slotId": "prompt"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "many",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "edited_images",
+      "slotId": "edited_images"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.guided_edit.parameters.json",
+  "runtimeRequirements": [
+    "durable_asset_output",
+    "image_generation"
+  ],
+  "schemaVersion": 2,
+  "supportedAdapterClasses": [
+    "agent_runtime.media"
+  ],
+  "version": "0.1.0"
+}

@@ -21,6 +21,9 @@ Retake-connected AI capabilities:
 - `image.annotation_edit`: mark an image with numbered points, arrows, freehand
   lines, region brushes, rectangles, or ellipses; attach per-mark or global
   instructions; and request one to four clean edited candidates.
+- `image.guided_edit`: edit one source image from a written instruction with an
+  optional reference or mask, using the same public connected execution
+  contract for manual Commands, Workflows, and Agents.
 - `image.outpaint`: choose a target ratio and expansion, drag or anchor the
   natural-size source inside the target, and request one to four expanded
   candidates while preserving the original source pixels exactly.
