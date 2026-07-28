@@ -2,57 +2,41 @@
   "contributions": [
     {
       "contributionId": "design.retake.image-studio.action.adjust",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "adjustImageAction",
       "kind": "action"
     },
     {
       "contributionId": "design.retake.image-studio.action.annotation",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "annotationImageAction",
       "kind": "action"
     },
     {
       "contributionId": "design.retake.image-studio.action.annotation-history",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "reopenAnnotationOperationAction",
       "kind": "action"
     },
     {
       "contributionId": "design.retake.image-studio.action.crop",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "cropImageAction",
       "kind": "action"
     },
     {
       "contributionId": "design.retake.image-studio.action.masked-edit",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "maskedEditSelectionAction",
       "kind": "action"
     },
     {
       "contributionId": "design.retake.image-studio.action.outpaint",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "outpaintImageAction",
       "kind": "action"
     },
     {
       "contributionId": "design.retake.image-studio.action.resize",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "resizeImageAction",
       "kind": "action"
     },
     {
       "contributionId": "design.retake.image-studio.action.selection-mask",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "selectionMaskImageAction",
       "kind": "action"
     },
@@ -107,50 +91,36 @@
     },
     {
       "contributionId": "design.retake.image-studio.panel.adjust",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "adjustImagePanel",
       "kind": "panel"
     },
     {
       "contributionId": "design.retake.image-studio.panel.annotation",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "annotationImagePanel",
       "kind": "panel"
     },
     {
       "contributionId": "design.retake.image-studio.panel.crop",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "cropImagePanel",
       "kind": "panel"
     },
     {
       "contributionId": "design.retake.image-studio.panel.masked-edit",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "maskedEditPanel",
       "kind": "panel"
     },
     {
       "contributionId": "design.retake.image-studio.panel.outpaint",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "outpaintPanel",
       "kind": "panel"
     },
     {
       "contributionId": "design.retake.image-studio.panel.resize",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "resizeImagePanel",
       "kind": "panel"
     },
     {
       "contributionId": "design.retake.image-studio.panel.selection-mask",
-      "definitionHash": null,
-      "definitionPath": null,
       "exportName": "selectionMaskImagePanel",
       "kind": "panel"
     }
