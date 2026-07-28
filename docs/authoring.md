@@ -87,6 +87,11 @@ Block scope, imported composite Asset, execution lifecycle, multi-result
 projection, Board History, and historical Operation context. See
 [Annotation editing](./annotation.md).
 
+`image.guided_edit` is the narrow composable counterpart for Package-authored
+Skills and Workflows. Its public contract accepts one source Image, one inline
+instruction, and one optional guidance Image (reference or mask). The manual
+Image Toolbar Command uses the same Capability without requiring guidance.
+
 `image.outpaint` keeps target geometry and image preparation in the Plugin.
 Image Studio builds one transparent target-size guide and one opaque black/white
 mask, then sends them as typed bound Assets through the same connected

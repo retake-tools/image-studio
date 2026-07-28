@@ -45,6 +45,7 @@ export const adjustPanelStore = Object.freeze({
 });
 
 export const cropPanelStore = createPanelStore();
+export const guidedEditPanelStore = createPanelStore();
 export const resizePanelStore = createPanelStore();
 export const selectionMaskPanelStore = createPanelStore();
 export const maskedEditPanelStore = createSelectionPanelStore();

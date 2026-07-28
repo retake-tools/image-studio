@@ -16,12 +16,14 @@ import { imageStudioSettings } from './settings';
 import { ImageStudioAdjustPanel } from './adjust-panel';
 import { ImageStudioAnnotationPanel } from './annotation-panel';
 import { ImageStudioCropPanel } from './crop-panel';
+import { ImageStudioGuidedEditPanel } from './guided-edit-panel';
 import { ImageStudioMaskedEditPanel } from './masked-edit-panel';
 import { ImageStudioOutpaintPanel } from './outpaint-panel';
 import {
   adjustPanelStore,
   annotationPanelStore,
   cropPanelStore,
+  guidedEditPanelStore,
   maskedEditPanelStore,
   outpaintPanelStore,
   resizePanelStore,
@@ -100,6 +102,39 @@ export const localSelectionMaskCapability = defineCapability({
     schemaVersion: 2,
     supportedAdapterClasses: ['local_canvas'],
     version: '0.2.0',
+  },
+  kind: 'capability',
+});
+
+export const guidedEditCapability = defineCapability({
+  apiVersion: 2,
+  definition: {
+    capabilityId: 'image.guided_edit',
+    category: 'image_editing',
+    definitionHash: 'sha256:image-guided-edit-v1',
+    displayName: localized('Guided image edit', '引导式图片编辑'),
+    inputSlots: [
+      imageSourceInput(),
+      {
+        ...imageInput('guidance_image', 'guidance'),
+        artifactTypes: ['image', 'reference', 'selection_mask'],
+        cardinality: 'optional',
+        required: false,
+      },
+      textInput(),
+    ],
+    outputSlots: [{
+      cardinality: 'many',
+      dataType: 'image',
+      projectionBlockTypes: ['image'],
+      semanticRole: 'edited_images',
+      slotId: 'edited_images',
+    }],
+    parametersSchemaRef: 'definitions/image.guided_edit.parameters.json',
+    runtimeRequirements: ['durable_asset_output', 'image_generation'],
+    schemaVersion: 2,
+    supportedAdapterClasses: ['agent_runtime.media'],
+    version: '0.1.0',
   },
   kind: 'capability',
 });
@@ -221,6 +256,12 @@ export const selectionMaskImageCommand = imageToolbarCommand(
   selectionMaskPanelStore,
   50,
 );
+export const guidedEditImageCommand = imageToolbarCommand(
+  'design.retake.image-studio.command.guided-edit',
+  localized('Guided edit', '引导式编辑'),
+  guidedEditPanelStore,
+  55,
+);
 
 export const maskedEditSelectionCommand = defineCommand({
   apiVersion: 1,
@@ -272,6 +313,7 @@ export const annotationImagePanel = panelContribution(
   ImageStudioAnnotationPanel,
 );
 export const cropImagePanel = panelContribution(ImageStudioCropPanel);
+export const guidedEditPanel = panelContribution(ImageStudioGuidedEditPanel);
 export const maskedEditPanel = panelContribution(ImageStudioMaskedEditPanel);
 export const outpaintPanel = panelContribution(ImageStudioOutpaintPanel);
 export const resizeImagePanel = panelContribution(ImageStudioResizePanel);
@@ -288,6 +330,9 @@ export const imageStudioPlugin = definePlugin({
     annotationImagePanel,
     cropImageCommand,
     cropImagePanel,
+    guidedEditCapability,
+    guidedEditImageCommand,
+    guidedEditPanel,
     localAdjustCapability,
     localCropCapability,
     localResizeCapability,
@@ -456,6 +501,7 @@ function closePanels(): void {
   adjustPanelStore.close();
   annotationPanelStore.close();
   cropPanelStore.close();
+  guidedEditPanelStore.close();
   maskedEditPanelStore.close();
   outpaintPanelStore.close();
   resizePanelStore.close();
