@@ -1,46 +1,6 @@
 {
   "contributions": [
     {
-      "contributionId": "design.retake.image-studio.action.adjust",
-      "exportName": "adjustImageAction",
-      "kind": "action"
-    },
-    {
-      "contributionId": "design.retake.image-studio.action.annotation",
-      "exportName": "annotationImageAction",
-      "kind": "action"
-    },
-    {
-      "contributionId": "design.retake.image-studio.action.annotation-history",
-      "exportName": "reopenAnnotationOperationAction",
-      "kind": "action"
-    },
-    {
-      "contributionId": "design.retake.image-studio.action.crop",
-      "exportName": "cropImageAction",
-      "kind": "action"
-    },
-    {
-      "contributionId": "design.retake.image-studio.action.masked-edit",
-      "exportName": "maskedEditSelectionAction",
-      "kind": "action"
-    },
-    {
-      "contributionId": "design.retake.image-studio.action.outpaint",
-      "exportName": "outpaintImageAction",
-      "kind": "action"
-    },
-    {
-      "contributionId": "design.retake.image-studio.action.resize",
-      "exportName": "resizeImageAction",
-      "kind": "action"
-    },
-    {
-      "contributionId": "design.retake.image-studio.action.selection-mask",
-      "exportName": "selectionMaskImageAction",
-      "kind": "action"
-    },
-    {
       "contributionId": "design.retake.image-studio.capability.annotation-edit",
       "definitionHash": "sha256:image-annotation-edit-v2",
       "definitionPath": "definitions/image.annotation_edit.json",
@@ -90,6 +50,46 @@
       "kind": "capability"
     },
     {
+      "contributionId": "design.retake.image-studio.command.adjust",
+      "exportName": "adjustImageCommand",
+      "kind": "command"
+    },
+    {
+      "contributionId": "design.retake.image-studio.command.annotation",
+      "exportName": "annotationImageCommand",
+      "kind": "command"
+    },
+    {
+      "contributionId": "design.retake.image-studio.command.annotation-history",
+      "exportName": "reopenAnnotationOperationCommand",
+      "kind": "command"
+    },
+    {
+      "contributionId": "design.retake.image-studio.command.crop",
+      "exportName": "cropImageCommand",
+      "kind": "command"
+    },
+    {
+      "contributionId": "design.retake.image-studio.command.masked-edit",
+      "exportName": "maskedEditSelectionCommand",
+      "kind": "command"
+    },
+    {
+      "contributionId": "design.retake.image-studio.command.outpaint",
+      "exportName": "outpaintImageCommand",
+      "kind": "command"
+    },
+    {
+      "contributionId": "design.retake.image-studio.command.resize",
+      "exportName": "resizeImageCommand",
+      "kind": "command"
+    },
+    {
+      "contributionId": "design.retake.image-studio.command.selection-mask",
+      "exportName": "selectionMaskImageCommand",
+      "kind": "command"
+    },
+    {
       "contributionId": "design.retake.image-studio.panel.adjust",
       "exportName": "adjustImagePanel",
       "kind": "panel"
@@ -125,7 +125,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-v7",
+  "definitionHash": "sha256:image-studio-web-v8",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
