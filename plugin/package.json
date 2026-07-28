@@ -1,6 +1,6 @@
 {
   "name": "@retake-tools/image-studio-plugin-source",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
   "type": "module",
   "dependencies": {

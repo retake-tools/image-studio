@@ -8,7 +8,7 @@
     "agentPresets": [],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-v10",
+        "definitionHash": "sha256:image-studio-web-v12",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
@@ -29,7 +29,7 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.9.0"
+        "version": "0.9.1"
       }
     ],
     "skills": [],
@@ -105,5 +105,5 @@
   "retakeHostCompatibility": "^0.1.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.9.0"
+  "version": "0.9.1"
 }
