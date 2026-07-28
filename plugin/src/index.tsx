@@ -111,7 +111,7 @@ export const guidedEditCapability = defineCapability({
   definition: {
     capabilityId: 'image.guided_edit',
     category: 'image_editing',
-    definitionHash: 'sha256:image-guided-edit-v1',
+    definitionHash: 'sha256:image-guided-edit-v3',
     displayName: localized('Guided image edit', '引导式图片编辑'),
     inputSlots: [
       imageSourceInput(),
@@ -121,9 +121,13 @@ export const guidedEditCapability = defineCapability({
         cardinality: 'optional',
         required: false,
       },
-      textInput(),
+      {
+        ...textInput(),
+        bindingKinds: ['block', 'inline'],
+      },
     ],
     outputSlots: [{
+      artifactType: 'image',
       cardinality: 'many',
       dataType: 'image',
       projectionBlockTypes: ['image'],
@@ -134,7 +138,7 @@ export const guidedEditCapability = defineCapability({
     runtimeRequirements: ['durable_asset_output', 'image_generation'],
     schemaVersion: 2,
     supportedAdapterClasses: ['agent_runtime.media'],
-    version: '0.1.0',
+    version: '0.1.1',
   },
   kind: 'capability',
 });

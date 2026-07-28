@@ -9,7 +9,7 @@
     },
     {
       "contributionId": "design.retake.image-studio.capability.guided-edit",
-      "definitionHash": "sha256:image-guided-edit-v1",
+      "definitionHash": "sha256:image-guided-edit-v3",
       "definitionPath": "definitions/image.guided_edit.json",
       "exportName": "guidedEditCapability",
       "kind": "capability"
@@ -142,7 +142,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-v10",
+  "definitionHash": "sha256:image-studio-web-v12",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -172,5 +172,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.9.0"
+  "version": "0.9.1"
 }
