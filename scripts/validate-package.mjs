@@ -89,6 +89,25 @@ assert.deepEqual(
   pluginManifest.contributions.map((entry) => entry.contributionId),
   'Plugin contribution IDs must stay sorted.',
 );
+for (const contribution of pluginManifest.contributions) {
+  assert.deepEqual(
+    Object.keys(contribution).sort(compareText),
+    (
+      contribution.kind === 'capability'
+        ? [
+            'contributionId',
+            'definitionHash',
+            'definitionPath',
+            'exportName',
+            'kind',
+          ]
+        : ['contributionId', 'exportName', 'kind']
+    ),
+    `Plugin contribution must use the exact ${contribution.kind} shape: ${
+      contribution.contributionId
+    }`,
+  );
+}
 
 const capabilityDescriptor = pluginManifest.contributions.find(
   (entry) => entry.definitionPath === 'definitions/image.local_adjust.json',

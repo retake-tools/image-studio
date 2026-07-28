@@ -10,6 +10,21 @@ const pluginModule = await readJson('retake.plugin.json', packageRoot);
 const capabilityDescriptors = pluginModule.contributions.filter(
   (entry) => entry.kind === 'capability',
 );
+const runtimeContributionDescriptors = pluginModule.contributions.filter(
+  (entry) => entry.kind !== 'capability',
+);
+for (const descriptor of runtimeContributionDescriptors) {
+  assert.equal(
+    'definitionHash' in descriptor,
+    false,
+    `${descriptor.contributionId} must not carry a null definitionHash placeholder.`,
+  );
+  assert.equal(
+    'definitionPath' in descriptor,
+    false,
+    `${descriptor.contributionId} must not carry a null definitionPath placeholder.`,
+  );
+}
 const capabilities = await Promise.all(
   capabilityDescriptors.map((entry) => (
     readJson(entry.definitionPath, packageRoot)
