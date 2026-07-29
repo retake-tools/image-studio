@@ -1,58 +1,75 @@
 import React, { type ReactElement } from 'react';
 import {
+  annotationBrushStrokeWidthPixels,
   normalizedBounds,
   strokeBySize,
   type AnnotationMark,
 } from './annotation';
 
+const annotationLocationMarkerPath =
+  'M 0 0 C -0.009 -0.014 -0.027 -0.028 -0.027 -0.047 '
+  + 'A 0.027 0.027 0 1 1 0.027 -0.047 '
+  + 'C 0.027 -0.028 0.009 -0.014 0 0 Z';
+
 export function AnnotationOverlayMark({
+  imageHeight,
+  imageWidth,
   mark,
   selected,
 }: {
+  imageHeight: number;
+  imageWidth: number;
   mark: AnnotationMark;
   selected: boolean;
 }): ReactElement {
-  const strokeWidth = strokeBySize[mark.strokeSize] / 500;
+  const strokeWidth = strokeBySize[mark.strokeSize];
+  const fixedShapeYScale = imageWidth / imageHeight;
   const className = selected ? 'is-selected' : undefined;
+
   if (mark.kind === 'marker') {
     return (
       <g
         className={className}
         data-annotation-mark-id={mark.id}
-        transform={`translate(${mark.point.x} ${mark.point.y})`}
+        transform={
+          `translate(${mark.point.x} ${mark.point.y}) `
+          + `scale(1 ${fixedShapeYScale})`
+        }
       >
         {selected ? (
-          <circle
-            className="retake-annotation-selection"
-            cy={-0.035}
-            r={0.034}
+          <path
+            className="retake-annotation-marker-selection"
+            d={annotationLocationMarkerPath}
           />
         ) : null}
         <path
-          d="M 0 0 C -0.01 -0.015 -0.029 -0.03 -0.029 -0.051 A 0.029 0.029 0 1 1 0.029 -0.051 C 0.029 -0.03 0.01 -0.015 0 0 Z"
+          d={annotationLocationMarkerPath}
           fill={mark.color}
           stroke="#fff"
+          strokeLinejoin="round"
           strokeWidth={0.004}
         />
         <text
           fill="#fff"
-          fontSize={0.019}
+          fontSize={mark.id.length > 2 ? 0.016 : 0.019}
           fontWeight={850}
           textAnchor="middle"
-          y={-0.043}
+          y={-0.04}
         >
           {mark.id}
         </text>
       </g>
     );
   }
+
   if (mark.kind === 'arrow') {
     return (
       <g className={className} data-annotation-mark-id={mark.id}>
         {selected ? (
           <line
             className="retake-annotation-selection"
-            strokeWidth={strokeWidth + 0.015}
+            strokeWidth={strokeWidth + 4}
+            vectorEffect="non-scaling-stroke"
             x1={mark.start.x}
             x2={mark.end.x}
             y1={mark.start.y}
@@ -64,27 +81,39 @@ export function AnnotationOverlayMark({
           stroke={mark.color}
           strokeLinecap="round"
           strokeWidth={strokeWidth}
+          vectorEffect="non-scaling-stroke"
           x1={mark.start.x}
           x2={mark.end.x}
           y1={mark.start.y}
           y2={mark.end.y}
         />
-        <AnnotationBadge mark={mark} />
+        <AnnotationBadge fixedShapeYScale={fixedShapeYScale} mark={mark} />
         {selected ? (
           <>
-            <EndpointHandle point={mark.start} />
-            <EndpointHandle point={mark.end} />
+            <EndpointHandle
+              fixedShapeYScale={fixedShapeYScale}
+              point={mark.start}
+            />
+            <EndpointHandle
+              fixedShapeYScale={fixedShapeYScale}
+              point={mark.end}
+            />
           </>
         ) : null}
       </g>
     );
   }
+
   if (mark.kind === 'pen' || mark.kind === 'brush') {
     const points = mark.points.map((point) => (
       `${point.x},${point.y}`
     )).join(' ');
     const pathWidth = mark.kind === 'brush'
-      ? strokeWidth * 8
+      ? annotationBrushStrokeWidthPixels(
+          mark.strokeSize,
+          imageWidth,
+          imageHeight,
+        )
       : strokeWidth;
     return (
       <g className={className} data-annotation-mark-id={mark.id}>
@@ -93,7 +122,8 @@ export function AnnotationOverlayMark({
             className="retake-annotation-selection"
             fill="none"
             points={points}
-            strokeWidth={pathWidth + 0.015}
+            strokeWidth={pathWidth + 4}
+            vectorEffect="non-scaling-stroke"
           />
         ) : null}
         <polyline
@@ -104,20 +134,26 @@ export function AnnotationOverlayMark({
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={pathWidth}
+          vectorEffect="non-scaling-stroke"
         />
         {mark.points.length === 1 ? (
-          <circle
-            cx={mark.points[0]?.x}
-            cy={mark.points[0]?.y}
-            fill={mark.color}
+          <line
+            x1={mark.points[0]?.x}
+            x2={mark.points[0]?.x}
+            y1={mark.points[0]?.y}
+            y2={mark.points[0]?.y}
             opacity={mark.kind === 'brush' ? 0.38 : 1}
-            r={pathWidth / 2}
+            stroke={mark.color}
+            strokeLinecap="round"
+            strokeWidth={pathWidth}
+            vectorEffect="non-scaling-stroke"
           />
         ) : null}
-        <AnnotationBadge mark={mark} />
+        <AnnotationBadge fixedShapeYScale={fixedShapeYScale} mark={mark} />
       </g>
     );
   }
+
   const bounds = normalizedBounds(mark.start, mark.end);
   if (mark.kind === 'ellipse') {
     return (
@@ -129,7 +165,8 @@ export function AnnotationOverlayMark({
             cy={bounds.y + bounds.height / 2}
             rx={bounds.width / 2}
             ry={bounds.height / 2}
-            strokeWidth={strokeWidth + 0.015}
+            strokeWidth={strokeWidth + 4}
+            vectorEffect="non-scaling-stroke"
           />
         ) : null}
         <ellipse
@@ -140,18 +177,21 @@ export function AnnotationOverlayMark({
           ry={bounds.height / 2}
           stroke={mark.color}
           strokeWidth={strokeWidth}
+          vectorEffect="non-scaling-stroke"
         />
-        <AnnotationBadge mark={mark} />
+        <AnnotationBadge fixedShapeYScale={fixedShapeYScale} mark={mark} />
       </g>
     );
   }
+
   return (
     <g className={className} data-annotation-mark-id={mark.id}>
       {selected ? (
         <rect
           className="retake-annotation-selection"
           height={bounds.height}
-          strokeWidth={strokeWidth + 0.015}
+          strokeWidth={strokeWidth + 4}
+          vectorEffect="non-scaling-stroke"
           width={bounds.width}
           x={bounds.x}
           y={bounds.y}
@@ -162,17 +202,30 @@ export function AnnotationOverlayMark({
         height={bounds.height}
         stroke={mark.color}
         strokeWidth={strokeWidth}
+        vectorEffect="non-scaling-stroke"
         width={bounds.width}
         x={bounds.x}
         y={bounds.y}
       />
-      <AnnotationBadge mark={mark} />
+      <AnnotationBadge fixedShapeYScale={fixedShapeYScale} mark={mark} />
       {selected ? (
         <>
-          <EndpointHandle point={mark.start} />
-          <EndpointHandle point={mark.end} />
-          <EndpointHandle point={{ x: mark.start.x, y: mark.end.y }} />
-          <EndpointHandle point={{ x: mark.end.x, y: mark.start.y }} />
+          <EndpointHandle
+            fixedShapeYScale={fixedShapeYScale}
+            point={mark.start}
+          />
+          <EndpointHandle
+            fixedShapeYScale={fixedShapeYScale}
+            point={mark.end}
+          />
+          <EndpointHandle
+            fixedShapeYScale={fixedShapeYScale}
+            point={{ x: mark.start.x, y: mark.end.y }}
+          />
+          <EndpointHandle
+            fixedShapeYScale={fixedShapeYScale}
+            point={{ x: mark.end.x, y: mark.start.y }}
+          />
         </>
       ) : null}
     </g>
@@ -180,35 +233,46 @@ export function AnnotationOverlayMark({
 }
 
 function EndpointHandle({
+  fixedShapeYScale,
   point,
 }: {
+  fixedShapeYScale: number;
   point: { x: number; y: number };
 }): ReactElement {
   return (
-    <circle
+    <ellipse
       className="retake-annotation-endpoint"
       cx={point.x}
       cy={point.y}
-      r={0.011}
+      rx={0.011}
+      ry={0.011 * fixedShapeYScale}
     />
   );
 }
 
 function AnnotationBadge({
+  fixedShapeYScale,
   mark,
 }: {
+  fixedShapeYScale: number;
   mark: Exclude<AnnotationMark, { kind: 'marker' }>;
 }): ReactElement {
   const anchor = mark.kind === 'pen' || mark.kind === 'brush'
     ? mark.points[0] ?? { x: 0.5, y: 0.5 }
     : mark.start;
   return (
-    <g transform={`translate(${anchor.x} ${anchor.y})`}>
+    <g
+      transform={
+        `translate(${anchor.x} ${anchor.y}) `
+        + `scale(1 ${fixedShapeYScale})`
+      }
+    >
       <circle
         fill={mark.color}
         r={0.023}
         stroke="#fff"
-        strokeWidth={0.004}
+        strokeWidth={2}
+        vectorEffect="non-scaling-stroke"
       />
       <text
         fill="#fff"
@@ -231,7 +295,6 @@ export function AnnotationArrowDefinitions(): ReactElement {
           id={`retake-annotation-arrow-${color}`}
           key={color}
           markerHeight="7"
-          markerUnits="strokeWidth"
           markerWidth="7"
           orient="auto"
           refX="6"

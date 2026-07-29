@@ -5,6 +5,7 @@ import {
   definePlugin,
   defineMessages,
   type PluginActivationContext as PluginActivationContextV2,
+  type PluginCommandIcon,
   type PluginComponent,
   type PluginImageBlock as ImageToolbarBlockV2,
   type PluginOperationCommandContext,
@@ -233,12 +234,14 @@ export const adjustImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.adjust',
   localized('Adjust image', '调整图片'),
   adjustPanelStore,
+  'adjustments',
   10,
 );
 export const annotationImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.annotation',
   localized('Annotate image', '标注图片'),
   annotationPanelStore,
+  'annotation',
   20,
   ['Mod+Shift+A'],
 );
@@ -246,24 +249,28 @@ export const cropImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.crop',
   localized('Crop image', '裁剪图片'),
   cropPanelStore,
+  'crop',
   30,
 );
 export const resizeImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.resize',
   localized('Resize image', '缩放图片'),
   resizePanelStore,
+  'resize',
   40,
 );
 export const selectionMaskImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.selection-mask',
   localized('Create selection mask', '创建选区蒙版'),
   selectionMaskPanelStore,
+  'selection-mask',
   50,
 );
 export const guidedEditImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.guided-edit',
   localized('Guided edit', '引导式编辑'),
   guidedEditPanelStore,
+  'smart-edit',
   55,
 );
 
@@ -279,6 +286,7 @@ export const maskedEditSelectionCommand = defineCommand({
     order: 10,
     surfaceId: 'selection.context-toolbar',
   }],
+  icon: 'smart-edit',
   kind: 'command',
   label: localized('Masked AI edit', '局部 AI 编辑'),
   run({ blocks }: PluginSelectionCommandContext) {
@@ -291,6 +299,7 @@ export const outpaintImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.outpaint',
   localized('Expand image', 'AI 扩图'),
   outpaintPanelStore,
+  'outpaint',
   60,
 );
 
@@ -302,6 +311,7 @@ export const reopenAnnotationOperationCommand = defineCommand({
     order: 10,
     surfaceId: 'operation.inspector',
   }],
+  icon: 'annotation',
   kind: 'command',
   label: localized('Reopen annotation edit', '重新打开标注编辑'),
   ownedCapabilityId: 'image.annotation_edit',
@@ -469,6 +479,7 @@ function imageToolbarCommand(
   panelStore: {
     open(block: ImageToolbarBlockV2): void;
   },
+  icon: PluginCommandIcon,
   order: number,
   recommendedShortcuts: readonly string[] = [],
 ) {
@@ -480,6 +491,7 @@ function imageToolbarCommand(
       order,
       surfaceId: 'image.context-toolbar',
     }],
+    icon,
     kind: 'command',
     label,
     recommendedShortcuts,

@@ -10,6 +10,7 @@ export interface AnnotationCopy {
   brush: string;
   candidateCount: string;
   clear: string;
+  clearConfirm: string;
   close: string;
   color: string;
   connection: string;
@@ -55,6 +56,10 @@ export const annotationMessages = defineMessages({
   brush: localized('Region brush', '区域画笔'),
   candidateCount: localized('Candidates', '候选数量'),
   clear: localized('Clear', '清空'),
+  clearConfirm: localized(
+    'Clear every mark? You can restore them with Undo.',
+    '确定要清空所有标记吗？此操作可以通过撤销恢复。',
+  ),
   close: localized('Close', '关闭'),
   color: localized('Color', '颜色'),
   connection: localized('Connection', '连接'),

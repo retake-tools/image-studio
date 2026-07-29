@@ -1,49 +1,81 @@
 export const annotationStyles = `
+  .retake-annotation-modal-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 44;
+    background: rgb(15 23 42 / 7%);
+    backdrop-filter: blur(1px);
+  }
+
   .retake-image-studio-panel.is-annotation {
     position: fixed;
-    display: grid;
-    top: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: min(920px, calc(100vw - 32px));
-    max-height: none;
-    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
-    align-content: start;
-    overflow: auto;
+    top: 50%;
+    left: 50%;
+    z-index: 45;
+    display: flex;
+    width: min(1220px, calc(100vw - 36px));
+    height: min(760px, calc(100vh - 96px));
+    max-height: calc(100vh - 96px);
+    box-sizing: border-box;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
   }
 
   .retake-image-studio-panel.is-annotation > .retake-image-studio-panel__header,
-  .retake-image-studio-panel.is-annotation > .retake-annotation-notice,
-  .retake-image-studio-panel.is-annotation > .retake-annotation-tools,
-  .retake-image-studio-panel.is-annotation > .retake-image-studio-panel__error,
-  .retake-image-studio-panel.is-annotation > .retake-annotation-prompt,
-  .retake-image-studio-panel.is-annotation > .retake-image-studio-panel__run {
-    grid-column: 1 / -1;
+  .retake-image-studio-panel.is-annotation > .retake-annotation-notice {
+    flex: none;
   }
 
   .retake-annotation-notice {
     margin: 0;
-    border: 1px solid color-mix(in srgb, var(--retake-accent, #7068b1) 30%, transparent);
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--retake-accent, #7068b1) 8%, transparent);
+    border: 1px solid #f2c66d;
+    border-radius: 8px;
+    background: #fff8e6;
     padding: 8px 10px;
-    color: var(--retake-text-muted, #626270);
+    color: #6b4708;
     font-size: 12px;
+  }
+
+  .retake-annotation-editor {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .retake-annotation-editor-shell {
+    display: grid;
+    flex: 1;
+    grid-template-columns: auto minmax(0, 1fr) minmax(260px, 310px);
+    gap: 8px;
+    min-width: 0;
+    min-height: 0;
   }
 
   .retake-annotation-tools {
     display: flex;
-    flex-wrap: wrap;
+    min-width: 34px;
+    flex-direction: column;
     gap: 6px;
+    padding: 6px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: var(--retake-surface-muted, #f8fafc);
   }
 
   .retake-annotation-tools button,
   .retake-annotation-zoom button,
   .retake-annotation-strokes button {
-    border: 1px solid var(--retake-border, rgba(38, 38, 48, 0.14));
-    border-radius: 8px;
+    display: inline-grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 7px;
     background: var(--retake-surface, #fff);
-    padding: 6px 8px;
+    padding: 0;
     color: var(--retake-text, #282832);
     cursor: pointer;
     font: inherit;
@@ -55,7 +87,6 @@ export const annotationStyles = `
     border-color: var(--retake-accent, #7068b1);
     background: color-mix(in srgb, var(--retake-accent, #7068b1) 12%, white);
     color: var(--retake-accent, #625aa8);
-    font-weight: 700;
   }
 
   .retake-annotation-tools button:disabled,
@@ -64,19 +95,30 @@ export const annotationStyles = `
     opacity: 0.42;
   }
 
+  .retake-annotation-tool-separator {
+    height: 1px;
+    margin: 1px 2px;
+    background: var(--retake-border, #d8dee8);
+  }
+
   .retake-annotation-workspace {
-    display: grid;
+    display: flex;
     min-width: 0;
-    gap: 8px;
+    min-height: 0;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .retake-annotation-stage-shell {
+    position: relative;
     display: grid;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
     place-items: center;
-    min-height: 390px;
     overflow: hidden;
-    border: 1px solid var(--retake-border, rgba(38, 38, 48, 0.14));
-    border-radius: 14px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
     background:
       linear-gradient(45deg, rgba(40, 40, 48, 0.035) 25%, transparent 25%),
       linear-gradient(-45deg, rgba(40, 40, 48, 0.035) 25%, transparent 25%),
@@ -84,12 +126,34 @@ export const annotationStyles = `
       linear-gradient(-45deg, transparent 75%, rgba(40, 40, 48, 0.035) 75%);
     background-position: 0 0, 0 8px, 8px -8px, -8px 0;
     background-size: 16px 16px;
+    overscroll-behavior: contain;
   }
 
   .retake-annotation-stage {
     position: relative;
+    flex: none;
+    max-width: 100%;
+    max-height: 100%;
     transform-origin: center;
     touch-action: none;
+    user-select: none;
+  }
+
+  .retake-annotation-stage.is-select-tool {
+    cursor: default;
+  }
+
+  .retake-annotation-stage.is-marker-tool,
+  .retake-annotation-stage.is-arrow-tool,
+  .retake-annotation-stage.is-pen-tool,
+  .retake-annotation-stage.is-brush-tool,
+  .retake-annotation-stage.is-rect-tool,
+  .retake-annotation-stage.is-ellipse-tool {
+    cursor: crosshair;
+  }
+
+  .retake-annotation-stage.is-eraser-tool {
+    cursor: not-allowed;
   }
 
   .retake-annotation-stage img {
@@ -99,13 +163,13 @@ export const annotationStyles = `
     border-radius: 4px;
     object-fit: fill;
     user-select: none;
+    -webkit-user-drag: none;
   }
 
   .retake-annotation-pointer-layer {
     position: absolute;
     inset: 0;
     outline: none;
-    cursor: crosshair;
     touch-action: none;
   }
 
@@ -123,9 +187,18 @@ export const annotationStyles = `
 
   .retake-annotation-selection {
     fill: none;
-    stroke: #fff;
-    stroke-opacity: 0.9;
-    stroke-dasharray: 0.015 0.01;
+    opacity: 0.72;
+    stroke: #2563eb;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  .retake-annotation-marker-selection {
+    fill: none;
+    stroke: #2563eb;
+    stroke-linejoin: round;
+    stroke-width: 0.01;
   }
 
   .retake-annotation-endpoint {
@@ -134,33 +207,102 @@ export const annotationStyles = `
     stroke-width: 0.004;
   }
 
-  .retake-annotation-zoom {
+  .retake-annotation-hover-prompt {
+    position: absolute;
+    z-index: 4;
     display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    width: max-content;
+    max-width: min(280px, calc(100% - 24px));
+    max-height: 120px;
+    padding: 7px 9px;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 72%);
+    border-radius: 8px;
+    background: rgb(15 23 42 / 76%);
+    box-shadow: 0 8px 22px rgb(15 23 42 / 20%);
+    color: #fff;
+    font-size: 11px;
+    line-height: 1.42;
+    pointer-events: none;
+    transform: translate(12px, -50%);
+    backdrop-filter: blur(6px);
+  }
+
+  .retake-annotation-hover-prompt strong {
+    color: #bfdbfe;
+  }
+
+  .retake-annotation-quick-delete {
+    position: absolute;
+    z-index: 5;
+    display: inline-grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 5px 14px rgb(15 23 42 / 18%);
+    color: #475569;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+  }
+
+  .retake-annotation-zoom {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 6;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 7px;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 92%);
+    box-shadow: 0 8px 22px rgb(16 24 40 / 14%);
+    backdrop-filter: blur(10px);
   }
 
   .retake-annotation-zoom span {
-    min-width: 44px;
-    text-align: center;
+    min-width: 42px;
     color: var(--retake-text-muted, #626270);
     font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    text-align: center;
   }
 
   .retake-annotation-pan-hint {
-    text-align: center;
+    flex: none;
     color: var(--retake-text-muted, #777782);
     font-size: 11px;
+    text-align: center;
+  }
+
+  .retake-annotation-side-panel {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: var(--retake-surface-muted, #f8fafc);
+    overscroll-behavior: contain;
   }
 
   .retake-annotation-settings,
   .retake-annotation-intents,
-  .retake-annotation-global,
-  .retake-annotation-execution {
+  .retake-annotation-global {
     display: grid;
     align-content: start;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
   }
 
@@ -171,14 +313,15 @@ export const annotationStyles = `
   .retake-annotation-settings fieldset {
     min-width: 0;
     margin: 0;
-    border: 1px solid var(--retake-border, rgba(38, 38, 48, 0.12));
-    border-radius: 10px;
-    padding: 8px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: var(--retake-surface, #fff);
+    padding: 7px;
   }
 
   .retake-annotation-settings legend,
   .retake-annotation-global > span,
-  .retake-annotation-execution span {
+  .retake-annotation-run-controls span {
     color: var(--retake-text, #30303d);
     font-size: 11px;
     font-weight: 700;
@@ -192,35 +335,45 @@ export const annotationStyles = `
   }
 
   .retake-annotation-swatches button {
-    width: 24px;
-    height: 24px;
-    border: 2px solid transparent;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #fff;
     border-radius: 999px;
+    box-shadow: 0 0 0 1px #cbd5e1;
     cursor: pointer;
   }
 
   .retake-annotation-swatches button.is-active {
-    border-color: #fff;
-    box-shadow: 0 0 0 2px var(--retake-accent, #7068b1);
+    box-shadow:
+      0 0 0 2px var(--retake-accent, #7068b1),
+      0 0 0 4px color-mix(in srgb, var(--retake-accent, #7068b1) 18%, transparent);
+  }
+
+  .retake-annotation-strokes button {
+    width: auto;
+    min-width: 30px;
+    height: 27px;
+    padding: 0 6px;
   }
 
   .retake-annotation-intents {
-    max-height: 300px;
+    flex: 1;
+    min-height: 92px;
     overflow: auto;
-    border: 1px solid var(--retake-border, rgba(38, 38, 48, 0.12));
-    border-radius: 12px;
-    padding: 10px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: var(--retake-surface, #fff);
+    padding: 8px;
   }
 
   .retake-annotation-intents > strong {
-    color: var(--retake-text, #30303d);
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .retake-annotation-intents > p {
     margin: 0;
     color: var(--retake-text-muted, #777782);
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .retake-annotation-intents label {
@@ -228,13 +381,15 @@ export const annotationStyles = `
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 6px;
     border: 1px solid transparent;
-    border-radius: 9px;
+    border-radius: 8px;
     padding: 6px;
   }
 
   .retake-annotation-intents label.is-selected {
-    border-color: color-mix(in srgb, var(--retake-accent, #7068b1) 35%, transparent);
-    background: color-mix(in srgb, var(--retake-accent, #7068b1) 6%, transparent);
+    border-color: #60a5fa;
+    border-left-width: 3px;
+    background: #eff6ff;
+    box-shadow: 0 0 0 2px rgb(37 99 235 / 12%);
   }
 
   .retake-annotation-intents label > button {
@@ -253,10 +408,10 @@ export const annotationStyles = `
 
   .retake-annotation-intents label > .retake-annotation-delete {
     display: inline-grid;
-    width: 22px;
-    height: 22px;
+    width: 23px;
+    height: 23px;
     place-items: center;
-    border: 1px solid var(--retake-border, rgba(38, 38, 48, 0.16));
+    border: 1px solid var(--retake-border, #d8dee8);
     border-radius: 7px;
     color: var(--retake-text-muted, #626270);
   }
@@ -273,60 +428,153 @@ export const annotationStyles = `
 
   .retake-annotation-intents textarea,
   .retake-annotation-global textarea,
-  .retake-annotation-execution select {
+  .retake-annotation-run-controls select {
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid var(--retake-border, rgba(38, 38, 48, 0.16));
-    border-radius: 9px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 7px;
     background: var(--retake-surface, #fff);
-    padding: 8px;
+    padding: 7px 8px;
     color: var(--retake-text, #20202a);
     font: inherit;
-    font-size: 12px;
-  }
-
-  .retake-annotation-global {
-    margin-top: -2px;
-  }
-
-  .retake-annotation-global textarea {
-    resize: vertical;
-  }
-
-  .retake-annotation-execution {
-    grid-template-columns: minmax(0, 1fr) 110px;
-  }
-
-  .retake-annotation-execution label {
-    display: grid;
-    gap: 6px;
-  }
-
-  .retake-annotation-prompt {
-    color: var(--retake-text-muted, #626270);
     font-size: 11px;
   }
 
+  .retake-annotation-intents textarea {
+    min-height: 48px;
+    resize: vertical;
+  }
+
+  .retake-annotation-global textarea {
+    min-height: 64px;
+    resize: vertical;
+  }
+
+  .retake-annotation-prompt {
+    border-top: 1px solid var(--retake-border, #d8dee8);
+    padding-top: 7px;
+    color: var(--retake-text-muted, #626270);
+    font-size: 10px;
+  }
+
+  .retake-annotation-prompt summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+
   .retake-annotation-prompt pre {
-    max-height: 180px;
+    max-height: 160px;
     overflow: auto;
-    border-radius: 9px;
-    background: var(--retake-surface-muted, #f5f5f8);
-    padding: 9px;
+    border-radius: 7px;
+    background: #eef2f7;
+    padding: 7px;
+    font-size: 10px;
     white-space: pre-wrap;
+  }
+
+  .retake-annotation-errors {
+    display: grid;
+    flex: none;
+    gap: 4px;
+  }
+
+  .retake-annotation-errors:empty {
+    display: none;
+  }
+
+  .retake-annotation-errors .retake-image-studio-panel__error {
+    margin: 0;
+  }
+
+  .retake-annotation-run-controls {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .retake-annotation-run-controls > label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .retake-annotation-run-controls select {
+    width: auto;
+    min-width: 190px;
+    max-width: 260px;
+  }
+
+  .retake-annotation-result-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .retake-annotation-result-count > span {
+    margin-right: 2px;
+  }
+
+  .retake-annotation-result-count button {
+    display: inline-grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 6px;
+    background: var(--retake-surface, #fff);
+    color: #475569;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .retake-annotation-result-count button.is-active {
+    border-color: var(--retake-accent, #7068b1);
+    background: color-mix(in srgb, var(--retake-accent, #7068b1) 12%, white);
+    color: var(--retake-accent, #625aa8);
+  }
+
+  .retake-annotation-run-controls > .retake-image-studio-panel__run {
+    width: auto;
+    min-width: 126px;
+    margin: 0;
   }
 
   @media (max-width: 760px) {
     .retake-image-studio-panel.is-annotation {
+      width: calc(100vw - 20px);
+      height: calc(100vh - 24px);
+      max-height: calc(100vh - 24px);
+    }
+
+    .retake-annotation-editor-shell {
       grid-template-columns: 1fr;
+      overflow: auto;
     }
 
-    .retake-image-studio-panel.is-annotation > * {
-      grid-column: 1 !important;
+    .retake-annotation-tools {
+      flex-direction: row;
+      flex-wrap: wrap;
     }
 
-    .retake-annotation-stage-shell {
-      min-height: 300px;
+    .retake-annotation-tool-separator {
+      width: 1px;
+      height: 28px;
+      margin: 1px;
+    }
+
+    .retake-annotation-workspace {
+      min-height: 380px;
+    }
+
+    .retake-annotation-side-panel {
+      max-height: 320px;
+    }
+
+    .retake-annotation-run-controls {
+      flex-wrap: wrap;
     }
   }
 `;

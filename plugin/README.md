@@ -1,7 +1,7 @@
 # Retake Image Studio Package
 
 This directory is the portable source for
-`design.retake.image-studio@0.10.3`.
+`design.retake.image-studio@0.10.4`.
 
 The single Retake Package contains the trusted Image Studio Web PluginModule,
 its image Capabilities, the Guided Image Skill and Workflow, and the bounded
