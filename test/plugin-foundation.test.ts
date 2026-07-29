@@ -3,8 +3,16 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { createPluginTranslator } from '@retake/plugin-api';
 import {
+  adjustImageCommand,
+  annotationImageCommand,
+  cropImageCommand,
+  guidedEditImageCommand,
   imageStudioMessages,
   imageStudioPlugin,
+  maskedEditSelectionCommand,
+  outpaintImageCommand,
+  resizeImageCommand,
+  selectionMaskImageCommand,
 } from '../plugin/src/index';
 import { imageStudioSettings } from '../plugin/src/settings';
 import { imageStudioTheme } from '../plugin/src/theme';
@@ -38,6 +46,31 @@ test('plugin theme values come from the public token facade', () => {
   assert.equal(imageStudioTheme.foreground, 'var(--retake-color-foreground)');
   assert.equal(imageStudioTheme.muted, 'var(--retake-color-muted)');
   assert.equal(imageStudioTheme.surface, 'var(--retake-color-surface)');
+});
+
+test('image commands publish intentional host toolbar icons', () => {
+  assert.deepEqual(
+    [
+      adjustImageCommand.icon,
+      annotationImageCommand.icon,
+      cropImageCommand.icon,
+      resizeImageCommand.icon,
+      selectionMaskImageCommand.icon,
+      guidedEditImageCommand.icon,
+      maskedEditSelectionCommand.icon,
+      outpaintImageCommand.icon,
+    ],
+    [
+      'adjustments',
+      'annotation',
+      'crop',
+      'resize',
+      'selection-mask',
+      'smart-edit',
+      'smart-edit',
+      'outpaint',
+    ],
+  );
 });
 
 test('panels do not own locale detection or private theme fallbacks', async () => {

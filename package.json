@@ -1,6 +1,6 @@
 {
   "name": "@retake-tools/image-studio-source",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "license": "Apache-2.0",
   "private": true,
   "description": "Source and validation workspace for the Retake Image Studio plugin.",
@@ -20,6 +20,7 @@
     "@retake/plugin-api": "file:plugin/vendor/npm/retake-plugin-api-0.1.2.tgz",
     "@types/node": "22.19.7",
     "@types/react": "19.2.17",
+    "lucide-react": "1.22.0",
     "react": "19.2.7",
     "tsx": "4.22.4",
     "typescript": "6.0.3"
