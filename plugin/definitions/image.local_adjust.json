@@ -1,0 +1,47 @@
+{
+  "capabilityId": "image.local_adjust",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-local-adjust-v2",
+  "displayName": {
+    "default": "Local image adjustment",
+    "locales": {
+      "zh-CN": "本地图片调整"
+    }
+  },
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "one",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "adjusted_image",
+      "slotId": "result_image"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.local_adjust.parameters.json",
+  "runtimeRequirements": [
+    "browser.canvas_2d"
+  ],
+  "schemaVersion": 2,
+  "supportedAdapterClasses": [
+    "local_canvas"
+  ],
+  "version": "0.2.0"
+}

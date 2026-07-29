@@ -1,0 +1,27 @@
+{
+  "name": "@retake-tools/image-studio-source",
+  "version": "0.10.1",
+  "license": "Apache-2.0",
+  "private": true,
+  "description": "Source and validation workspace for the Retake Image Studio plugin.",
+  "type": "module",
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0"
+  },
+  "scripts": {
+    "release:check": "npm run validate && node scripts/check-release.mjs",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "validate": "node scripts/validate-package.mjs"
+  },
+  "devDependencies": {
+    "@retake-tools/package-contracts": "file:plugin/vendor/npm/retake-tools-package-contracts-0.1.2.tgz",
+    "@retake-tools/plugin-runtime": "file:plugin/vendor/npm/retake-tools-plugin-runtime-0.1.2.tgz",
+    "@retake/plugin-api": "file:plugin/vendor/npm/retake-plugin-api-0.1.2.tgz",
+    "@types/node": "22.19.7",
+    "@types/react": "19.2.17",
+    "react": "19.2.7",
+    "tsx": "4.22.4",
+    "typescript": "6.0.3"
+  }
+}

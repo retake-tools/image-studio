@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "brightness": {
+      "default": 0,
+      "maximum": 100,
+      "minimum": -100,
+      "type": "number"
+    },
+    "contrast": {
+      "default": 0,
+      "maximum": 100,
+      "minimum": -100,
+      "type": "number"
+    },
+    "saturation": {
+      "default": 0,
+      "maximum": 100,
+      "minimum": -100,
+      "type": "number"
+    }
+  },
+  "required": [
+    "brightness",
+    "contrast",
+    "saturation"
+  ],
+  "title": "Local image adjustment parameters",
+  "type": "object"
+}

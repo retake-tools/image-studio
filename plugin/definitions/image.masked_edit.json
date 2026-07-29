@@ -1,0 +1,75 @@
+{
+  "capabilityId": "image.masked_edit",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-masked-edit-v2",
+  "displayName": {
+    "default": "Masked AI image edit",
+    "locales": {
+      "zh-CN": "局部 AI 图片编辑"
+    }
+  },
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "inpaint_mask",
+      "slotId": "inpaint_mask"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "inline"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "text"
+      ],
+      "required": true,
+      "semanticRole": "prompt",
+      "slotId": "prompt"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "one",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "edited_image",
+      "slotId": "edited_image"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.masked_edit.parameters.json",
+  "runtimeRequirements": [
+    "durable_asset_output",
+    "image_generation"
+  ],
+  "schemaVersion": 2,
+  "supportedAdapterClasses": [
+    "agent_runtime.media"
+  ],
+  "version": "0.2.0"
+}

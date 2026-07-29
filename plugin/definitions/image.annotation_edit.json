@@ -1,0 +1,74 @@
+{
+  "capabilityId": "image.annotation_edit",
+  "category": "image_editing",
+  "definitionHash": "sha256:image-annotation-edit-v2",
+  "displayName": {
+    "default": "Annotation image edit",
+    "locales": {
+      "zh-CN": "图片标注编辑"
+    }
+  },
+  "inputSlots": [
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset",
+        "block"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "source",
+      "slotId": "source_image"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "asset"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "image"
+      ],
+      "required": true,
+      "semanticRole": "annotated_composite",
+      "slotId": "annotated_composite"
+    },
+    {
+      "artifactTypes": [],
+      "bindingKinds": [
+        "inline"
+      ],
+      "cardinality": "one",
+      "dataTypes": [
+        "text"
+      ],
+      "required": true,
+      "semanticRole": "prompt",
+      "slotId": "prompt"
+    }
+  ],
+  "outputSlots": [
+    {
+      "cardinality": "many",
+      "dataType": "image",
+      "projectionBlockTypes": [
+        "image"
+      ],
+      "semanticRole": "edited_images",
+      "slotId": "edited_images"
+    }
+  ],
+  "parametersSchemaRef": "definitions/image.annotation_edit.parameters.json",
+  "runtimeRequirements": [
+    "durable_asset_output",
+    "image_generation"
+  ],
+  "schemaVersion": 2,
+  "supportedAdapterClasses": [
+    "agent_runtime.media"
+  ],
+  "version": "0.2.0"
+}
