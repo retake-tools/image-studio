@@ -34,14 +34,21 @@ Operator AgentPreset。Guided Image 是进入 Image Studio 的流程入口，不
 
 ## 从 Web 安装
 
-在 Retake Whiteboard 中打开 **设置 → 插件库**，输入：
+在 Retake Whiteboard 0.1.3 或更高版本中打开 **设置 → 插件库**。如需跟随最新稳定版并接收更新
+通知，输入：
 
 ```text
-github:retake-tools/image-studio@<commit-or-tag>#subdirectory=plugin
+github:retake-tools/image-studio@main#subdirectory=plugin
 ```
 
-推荐使用完整 commit ID，以确保安装结果可复现。Retake 会自动获取源码、执行受控构建、缓存安装
-产物，并要求用户确认该精确代码版本的权限与信任后再启用。
+如需不可变且可复现的安装，使用当前发布 tag：
+
+```text
+github:retake-tools/image-studio@v0.10.3#subdirectory=plugin
+```
+
+`main` 是持续移动的稳定更新通道；版本 tag 保持固定。Retake 会自动获取源码、执行受控构建、
+缓存安装产物，并要求用户确认该精确代码版本的权限与信任后再启用。
 
 不需要额外安装 CLI 或本地 bridge。本地处理保留在 Plugin 中；AI 编辑复用 Retake 已有的
 Codex App Server 或手动 Codex/MCP 路由，Plugin 不接触凭据与本地路径。

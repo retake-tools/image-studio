@@ -10,11 +10,17 @@ Image Studio CLI or bridge.
 
 ## Install from GitHub
 
-1. Open **Settings → Plugin library** in Retake Whiteboard.
-2. Enter this source:
+1. Open **Settings → Plugin library** in Retake Whiteboard 0.1.3 or later.
+2. To follow stable updates, enter:
 
    ```text
-   github:retake-tools/image-studio@<commit-or-tag>#subdirectory=plugin
+   github:retake-tools/image-studio@main#subdirectory=plugin
+   ```
+
+   For an immutable install instead, enter:
+
+   ```text
+   github:retake-tools/image-studio@v0.10.3#subdirectory=plugin
    ```
 
 3. Install the Package.
@@ -26,9 +32,8 @@ Image Studio CLI or bridge.
 7. For **Masked AI edit**, select exactly one source Image and one same-sized
    PNG Selection Mask, then use the multi-selection toolbar.
 
-Use a full commit ID for a reproducible install. Use a version tag only after
-that tag appears in this repository. A branch name is convenient for testing
-intentional updates but is not immutable.
+`main` is the moving stable update channel and supports update discovery. The
+version tag is immutable and reproducible.
 
 ## Why `#subdirectory=plugin`
 

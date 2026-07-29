@@ -16,7 +16,7 @@
     ],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-license-v14",
+        "definitionHash": "sha256:image-studio-web-license-v15",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
@@ -37,7 +37,7 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.10.2"
+        "version": "0.10.3"
       }
     ],
     "skills": [
@@ -165,8 +165,8 @@
     "name": "Retake",
     "publisherId": "retake.publisher.official"
   },
-  "retakeHostCompatibility": "^0.1.0",
+  "retakeHostCompatibility": ">=0.1.3 <0.2.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.10.2"
+  "version": "0.10.3"
 }

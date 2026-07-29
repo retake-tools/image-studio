@@ -124,9 +124,15 @@ for (const expectedLink of [
 }
 assert.ok(
   readme.includes(
-    'github:retake-tools/image-studio@<commit-or-tag>#subdirectory=plugin',
+    'github:retake-tools/image-studio@main#subdirectory=plugin',
   ),
-  'README must document the exact Git source boundary.',
+  'README must document the stable Git update source.',
+);
+assert.ok(
+  readme.includes(
+    `github:retake-tools/image-studio@v${authoringPackage.version}#subdirectory=plugin`,
+  ),
+  'README must document the immutable version-tag source.',
 );
 
 const workflow = await readText('.github/workflows/ci.yml', repositoryRoot);
