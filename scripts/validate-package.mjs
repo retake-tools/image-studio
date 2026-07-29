@@ -57,7 +57,7 @@ const guidedImageWorkflow = await readJson(
 );
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
-assert.equal(packageManifest.version, '0.10.1');
+assert.equal(packageManifest.version, '0.10.2');
 assert.equal(packageManifest.license, 'Apache-2.0');
 assert.equal(packageManifest.files.includes('NOTICE'), true);
 assert.equal(
