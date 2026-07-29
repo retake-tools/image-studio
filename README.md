@@ -53,18 +53,25 @@ stay outside the distributed artifact.
 
 ## Install
 
-In Retake Whiteboard, open **Settings → Plugin library** and install:
+In Retake Whiteboard 0.1.3 or later, open **Settings → Plugin library**.
+To follow the latest stable release and receive update notifications, install:
 
 ```text
-github:retake-tools/image-studio@<commit-or-tag>#subdirectory=plugin
+github:retake-tools/image-studio@main#subdirectory=plugin
 ```
 
-Retake resolves the Git source, runs its controlled
+For an immutable, reproducible install, use the current release tag:
+
+```text
+github:retake-tools/image-studio@v0.10.3#subdirectory=plugin
+```
+
+Retake resolves either Git source, runs its controlled
 `retake_web_plugin_v1` build, caches the portable Package, and asks the user to
 review permissions and trust that exact code digest before enabling it.
 
-Using a full commit ID gives a reproducible install. A branch or version tag
-can be used when following updates intentionally.
+`main` is the moving stable update channel. The version tag remains fixed and
+does not move.
 
 No CLI or local bridge is required. Browser-native processing stays in the
 Plugin; connected AI editing uses Retake's existing Codex App Server or manual

@@ -142,7 +142,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-license-v14",
+  "definitionHash": "sha256:image-studio-web-license-v15",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -172,5 +172,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.10.2"
+  "version": "0.10.3"
 }
