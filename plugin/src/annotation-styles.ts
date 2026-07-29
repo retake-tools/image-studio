@@ -111,12 +111,14 @@ export const annotationStyles = `
 
   .retake-annotation-stage-shell {
     position: relative;
+    isolation: isolate;
+    contain: layout paint;
     display: grid;
     flex: 1;
     min-width: 0;
     min-height: 0;
     place-items: center;
-    overflow: hidden;
+    overflow: clip;
     border: 1px solid var(--retake-border, #d8dee8);
     border-radius: 8px;
     background:
@@ -238,8 +240,8 @@ export const annotationStyles = `
     position: absolute;
     z-index: 5;
     display: inline-grid;
-    width: 26px;
-    height: 26px;
+    width: 20px;
+    height: 20px;
     place-items: center;
     border: 1px solid #cbd5e1;
     border-radius: 999px;
@@ -248,6 +250,12 @@ export const annotationStyles = `
     color: #475569;
     cursor: pointer;
     transform: translate(-50%, -50%);
+  }
+
+  .retake-annotation-quick-delete::before {
+    position: absolute;
+    inset: -4px;
+    content: "";
   }
 
   .retake-annotation-zoom {

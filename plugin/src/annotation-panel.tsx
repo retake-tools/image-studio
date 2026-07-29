@@ -736,6 +736,14 @@ export function ImageStudioAnnotationPanel({
                     />
                     <div
                       className="retake-annotation-pointer-layer"
+                      onDoubleClick={(event) => {
+                        if (activeTool !== 'select' || pending) return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        gestureRef.current = null;
+                        setPan({ x: 0, y: 0 });
+                        setZoom(1);
+                      }}
                       onPointerCancel={finishGesture}
                       onPointerDown={onStagePointerDown}
                       onPointerMove={onStagePointerMove}
@@ -816,7 +824,7 @@ export function ImageStudioAnnotationPanel({
                         )}
                         type="button"
                       >
-                        <Trash2 aria-hidden="true" size={13} />
+                        <Trash2 aria-hidden="true" size={11} />
                       </button>
                     ) : null}
                   </div>

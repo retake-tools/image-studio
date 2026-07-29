@@ -33,7 +33,7 @@ export function AnnotationOverlayMark({
         data-annotation-mark-id={mark.id}
         transform={
           `translate(${mark.point.x} ${mark.point.y}) `
-          + `scale(1 ${fixedShapeYScale})`
+          + `scale(0.86 ${fixedShapeYScale * 0.86})`
         }
       >
         {selected ? (
@@ -269,14 +269,14 @@ function AnnotationBadge({
     >
       <circle
         fill={mark.color}
-        r={0.023}
+        r={0.02}
         stroke="#fff"
         strokeWidth={2}
         vectorEffect="non-scaling-stroke"
       />
       <text
         fill="#fff"
-        fontSize={0.017}
+        fontSize={0.015}
         fontWeight={850}
         textAnchor="middle"
         y={0.006}

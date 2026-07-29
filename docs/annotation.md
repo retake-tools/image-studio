@@ -8,6 +8,8 @@ provider-neutral, connected image-edit request.
 1. Select an Image Block and choose **Annotate image**.
 2. Add numbered markers, directional arrows, freehand pen lines,
    semi-transparent region brushes, rectangles, or ellipses.
+   Zoom as needed, drag the enlarged canvas to pan, and double-click the canvas
+   to return to the default 100% view.
 3. Write an instruction for each mark, or add one global instruction that
    applies to all marks.
 4. Choose a compatible Retake image Connection and request one to four
