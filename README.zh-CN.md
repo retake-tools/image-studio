@@ -44,7 +44,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 如需不可变且可复现的安装，使用当前发布 tag：
 
 ```text
-github:retake-tools/image-studio@v0.10.4#subdirectory=plugin
+github:retake-tools/image-studio@v0.10.5#subdirectory=plugin
 ```
 
 `main` 是持续移动的稳定更新通道；版本 tag 保持固定。Retake 会自动获取源码、执行受控构建、

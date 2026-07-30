@@ -37,7 +37,7 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.10.4"
+        "version": "0.10.5"
       }
     ],
     "skills": [
@@ -169,5 +169,5 @@
   "retakeHostCompatibility": ">=0.1.3 <0.2.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.10.4"
+  "version": "0.10.5"
 }

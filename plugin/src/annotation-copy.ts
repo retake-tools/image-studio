@@ -98,8 +98,8 @@ export const annotationMessages = defineMessages({
   ),
   noMarks: localized('No marks yet.', '还没有标记。'),
   panHint: localized(
-    'Drag empty space to pan after zooming in.',
-    '放大后在空白处拖动可平移。',
+    'With Select active, drag to pan or double-click to reset to 100%.',
+    '切换到选择工具后，拖动可平移，双击可恢复 100%。',
   ),
   pen: localized('Pen', '画笔'),
   purple: localized('Purple', '紫色'),

@@ -90,3 +90,29 @@ test('panels do not own locale detection or private theme fallbacks', async () =
   assert.doesNotMatch(combined, /startsWith\(['"]zh/);
   assert.doesNotMatch(combined, /var\(--retake-(?:accent|surface|text),/);
 });
+
+test('annotation view keeps compact controls and a conflict-free reset gesture', async () => {
+  const [overlay, panel, styles] = await Promise.all([
+    readFile(
+      new URL('../plugin/src/annotation-overlay.tsx', import.meta.url),
+      'utf8',
+    ),
+    readFile(
+      new URL('../plugin/src/annotation-panel.tsx', import.meta.url),
+      'utf8',
+    ),
+    readFile(
+      new URL('../plugin/src/annotation-styles.ts', import.meta.url),
+      'utf8',
+    ),
+  ]);
+
+  assert.match(overlay, /scale\(0\.86 \$\{fixedShapeYScale \* 0\.86\}\)/);
+  assert.match(panel, /onDoubleClick=\{\(event\) => \{/);
+  assert.match(panel, /activeTool !== 'select' \|\| pending/);
+  assert.match(panel, /<Trash2 aria-hidden="true" size=\{11\} \/>/);
+  assert.match(
+    styles,
+    /\.retake-annotation-quick-delete\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;/s,
+  );
+});
