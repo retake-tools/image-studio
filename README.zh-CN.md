@@ -5,15 +5,11 @@
 Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布上提供可视化、流程化、可组合的
 真实图片处理能力。
 
-当前包含四个浏览器原生能力和三个 Retake 连接式 AI 能力：
+当前提供三个浏览器原生工具和两个 Retake 连接式 AI 编辑界面：
 
 - `image.local_adjust`：实时预览和调整亮度、对比度、饱和度；
-- `image.local_crop`：比例预设、裁剪范围、拖动或键盘定位、精确输出尺寸；
+- `image.local_crop`：比例预设、直接拖动四角调整裁剪框、拖动或键盘定位、精确输出尺寸；
 - `image.local_resize`：等比百分比或像素缩放、显式放大控制，以及 PNG / JPEG / WebP 输出；
-- `image.local_selection_mask`：添加 / 擦除选区、撤销、重做、反选，并输出与原图等大的
-  provider-neutral 黑白 PNG 蒙版；
-- `image.masked_edit`：同时绑定源图与等大的 Selection Mask，通过 Retake 当前图片默认连接
-  执行局部 Codex 图片编辑；
 - `image.annotation_edit`：通过编号定位点、箭头、画笔、区域画笔、矩形或椭圆标记图片，
   为每个标记或全局填写修改要求，并生成 1–4 张不含标注的编辑结果；
 - `image.outpaint`：选择目标比例与扩展量，拖动或锚定保持自然像素尺寸的原图，并生成
@@ -21,6 +17,10 @@ Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布�
 - 使用浏览器 Canvas 2D 在本地处理；
 - 通过 Retake Host API 创建新的标准 Image Asset、Operation、Execution 和 Result Block；
 - 不修改源图片。
+
+`image.masked_edit` 仅保留为外部 Workflow 已提供精确 Mask 时可调用的 typed compatibility
+contract；Image Studio 不再提供选区蒙版制作或局部蒙版编辑界面。`image.guided_edit` 在
+Guided Image Skill / Workflow 迁移完成前暂时保留，但不再显示在图片 Toolbar。
 
 Retake Whiteboard 继续负责画布、Block / Edge、AssetStore、Execution、History、Package 生命周期、
 信任和持久化；本仓库只拥有图片专业能力、界面、参数和处理器。
@@ -44,7 +44,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 如需不可变且可复现的安装，使用当前发布 tag：
 
 ```text
-github:retake-tools/image-studio@v0.10.5#subdirectory=plugin
+github:retake-tools/image-studio@v0.10.6#subdirectory=plugin
 ```
 
 `main` 是持续移动的稳定更新通道；版本 tag 保持固定。Retake 会自动获取源码、执行受控构建、
@@ -72,7 +72,6 @@ npm run release:check
 更多资料：
 
 - [Package 结构与作者边界](./docs/authoring.md)
-- [Selection Mask 边界](./docs/selection-mask.md)
 - [局部 AI 编辑边界](./docs/masked-edit.md)
 - [标注编辑边界](./docs/annotation.md)
 - [AI 扩图边界](./docs/outpaint.md)

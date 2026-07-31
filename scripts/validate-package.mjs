@@ -28,12 +28,6 @@ const resizeCapability = await readJson('definitions/image.local_resize.json');
 const resizeParameters = await readJson(
   'definitions/image.local_resize.parameters.json',
 );
-const selectionMaskCapability = await readJson(
-  'definitions/image.local_selection_mask.json',
-);
-const selectionMaskParameters = await readJson(
-  'definitions/image.local_selection_mask.parameters.json',
-);
 const maskedEditCapability = await readJson(
   'definitions/image.masked_edit.json',
 );
@@ -57,7 +51,7 @@ const guidedImageWorkflow = await readJson(
 );
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
-assert.equal(packageManifest.version, '0.10.5');
+assert.equal(packageManifest.version, '0.10.6');
 assert.equal(packageManifest.retakeHostCompatibility, '>=0.1.3 <0.2.0');
 assert.equal(packageManifest.license, 'Apache-2.0');
 assert.equal(packageManifest.files.includes('NOTICE'), true);
@@ -86,8 +80,6 @@ assert.deepEqual(
     'definitions/image.local_crop.parameters.json',
     'definitions/image.local_resize.json',
     'definitions/image.local_resize.parameters.json',
-    'definitions/image.local_selection_mask.json',
-    'definitions/image.local_selection_mask.parameters.json',
     'definitions/image.masked_edit.json',
     'definitions/image.masked_edit.parameters.json',
     'definitions/image.outpaint.json',
@@ -197,33 +189,6 @@ assert.deepEqual(resizeParameters.required, [
   'sourceWidth',
 ]);
 assert.equal(resizeParameters.additionalProperties, false);
-
-const selectionMaskCapabilityDescriptor = pluginManifest.contributions.find(
-  (entry) => (
-    entry.definitionPath === 'definitions/image.local_selection_mask.json'
-  ),
-);
-assert.ok(selectionMaskCapabilityDescriptor);
-assert.equal(
-  selectionMaskCapabilityDescriptor.definitionHash,
-  selectionMaskCapability.definitionHash,
-);
-assert.equal(
-  selectionMaskCapability.capabilityId,
-  'image.local_selection_mask',
-);
-assert.equal(
-  selectionMaskCapability.parametersSchemaRef,
-  'definitions/image.local_selection_mask.parameters.json',
-);
-assert.deepEqual(selectionMaskParameters.required, [
-  'inverted',
-  'maskEncoding',
-  'sourceHeight',
-  'sourceWidth',
-  'strokeCount',
-]);
-assert.equal(selectionMaskParameters.additionalProperties, false);
 
 const maskedEditCapabilityDescriptor = pluginManifest.contributions.find(
   (entry) => entry.definitionPath === 'definitions/image.masked_edit.json',
@@ -372,7 +337,6 @@ console.log(JSON.stringify({
     capability.capabilityId,
     cropCapability.capabilityId,
     resizeCapability.capabilityId,
-    selectionMaskCapability.capabilityId,
     maskedEditCapability.capabilityId,
     outpaintCapability.capabilityId,
   ],

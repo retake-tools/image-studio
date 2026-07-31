@@ -4,6 +4,8 @@ import {
   cropOutputGeometry,
   cropRegionForPreset,
   isFullImageCrop,
+  moveCropRegion,
+  resizeCropRegion,
 } from '../plugin/src/image-crop';
 
 test('crop presets stay inside a landscape source', () => {
@@ -100,4 +102,19 @@ test('invalid crop regions are rejected before Canvas execution', () => {
     ),
     /inside the source image/,
   );
+});
+
+test('crop frame movement stays within the image', () => {
+  assert.deepEqual(
+    moveCropRegion({ x: 0.2, y: 0.2, width: 0.5, height: 0.5 }, 1, -1),
+    { x: 0.5, y: 0, width: 0.5, height: 0.5 },
+  );
+});
+
+test('crop corner resize preserves ratio and opposite anchor', () => {
+  const start = { x: 0.2, y: 0.25, width: 0.4, height: 0.3 };
+  const resized = resizeCropRegion(start, 'nw', -0.1, -0.075);
+  assert.ok(Math.abs(resized.width / resized.height - start.width / start.height) < 0.000001);
+  assert.ok(Math.abs(resized.x + resized.width - (start.x + start.width)) < 0.000001);
+  assert.ok(Math.abs(resized.y + resized.height - (start.y + start.height)) < 0.000001);
 });

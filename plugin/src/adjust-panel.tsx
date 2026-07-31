@@ -103,7 +103,7 @@ export function ImageStudioAdjustPanel({
       <style>{imageStudioStyles}</style>
       <section
         aria-label={copy.title}
-        className="retake-image-studio-panel"
+        className="retake-image-studio-panel is-editor is-adjust"
         data-retake-image-studio="adjust"
       >
         <header className="retake-image-studio-panel__header">
@@ -121,62 +121,68 @@ export function ImageStudioAdjustPanel({
             ×
           </button>
         </header>
-        {sourceUrl ? (
-          <div className="retake-image-studio-preview">
-            <img
-              alt={block.title}
-              src={sourceUrl}
-              style={{ filter: imageAdjustmentFilter(adjustments) }}
-            />
+        <div className="retake-image-studio-editor-body">
+          <div className="retake-image-studio-editor-preview">
+            {sourceUrl ? (
+              <div className="retake-image-studio-preview">
+                <img
+                  alt={block.title}
+                  src={sourceUrl}
+                  style={{ filter: imageAdjustmentFilter(adjustments) }}
+                />
+              </div>
+            ) : (
+              <p className="retake-image-studio-panel__error">
+                {copy.sourceUnavailable}
+              </p>
+            )}
           </div>
-        ) : (
-          <p className="retake-image-studio-panel__error">
-            {copy.sourceUnavailable}
-          </p>
-        )}
-        <RangeControl
-          disabled={pending}
-          label={copy.brightness}
-          value={adjustments.brightness}
-          onChange={(brightness) => {
-            setAdjustments((current) => ({ ...current, brightness }));
-          }}
-        />
-        <RangeControl
-          disabled={pending}
-          label={copy.contrast}
-          value={adjustments.contrast}
-          onChange={(contrast) => {
-            setAdjustments((current) => ({ ...current, contrast }));
-          }}
-        />
-        <RangeControl
-          disabled={pending}
-          label={copy.saturation}
-          value={adjustments.saturation}
-          onChange={(saturation) => {
-            setAdjustments((current) => ({ ...current, saturation }));
-          }}
-        />
-        {error ? (
-          <p className="retake-image-studio-panel__error" role="alert">
-            {error}
-          </p>
-        ) : null}
-        <button
-          className="retake-image-studio-panel__run"
-          disabled={
-            pending
-            || !sourceUrl
-            || !hasImageAdjustments(adjustments)
-          }
-          onClick={() => {
-            void run();
-          }}
-          type="button"
-        >
-          {pending ? copy.running : copy.run}
-        </button>
+          <div className="retake-image-studio-editor-controls">
+            <RangeControl
+              disabled={pending}
+              label={copy.brightness}
+              value={adjustments.brightness}
+              onChange={(brightness) => {
+                setAdjustments((current) => ({ ...current, brightness }));
+              }}
+            />
+            <RangeControl
+              disabled={pending}
+              label={copy.contrast}
+              value={adjustments.contrast}
+              onChange={(contrast) => {
+                setAdjustments((current) => ({ ...current, contrast }));
+              }}
+            />
+            <RangeControl
+              disabled={pending}
+              label={copy.saturation}
+              value={adjustments.saturation}
+              onChange={(saturation) => {
+                setAdjustments((current) => ({ ...current, saturation }));
+              }}
+            />
+            {error ? (
+              <p className="retake-image-studio-panel__error" role="alert">
+                {error}
+              </p>
+            ) : null}
+            <button
+              className="retake-image-studio-panel__run"
+              disabled={
+                pending
+                || !sourceUrl
+                || !hasImageAdjustments(adjustments)
+              }
+              onClick={() => {
+                void run();
+              }}
+              type="button"
+            >
+              {pending ? copy.running : copy.run}
+            </button>
+          </div>
+        </div>
       </section>
     </>
   );

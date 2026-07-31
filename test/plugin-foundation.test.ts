@@ -6,13 +6,10 @@ import {
   adjustImageCommand,
   annotationImageCommand,
   cropImageCommand,
-  guidedEditImageCommand,
   imageStudioMessages,
   imageStudioPlugin,
-  maskedEditSelectionCommand,
   outpaintImageCommand,
   resizeImageCommand,
-  selectionMaskImageCommand,
 } from '../plugin/src/index';
 import { imageStudioSettings } from '../plugin/src/settings';
 import { imageStudioTheme } from '../plugin/src/theme';
@@ -55,9 +52,6 @@ test('image commands publish intentional host toolbar icons', () => {
       annotationImageCommand.icon,
       cropImageCommand.icon,
       resizeImageCommand.icon,
-      selectionMaskImageCommand.icon,
-      guidedEditImageCommand.icon,
-      maskedEditSelectionCommand.icon,
       outpaintImageCommand.icon,
     ],
     [
@@ -65,9 +59,6 @@ test('image commands publish intentional host toolbar icons', () => {
       'annotation',
       'crop',
       'resize',
-      'selection-mask',
-      'smart-edit',
-      'smart-edit',
       'outpaint',
     ],
   );
@@ -78,10 +69,8 @@ test('panels do not own locale detection or private theme fallbacks', async () =
     'adjust-panel.tsx',
     'annotation-copy.ts',
     'crop-panel.tsx',
-    'masked-edit-panel.tsx',
     'outpaint-copy.ts',
     'resize-panel.tsx',
-    'selection-mask-panel.tsx',
   ].map((fileName) => (
     readFile(new URL(`../plugin/src/${fileName}`, import.meta.url), 'utf8')
   )));
@@ -115,4 +104,17 @@ test('annotation view keeps compact controls and a conflict-free reset gesture',
     styles,
     /\.retake-annotation-quick-delete\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;/s,
   );
+});
+
+test('outpaint measures the source when persisted dimensions are absent', async () => {
+  const source = await readFile(
+    new URL('../plugin/src/outpaint-panel.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(source, /sourceUrl \? \(/);
+  assert.match(source, /geometry \? \(/);
+  assert.match(source, /retake-outpaint-source-measure/);
+  assert.match(source, /naturalHeight/);
+  assert.match(source, /naturalWidth/);
 });

@@ -36,13 +36,6 @@
       "kind": "capability"
     },
     {
-      "contributionId": "design.retake.image-studio.capability.local-selection-mask",
-      "definitionHash": "sha256:image-local-selection-mask-v2",
-      "definitionPath": "definitions/image.local_selection_mask.json",
-      "exportName": "localSelectionMaskCapability",
-      "kind": "capability"
-    },
-    {
       "contributionId": "design.retake.image-studio.capability.masked-edit",
       "definitionHash": "sha256:image-masked-edit-v2",
       "definitionPath": "definitions/image.masked_edit.json",
@@ -77,16 +70,6 @@
       "kind": "command"
     },
     {
-      "contributionId": "design.retake.image-studio.command.guided-edit",
-      "exportName": "guidedEditImageCommand",
-      "kind": "command"
-    },
-    {
-      "contributionId": "design.retake.image-studio.command.masked-edit",
-      "exportName": "maskedEditSelectionCommand",
-      "kind": "command"
-    },
-    {
       "contributionId": "design.retake.image-studio.command.outpaint",
       "exportName": "outpaintImageCommand",
       "kind": "command"
@@ -94,11 +77,6 @@
     {
       "contributionId": "design.retake.image-studio.command.resize",
       "exportName": "resizeImageCommand",
-      "kind": "command"
-    },
-    {
-      "contributionId": "design.retake.image-studio.command.selection-mask",
-      "exportName": "selectionMaskImageCommand",
       "kind": "command"
     },
     {
@@ -122,11 +100,6 @@
       "kind": "panel"
     },
     {
-      "contributionId": "design.retake.image-studio.panel.masked-edit",
-      "exportName": "maskedEditPanel",
-      "kind": "panel"
-    },
-    {
       "contributionId": "design.retake.image-studio.panel.outpaint",
       "exportName": "outpaintPanel",
       "kind": "panel"
@@ -135,14 +108,9 @@
       "contributionId": "design.retake.image-studio.panel.resize",
       "exportName": "resizeImagePanel",
       "kind": "panel"
-    },
-    {
-      "contributionId": "design.retake.image-studio.panel.selection-mask",
-      "exportName": "selectionMaskImagePanel",
-      "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-license-v16",
+  "definitionHash": "sha256:image-studio-web-license-v17",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -172,5 +140,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.10.5"
+  "version": "0.10.6"
 }

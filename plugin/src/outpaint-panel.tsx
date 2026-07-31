@@ -278,54 +278,72 @@ export function ImageStudioOutpaintPanel({
           </button>
         </header>
 
-        {sourceUrl && geometry ? (
+        {sourceUrl ? (
           <div className="retake-outpaint-stage-shell">
-            <div
-              className="retake-outpaint-stage"
-              style={{
-                aspectRatio:
-                  `${geometry.targetWidth} / ${geometry.targetHeight}`,
-              }}
-            >
+            {geometry ? (
               <div
-                aria-label={copy.sourcePosition}
-                className="retake-outpaint-source"
-                onKeyDown={moveWithKeyboard}
-                onPointerCancel={endDrag}
-                onPointerDown={beginDrag}
-                onPointerMove={drag}
-                onPointerUp={endDrag}
+                className="retake-outpaint-stage"
                 style={{
-                  height:
-                    `${geometry.sourceHeight / geometry.targetHeight * 100}%`,
-                  left: `${geometry.sourceX / geometry.targetWidth * 100}%`,
-                  top: `${geometry.sourceY / geometry.targetHeight * 100}%`,
-                  width:
-                    `${geometry.sourceWidth / geometry.targetWidth * 100}%`,
+                  aspectRatio:
+                    `${geometry.targetWidth} / ${geometry.targetHeight}`,
                 }}
-                tabIndex={pending ? -1 : 0}
               >
-                <img
-                  alt={block.title}
-                  draggable={false}
-                  onLoad={(event) => {
-                    const next = {
-                      height: event.currentTarget.naturalHeight,
-                      width: event.currentTarget.naturalWidth,
-                    };
-                    if (next.width > 0 && next.height > 0) {
-                      setDimensions((current) => (
-                        current?.width === next.width
-                        && current.height === next.height
-                          ? current
-                          : next
-                      ));
-                    }
+                <div
+                  aria-label={copy.sourcePosition}
+                  className="retake-outpaint-source"
+                  onKeyDown={moveWithKeyboard}
+                  onPointerCancel={endDrag}
+                  onPointerDown={beginDrag}
+                  onPointerMove={drag}
+                  onPointerUp={endDrag}
+                  style={{
+                    height:
+                      `${geometry.sourceHeight / geometry.targetHeight * 100}%`,
+                    left: `${geometry.sourceX / geometry.targetWidth * 100}%`,
+                    top: `${geometry.sourceY / geometry.targetHeight * 100}%`,
+                    width:
+                      `${geometry.sourceWidth / geometry.targetWidth * 100}%`,
                   }}
-                  src={sourceUrl}
-                />
+                  tabIndex={pending ? -1 : 0}
+                >
+                  <img
+                    alt={block.title}
+                    draggable={false}
+                    onLoad={(event) => {
+                      const next = {
+                        height: event.currentTarget.naturalHeight,
+                        width: event.currentTarget.naturalWidth,
+                      };
+                      if (next.width > 0 && next.height > 0) {
+                        setDimensions((current) => (
+                          current?.width === next.width
+                          && current.height === next.height
+                            ? current
+                            : next
+                        ));
+                      }
+                    }}
+                    src={sourceUrl}
+                  />
+                </div>
               </div>
-            </div>
+            ) : (
+              <img
+                alt={block.title}
+                className="retake-outpaint-source-measure"
+                draggable={false}
+                onLoad={(event) => {
+                  const next = {
+                    height: event.currentTarget.naturalHeight,
+                    width: event.currentTarget.naturalWidth,
+                  };
+                  if (next.width > 0 && next.height > 0) {
+                    setDimensions(next);
+                  }
+                }}
+                src={sourceUrl}
+              />
+            )}
           </div>
         ) : (
           <p className="retake-image-studio-panel__error">

@@ -17,6 +17,13 @@ export const outpaintStyles = `
   padding: 10px;
 }
 
+.retake-outpaint-source-measure {
+  display: block;
+  max-height: 360px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
 .retake-outpaint-stage {
   background:
     linear-gradient(45deg, #f8fafc 25%, transparent 25%),
