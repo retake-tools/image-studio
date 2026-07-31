@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  outpaintExpansionRegions,
   outpaintGeometry,
   outpaintGeometryIssue,
   outpaintParameters,
 } from '../plugin/src/outpaint';
+import { outpaintCopy } from '../plugin/src/outpaint-copy';
 
 test('outpaint creates a centered minimal 16:9 canvas around a square source', () => {
   const geometry = outpaintGeometry({
@@ -91,4 +93,32 @@ test('outpaint parameters freeze exact target and source geometry', () => {
     targetHeight: 768,
     targetWidth: 768,
   });
+});
+
+test('outpaint preview exposes only the generated regions around the source', () => {
+  const geometry = outpaintGeometry({
+    aspectPreset: '16:9',
+    positionX: 0.5,
+    positionY: 0.5,
+    scale: 1,
+    sourceHeight: 1024,
+    sourceWidth: 1024,
+  });
+  const regions = outpaintExpansionRegions(geometry);
+  assert.deepEqual(regions.map((region) => region.key), ['right', 'left']);
+  assert.equal(
+    regions.reduce(
+      (area, region) => area
+        + region.widthPercent * region.heightPercent,
+      0,
+    ) > 0,
+    true,
+  );
+});
+
+test('outpaint default prompt forbids copied or repeated source content', () => {
+  const english = outpaintCopy('en').defaultPrompt;
+  const chinese = outpaintCopy('zh-CN').defaultPrompt;
+  assert.match(english, /Do not copy, mirror, tile, repeat/);
+  assert.match(chinese, /不得复制、镜像、平铺、重复主体/);
 });

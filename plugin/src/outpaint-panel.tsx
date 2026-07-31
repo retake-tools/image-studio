@@ -14,6 +14,7 @@ import { usePluginEnvironment } from './localization';
 import { outpaintCopy } from './outpaint-copy';
 import {
   createOutpaintInputs,
+  outpaintExpansionRegions,
   outpaintGeometry,
   outpaintGeometryIssue,
   outpaintParameters,
@@ -133,6 +134,9 @@ export function ImageStudioOutpaintPanel({
       })
     : null;
   const issue = geometry ? outpaintGeometryIssue(geometry) : null;
+  const expansionRegions = geometry
+    ? outpaintExpansionRegions(geometry)
+    : [];
   const issueMessage = issue === 'no_expansion'
     ? copy.noExpansion
     : issue === 'target_too_large'
@@ -282,12 +286,27 @@ export function ImageStudioOutpaintPanel({
           <div className="retake-outpaint-stage-shell">
             {geometry ? (
               <div
+                aria-label={copy.expansionArea}
                 className="retake-outpaint-stage"
+                role="img"
                 style={{
                   aspectRatio:
                     `${geometry.targetWidth} / ${geometry.targetHeight}`,
                 }}
               >
+                {expansionRegions.map((region) => (
+                  <div
+                    aria-hidden="true"
+                    className="retake-outpaint-expansion"
+                    key={region.key}
+                    style={{
+                      height: `${region.heightPercent}%`,
+                      left: `${region.leftPercent}%`,
+                      top: `${region.topPercent}%`,
+                      width: `${region.widthPercent}%`,
+                    }}
+                  />
+                ))}
                 <div
                   aria-label={copy.sourcePosition}
                   className="retake-outpaint-source"
@@ -306,6 +325,9 @@ export function ImageStudioOutpaintPanel({
                   }}
                   tabIndex={pending ? -1 : 0}
                 >
+                  <span className="retake-outpaint-source-label">
+                    {copy.sourceArea}
+                  </span>
                   <img
                     alt={block.title}
                     draggable={false}
@@ -344,6 +366,12 @@ export function ImageStudioOutpaintPanel({
                 src={sourceUrl}
               />
             )}
+            {geometry ? (
+              <p className="retake-outpaint-stage-legend">
+                <span aria-hidden="true" />
+                {copy.expansionPreview}
+              </p>
+            ) : null}
           </div>
         ) : (
           <p className="retake-image-studio-panel__error">

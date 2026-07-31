@@ -239,17 +239,25 @@ export const annotationStyles = `
   .retake-annotation-quick-delete {
     position: absolute;
     z-index: 5;
-    display: inline-grid;
-    width: 20px;
-    height: 20px;
-    place-items: center;
+    display: inline-flex;
+    width: 14px;
+    height: 14px;
+    align-items: center;
+    justify-content: center;
     border: 1px solid #cbd5e1;
     border-radius: 999px;
     background: #fff;
     box-shadow: 0 5px 14px rgb(15 23 42 / 18%);
     color: #475569;
     cursor: pointer;
+    line-height: 0;
+    padding: 0;
     transform: translate(-50%, -50%);
+  }
+
+  .retake-annotation-quick-delete svg {
+    display: block;
+    flex: 0 0 auto;
   }
 
   .retake-annotation-quick-delete::before {

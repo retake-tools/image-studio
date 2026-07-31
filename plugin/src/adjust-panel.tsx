@@ -124,12 +124,14 @@ export function ImageStudioAdjustPanel({
         <div className="retake-image-studio-editor-body">
           <div className="retake-image-studio-editor-preview">
             {sourceUrl ? (
-              <div className="retake-image-studio-preview">
-                <img
-                  alt={block.title}
-                  src={sourceUrl}
-                  style={{ filter: imageAdjustmentFilter(adjustments) }}
-                />
+              <div className="retake-image-studio-crop-stage">
+                <div className="retake-image-studio-crop-media">
+                  <img
+                    alt={block.title}
+                    src={sourceUrl}
+                    style={{ filter: imageAdjustmentFilter(adjustments) }}
+                  />
+                </div>
               </div>
             ) : (
               <p className="retake-image-studio-panel__error">

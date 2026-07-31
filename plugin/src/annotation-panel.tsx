@@ -824,7 +824,7 @@ export function ImageStudioAnnotationPanel({
                         )}
                         type="button"
                       >
-                        <Trash2 aria-hidden="true" size={11} />
+                        <X aria-hidden="true" size={8} strokeWidth={2.25} />
                       </button>
                     ) : null}
                   </div>

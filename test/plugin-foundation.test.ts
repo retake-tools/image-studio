@@ -99,10 +99,13 @@ test('annotation view keeps compact controls and a conflict-free reset gesture',
   assert.match(overlay, /scale\(0\.86 \$\{fixedShapeYScale \* 0\.86\}\)/);
   assert.match(panel, /onDoubleClick=\{\(event\) => \{/);
   assert.match(panel, /activeTool !== 'select' \|\| pending/);
-  assert.match(panel, /<Trash2 aria-hidden="true" size=\{11\} \/>/);
+  assert.match(
+    panel,
+    /<X aria-hidden="true" size=\{8\} strokeWidth=\{2\.25\} \/>/,
+  );
   assert.match(
     styles,
-    /\.retake-annotation-quick-delete\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;/s,
+    /\.retake-annotation-quick-delete\s*\{[^}]*width:\s*14px;[^}]*height:\s*14px;/s,
   );
 });
 

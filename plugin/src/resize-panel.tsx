@@ -156,7 +156,7 @@ export function ImageStudioResizePanel({
       <style>{imageStudioStyles}</style>
       <section
         aria-label={copy.title}
-        className="retake-image-studio-panel"
+        className="retake-image-studio-panel is-editor is-resize"
         data-retake-image-studio="resize"
       >
         <header className="retake-image-studio-panel__header">
@@ -174,134 +174,146 @@ export function ImageStudioResizePanel({
             ×
           </button>
         </header>
-        {sourceUrl ? (
-          <div className="retake-image-studio-preview">
-            <img
-              alt={block.title}
-              onLoad={(event) => {
-                const next = {
-                  height: event.currentTarget.naturalHeight,
-                  width: event.currentTarget.naturalWidth,
-                };
-                if (next.width > 0 && next.height > 0) setDimensions(next);
+        <div className="retake-image-studio-editor-body">
+          <div className="retake-image-studio-editor-preview">
+            {sourceUrl ? (
+              <div className="retake-image-studio-crop-stage">
+                <div className="retake-image-studio-crop-media">
+                  <img
+                    alt={block.title}
+                    onLoad={(event) => {
+                      const next = {
+                        height: event.currentTarget.naturalHeight,
+                        width: event.currentTarget.naturalWidth,
+                      };
+                      if (next.width > 0 && next.height > 0) {
+                        setDimensions(next);
+                      }
+                    }}
+                    src={sourceUrl}
+                  />
+                </div>
+              </div>
+            ) : (
+              <p className="retake-image-studio-panel__error">
+                {copy.sourceUnavailable}
+              </p>
+            )}
+          </div>
+          <div className="retake-image-studio-editor-controls">
+            {dimensions ? (
+              <div className="retake-image-studio-resize-source">
+                <span>{copy.source}</span>
+                <strong>{dimensions.width} × {dimensions.height} px</strong>
+              </div>
+            ) : null}
+            <label className="retake-image-studio-field">
+              <span>{copy.mode}</span>
+              <select
+                disabled={pending}
+                onChange={(event) => {
+                  const nextMode = event.target.value as ResizeMode;
+                  setMode(nextMode);
+                  setValue(
+                    nextMode === 'percentage'
+                      ? 50
+                      : nextMode === 'width'
+                        ? dimensions?.width ?? 1
+                        : dimensions?.height ?? 1,
+                  );
+                }}
+                value={mode}
+              >
+                <option value="percentage">{copy.percentage}</option>
+                <option value="width">{copy.width}</option>
+                <option value="height">{copy.height}</option>
+              </select>
+            </label>
+            <label className="retake-image-studio-field">
+              <span>
+                {mode === 'percentage' ? copy.scale : copy.pixels}
+              </span>
+              <input
+                disabled={pending}
+                max={mode === 'percentage' ? 400 : 8192}
+                min={mode === 'percentage' ? 10 : 1}
+                onChange={(event) => setValue(Number(event.target.value))}
+                step={1}
+                type="number"
+                value={value}
+              />
+            </label>
+            <label className="retake-image-studio-check">
+              <input
+                checked={allowUpscale}
+                disabled={pending}
+                onChange={(event) => setAllowUpscale(event.target.checked)}
+                type="checkbox"
+              />
+              <span>{copy.allowUpscale}</span>
+            </label>
+            <label className="retake-image-studio-field">
+              <span>{copy.format}</span>
+              <select
+                disabled={pending}
+                onChange={(event) => {
+                  setFormat(event.target.value as ResizeOutputFormat);
+                }}
+                value={format}
+              >
+                <option value="png">PNG</option>
+                <option value="jpeg">JPEG</option>
+                <option value="webp">WebP</option>
+              </select>
+            </label>
+            {format !== 'png' ? (
+              <label className="retake-image-studio-field">
+                <span>{copy.quality}</span>
+                <input
+                  disabled={pending}
+                  max={100}
+                  min={60}
+                  onChange={(event) => setQuality(Number(event.target.value))}
+                  step={1}
+                  type="number"
+                  value={quality}
+                />
+              </label>
+            ) : null}
+            {format === 'jpeg' ? (
+              <label className="retake-image-studio-field">
+                <span>{copy.background}</span>
+                <input
+                  disabled={pending}
+                  onChange={(event) => setMatteColor(event.target.value)}
+                  type="color"
+                  value={matteColor}
+                />
+              </label>
+            ) : null}
+            {output ? (
+              <div className="retake-image-studio-crop-output">
+                <span>{copy.output}</span>
+                <strong>{output.width} × {output.height} px</strong>
+              </div>
+            ) : null}
+            {validationError || error ? (
+              <p className="retake-image-studio-panel__error" role="alert">
+                {error ?? validationError}
+              </p>
+            ) : null}
+            <button
+              className="retake-image-studio-panel__run"
+              disabled={pending || !sourceUrl || !output}
+              onClick={() => {
+                void run();
               }}
-              src={sourceUrl}
-            />
+              type="button"
+            >
+              {pending ? copy.running : copy.run}
+            </button>
           </div>
-        ) : (
-          <p className="retake-image-studio-panel__error">
-            {copy.sourceUnavailable}
-          </p>
-        )}
-        {dimensions ? (
-          <div className="retake-image-studio-resize-source">
-            <span>{copy.source}</span>
-            <strong>{dimensions.width} × {dimensions.height} px</strong>
-          </div>
-        ) : null}
-        <label className="retake-image-studio-field">
-          <span>{copy.mode}</span>
-          <select
-            disabled={pending}
-            onChange={(event) => {
-              const nextMode = event.target.value as ResizeMode;
-              setMode(nextMode);
-              setValue(
-                nextMode === 'percentage'
-                  ? 50
-                  : nextMode === 'width'
-                    ? dimensions?.width ?? 1
-                    : dimensions?.height ?? 1,
-              );
-            }}
-            value={mode}
-          >
-            <option value="percentage">{copy.percentage}</option>
-            <option value="width">{copy.width}</option>
-            <option value="height">{copy.height}</option>
-          </select>
-        </label>
-        <label className="retake-image-studio-field">
-          <span>{mode === 'percentage' ? copy.scale : copy.pixels}</span>
-          <input
-            disabled={pending}
-            max={mode === 'percentage' ? 400 : 8192}
-            min={mode === 'percentage' ? 10 : 1}
-            onChange={(event) => setValue(Number(event.target.value))}
-            step={1}
-            type="number"
-            value={value}
-          />
-        </label>
-        <label className="retake-image-studio-check">
-          <input
-            checked={allowUpscale}
-            disabled={pending}
-            onChange={(event) => setAllowUpscale(event.target.checked)}
-            type="checkbox"
-          />
-          <span>{copy.allowUpscale}</span>
-        </label>
-        <label className="retake-image-studio-field">
-          <span>{copy.format}</span>
-          <select
-            disabled={pending}
-            onChange={(event) => {
-              setFormat(event.target.value as ResizeOutputFormat);
-            }}
-            value={format}
-          >
-            <option value="png">PNG</option>
-            <option value="jpeg">JPEG</option>
-            <option value="webp">WebP</option>
-          </select>
-        </label>
-        {format !== 'png' ? (
-          <label className="retake-image-studio-field">
-            <span>{copy.quality}</span>
-            <input
-              disabled={pending}
-              max={100}
-              min={60}
-              onChange={(event) => setQuality(Number(event.target.value))}
-              step={1}
-              type="number"
-              value={quality}
-            />
-          </label>
-        ) : null}
-        {format === 'jpeg' ? (
-          <label className="retake-image-studio-field">
-            <span>{copy.background}</span>
-            <input
-              disabled={pending}
-              onChange={(event) => setMatteColor(event.target.value)}
-              type="color"
-              value={matteColor}
-            />
-          </label>
-        ) : null}
-        {output ? (
-          <div className="retake-image-studio-crop-output">
-            <span>{copy.output}</span>
-            <strong>{output.width} × {output.height} px</strong>
-          </div>
-        ) : null}
-        {validationError || error ? (
-          <p className="retake-image-studio-panel__error" role="alert">
-            {error ?? validationError}
-          </p>
-        ) : null}
-        <button
-          className="retake-image-studio-panel__run"
-          disabled={pending || !sourceUrl || !output}
-          onClick={() => {
-            void run();
-          }}
-          type="button"
-        >
-          {pending ? copy.running : copy.run}
-        </button>
+        </div>
       </section>
     </>
   );
