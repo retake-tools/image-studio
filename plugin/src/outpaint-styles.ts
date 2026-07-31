@@ -35,11 +35,8 @@ export const outpaintStyles = `
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   background-size: 16px 16px;
   box-shadow: 0 8px 24px rgb(15 23 42 / 16%);
-  max-height: 300px;
-  max-width: 100%;
   overflow: hidden;
   position: relative;
-  width: 100%;
 }
 
 .retake-outpaint-expansion {

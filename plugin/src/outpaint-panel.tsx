@@ -292,6 +292,10 @@ export function ImageStudioOutpaintPanel({
                 style={{
                   aspectRatio:
                     `${geometry.targetWidth} / ${geometry.targetHeight}`,
+                  width: `min(100%, ${Math.min(
+                    380,
+                    300 * geometry.targetWidth / geometry.targetHeight,
+                  )}px)`,
                 }}
               >
                 {expansionRegions.map((region) => (

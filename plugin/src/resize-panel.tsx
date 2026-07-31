@@ -229,20 +229,57 @@ export function ImageStudioResizePanel({
                 <option value="height">{copy.height}</option>
               </select>
             </label>
-            <label className="retake-image-studio-field">
-              <span>
-                {mode === 'percentage' ? copy.scale : copy.pixels}
-              </span>
-              <input
-                disabled={pending}
-                max={mode === 'percentage' ? 400 : 8192}
-                min={mode === 'percentage' ? 10 : 1}
-                onChange={(event) => setValue(Number(event.target.value))}
-                step={1}
-                type="number"
-                value={value}
-              />
-            </label>
+            {mode === 'percentage' ? (
+              <div className="retake-image-studio-range is-resize-scale">
+                <span>{copy.scale}</span>
+                <button
+                  aria-label={copy.decrease}
+                  disabled={pending || value <= 10}
+                  onClick={() => setValue((current) => (
+                    Math.max(10, current - 5)
+                  ))}
+                  type="button"
+                >
+                  −
+                </button>
+                <input
+                  aria-label={copy.scale}
+                  disabled={pending}
+                  max={400}
+                  min={10}
+                  onChange={(event) => setValue(
+                    Number(event.currentTarget.value),
+                  )}
+                  step={1}
+                  type="range"
+                  value={value}
+                />
+                <button
+                  aria-label={copy.increase}
+                  disabled={pending || value >= 400}
+                  onClick={() => setValue((current) => (
+                    Math.min(400, current + 5)
+                  ))}
+                  type="button"
+                >
+                  +
+                </button>
+                <output>{value}%</output>
+              </div>
+            ) : (
+              <label className="retake-image-studio-field">
+                <span>{copy.pixels}</span>
+                <input
+                  disabled={pending}
+                  max={8192}
+                  min={1}
+                  onChange={(event) => setValue(Number(event.target.value))}
+                  step={1}
+                  type="number"
+                  value={value}
+                />
+              </label>
+            )}
             <label className="retake-image-studio-check">
               <input
                 checked={allowUpscale}
@@ -345,9 +382,11 @@ const resizeMessages = defineMessages({
   allowUpscale: localized('Allow image upscale', '允许放大图片'),
   background: localized('Alpha background', '透明背景'),
   close: localized('Close', '关闭'),
+  decrease: localized('Decrease scale', '减小缩放比例'),
   failed: localized('Image resize failed', '图片缩放失败'),
   format: localized('File format', '文件格式'),
   height: localized('By height', '按高度'),
+  increase: localized('Increase scale', '增大缩放比例'),
   mode: localized('Resize by', '调整方式'),
   output: localized('Output size', '输出尺寸'),
   percentage: localized('Percentage', '按百分比'),
@@ -373,9 +412,11 @@ function localizedResizeCopy(
   allowUpscale: string;
   background: string;
   close: string;
+  decrease: string;
   failed: string;
   format: string;
   height: string;
+  increase: string;
   mode: string;
   output: string;
   percentage: string;
@@ -393,9 +434,11 @@ function localizedResizeCopy(
     allowUpscale: translator.t('allowUpscale'),
     background: translator.t('background'),
     close: translator.t('close'),
+    decrease: translator.t('decrease'),
     failed: translator.t('failed'),
     format: translator.t('format'),
     height: translator.t('height'),
+    increase: translator.t('increase'),
     mode: translator.t('mode'),
     output: translator.t('output'),
     percentage: translator.t('percentage'),

@@ -176,6 +176,10 @@ export const imageStudioStyles = `
   text-align: right;
 }
 
+.retake-image-studio-range.is-resize-scale {
+  grid-template-columns: 82px 24px minmax(0, 1fr) 24px 42px;
+}
+
 .retake-image-studio-field {
   align-items: center;
   color: ${theme.muted};

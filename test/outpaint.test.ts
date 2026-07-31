@@ -71,6 +71,20 @@ test('outpaint rejects target canvases beyond the V0 browser limit', () => {
   assert.equal(outpaintGeometryIssue(geometry), 'target_too_large');
 });
 
+test('outpaint preserves an exact portrait 9:16 target ratio', () => {
+  const geometry = outpaintGeometry({
+    aspectPreset: '9:16',
+    positionX: 0.5,
+    positionY: 0.5,
+    scale: 1,
+    sourceHeight: 1024,
+    sourceWidth: 1024,
+  });
+  assert.equal(geometry.targetWidth, 1024);
+  assert.equal(geometry.targetHeight, 1820);
+  assert.equal(geometry.targetWidth / geometry.targetHeight, 1024 / 1820);
+});
+
 test('outpaint parameters freeze exact target and source geometry', () => {
   const geometry = outpaintGeometry({
     aspectPreset: '1:1',

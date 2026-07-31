@@ -99,6 +99,9 @@ test('annotation view keeps compact controls and a conflict-free reset gesture',
   assert.match(overlay, /scale\(0\.86 \$\{fixedShapeYScale \* 0\.86\}\)/);
   assert.match(panel, /onDoubleClick=\{\(event\) => \{/);
   assert.match(panel, /activeTool !== 'select' \|\| pending/);
+  assert.match(panel, /is-annotation nodrag nopan nowheel/);
+  assert.match(panel, /onWheelCapture=\{onStageWheel\}/);
+  assert.match(panel, /translate3d\(\$\{pan\.x\}px, \$\{pan\.y\}px, 0\)/);
   assert.match(
     panel,
     /<X aria-hidden="true" size=\{8\} strokeWidth=\{2\.25\} \/>/,
@@ -110,14 +113,33 @@ test('annotation view keeps compact controls and a conflict-free reset gesture',
 });
 
 test('outpaint measures the source when persisted dimensions are absent', async () => {
-  const source = await readFile(
-    new URL('../plugin/src/outpaint-panel.tsx', import.meta.url),
-    'utf8',
-  );
+  const [source, styles] = await Promise.all([
+    readFile(
+      new URL('../plugin/src/outpaint-panel.tsx', import.meta.url),
+      'utf8',
+    ),
+    readFile(
+      new URL('../plugin/src/outpaint-styles.ts', import.meta.url),
+      'utf8',
+    ),
+  ]);
 
   assert.match(source, /sourceUrl \? \(/);
   assert.match(source, /geometry \? \(/);
   assert.match(source, /retake-outpaint-source-measure/);
   assert.match(source, /naturalHeight/);
   assert.match(source, /naturalWidth/);
+  assert.match(source, /300 \* geometry\.targetWidth \/ geometry\.targetHeight/);
+  assert.doesNotMatch(styles, /\.retake-outpaint-stage\s*\{[^}]*max-height:/s);
+});
+
+test('percentage resize uses the same inspectable range control as outpaint', async () => {
+  const source = await readFile(
+    new URL('../plugin/src/resize-panel.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(source, /retake-image-studio-range is-resize-scale/);
+  assert.match(source, /type="range"/);
+  assert.match(source, /<output>\{value\}%<\/output>/);
 });

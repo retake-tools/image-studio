@@ -18,6 +18,7 @@ export const annotationStyles = `
     max-height: calc(100vh - 96px);
     box-sizing: border-box;
     overflow: hidden;
+    overscroll-behavior: contain;
     transform: translate(-50%, -50%);
   }
 

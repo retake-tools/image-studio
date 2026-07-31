@@ -611,7 +611,7 @@ export function ImageStudioAnnotationPanel({
       <section
         aria-label={copy.title}
         aria-busy={pending}
-        className="retake-image-studio-panel is-annotation"
+        className="retake-image-studio-panel is-annotation nodrag nopan nowheel"
         data-retake-image-studio="annotation"
         onKeyDown={onPanelKeyDown}
       >
@@ -703,6 +703,7 @@ export function ImageStudioAnnotationPanel({
             <div className="retake-annotation-workspace">
               <div
                 className="retake-annotation-stage-shell"
+                onWheelCapture={onStageWheel}
                 ref={stageShellRef}
               >
                 {source.url ? (
@@ -718,7 +719,7 @@ export function ImageStudioAnnotationPanel({
                             aspectRatio: imageAspectRatio ?? 1,
                             width: '100%',
                           }),
-                      transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                      transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`,
                     }}
                   >
                     <img
@@ -759,7 +760,6 @@ export function ImageStudioAnnotationPanel({
                         setHoveredMarkId(null);
                       }}
                       onPointerUp={finishGesture}
-                      onWheel={onStageWheel}
                       ref={stageRef}
                       role="application"
                       tabIndex={0}
