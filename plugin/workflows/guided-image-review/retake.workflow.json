@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "workflowId": "retake.workflow.guided-image-review",
-  "version": "0.1.1",
-  "definitionHash": "sha256:retake-workflow-guided-image-review-v3",
+  "version": "0.2.0",
+  "definitionHash": "sha256:retake-workflow-guided-image-review-v4",
   "name": "Guided image edit and review",
   "description": "Run one guided Image edit and require a human to approve the accepted result.",
   "ui": {
@@ -32,7 +32,7 @@
       "required": true
     },
     {
-      "slotId": "guidance_image",
+      "slotId": "references",
       "artifactTypes": [
         "image",
         "reference",
@@ -60,7 +60,7 @@
       "source": {
         "kind": "step_output",
         "stepId": "guided_image_edit",
-        "outputSlotId": "edited_images"
+        "outputSlotId": "images"
       },
       "exposedAsIntermediate": false
     }
@@ -82,14 +82,14 @@
       "type": "capability",
       "stageId": "media_generation",
       "capabilityLock": {
-        "capabilityId": "image.guided_edit",
-        "version": "0.1.1",
-        "definitionHash": "sha256:image-guided-edit-v3"
+        "capabilityId": "image.generate",
+        "version": "0.1.0",
+        "definitionHash": "sha256:retake-image-generate-v1"
       },
       "skillLock": {
         "skillId": "retake.image.guided-edit",
-        "version": "0.1.0",
-        "definitionHash": "sha256:retake-image-guided-edit-skill-v1"
+        "version": "0.2.0",
+        "definitionHash": "sha256:retake-image-guided-edit-skill-v2"
       },
       "inputBindings": [
         {
@@ -100,10 +100,10 @@
           }
         },
         {
-          "inputSlotId": "guidance_image",
+          "inputSlotId": "references",
           "source": {
             "kind": "workflow_input",
-            "slotId": "guidance_image"
+            "slotId": "references"
           }
         },
         {
@@ -115,7 +115,7 @@
         }
       ],
       "outputSlots": [
-        "edited_images"
+        "images"
       ],
       "outputAcceptancePolicy": "manual_single",
       "runPolicy": "manual",

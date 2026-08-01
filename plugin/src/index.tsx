@@ -16,13 +16,11 @@ import { imageStudioSettings } from './settings';
 import { ImageStudioAdjustPanel } from './adjust-panel';
 import { ImageStudioAnnotationPanel } from './annotation-panel';
 import { ImageStudioCropPanel } from './crop-panel';
-import { ImageStudioGuidedEditPanel } from './guided-edit-panel';
 import { ImageStudioOutpaintPanel } from './outpaint-panel';
 import {
   adjustPanelStore,
   annotationPanelStore,
   cropPanelStore,
-  guidedEditPanelStore,
   outpaintPanelStore,
   resizePanelStore,
 } from './panel-store';
@@ -72,43 +70,6 @@ export const localResizeCapability = capabilityContribution({
   runtimeRequirements: ['browser.canvas_2d'],
   supportedAdapterClasses: ['local_canvas'],
   version: '0.2.0',
-});
-
-export const guidedEditCapability = defineCapability({
-  apiVersion: 2,
-  definition: {
-    capabilityId: 'image.guided_edit',
-    category: 'image_editing',
-    definitionHash: 'sha256:image-guided-edit-v3',
-    displayName: localized('Guided image edit', '引导式图片编辑'),
-    inputSlots: [
-      imageSourceInput(),
-      {
-        ...imageInput('guidance_image', 'guidance'),
-        artifactTypes: ['image', 'reference', 'selection_mask'],
-        cardinality: 'optional',
-        required: false,
-      },
-      {
-        ...textInput(),
-        bindingKinds: ['block', 'inline'],
-      },
-    ],
-    outputSlots: [{
-      artifactType: 'image',
-      cardinality: 'many',
-      dataType: 'image',
-      projectionBlockTypes: ['image'],
-      semanticRole: 'edited_images',
-      slotId: 'edited_images',
-    }],
-    parametersSchemaRef: 'definitions/image.guided_edit.parameters.json',
-    runtimeRequirements: ['durable_asset_output', 'image_generation'],
-    schemaVersion: 2,
-    supportedAdapterClasses: ['agent_runtime.media'],
-    version: '0.1.1',
-  },
-  kind: 'capability',
 });
 
 export const maskedEditCapability = defineCapability({
@@ -258,7 +219,6 @@ export const annotationImagePanel = panelContribution(
   ImageStudioAnnotationPanel,
 );
 export const cropImagePanel = panelContribution(ImageStudioCropPanel);
-export const guidedEditPanel = panelContribution(ImageStudioGuidedEditPanel);
 export const outpaintPanel = panelContribution(ImageStudioOutpaintPanel);
 export const resizeImagePanel = panelContribution(ImageStudioResizePanel);
 
@@ -271,8 +231,6 @@ export const imageStudioPlugin = definePlugin({
     annotationImagePanel,
     cropImageCommand,
     cropImagePanel,
-    guidedEditCapability,
-    guidedEditPanel,
     localAdjustCapability,
     localCropCapability,
     localResizeCapability,
@@ -438,7 +396,6 @@ function closePanels(): void {
   adjustPanelStore.close();
   annotationPanelStore.close();
   cropPanelStore.close();
-  guidedEditPanelStore.close();
   outpaintPanelStore.close();
   resizePanelStore.close();
 }

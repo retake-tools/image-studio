@@ -8,22 +8,20 @@
     "agentPresets": [
       {
         "agentPresetId": "retake.agent.guided-image-operator",
-        "definitionHash": "sha256:retake-agent-guided-image-operator-v1",
+        "definitionHash": "sha256:retake-agent-guided-image-operator-v2",
         "definitionPath": "agents/guided-image-operator/retake.agent.json",
         "resourcePaths": [],
-        "version": "0.1.0"
+        "version": "0.2.0"
       }
     ],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-license-v17",
+        "definitionHash": "sha256:image-studio-web-license-v18",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
           "definitions/image.annotation_edit.json",
           "definitions/image.annotation_edit.parameters.json",
-          "definitions/image.guided_edit.json",
-          "definitions/image.guided_edit.parameters.json",
           "definitions/image.local_adjust.json",
           "definitions/image.local_adjust.parameters.json",
           "definitions/image.local_crop.json",
@@ -35,24 +33,24 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.10.8"
+        "version": "0.11.0"
       }
     ],
     "skills": [
       {
-        "definitionHash": "sha256:retake-image-guided-edit-skill-v1",
+        "definitionHash": "sha256:retake-image-guided-edit-skill-v2",
         "definitionPath": "skills/guided-image-edit/retake.skill.json",
         "resourcePaths": [],
         "skillId": "retake.image.guided-edit",
-        "version": "0.1.0"
+        "version": "0.2.0"
       }
     ],
     "workflows": [
       {
-        "definitionHash": "sha256:retake-workflow-guided-image-review-v3",
+        "definitionHash": "sha256:retake-workflow-guided-image-review-v4",
         "definitionPath": "workflows/guided-image-review/retake.workflow.json",
         "resourcePaths": [],
-        "version": "0.1.1",
+        "version": "0.2.0",
         "workflowDefinitionId": "retake.workflow.guided-image-review"
       }
     ]
@@ -100,8 +98,6 @@
     "agents/guided-image-operator/retake.agent.json",
     "definitions/image.annotation_edit.json",
     "definitions/image.annotation_edit.parameters.json",
-    "definitions/image.guided_edit.json",
-    "definitions/image.guided_edit.parameters.json",
     "definitions/image.local_adjust.json",
     "definitions/image.local_adjust.parameters.json",
     "definitions/image.local_crop.json",
@@ -125,7 +121,6 @@
     "src/annotation.ts",
     "src/browser-image.ts",
     "src/crop-panel.tsx",
-    "src/guided-edit-panel.tsx",
     "src/image-adjustments.ts",
     "src/image-crop.ts",
     "src/image-resize.ts",
@@ -161,5 +156,5 @@
   "retakeHostCompatibility": ">=0.1.3 <0.2.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.10.8"
+  "version": "0.11.0"
 }

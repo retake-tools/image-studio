@@ -10,12 +10,6 @@ const annotationCapability = await readJson(
 const annotationParameters = await readJson(
   'definitions/image.annotation_edit.parameters.json',
 );
-const guidedEditCapability = await readJson(
-  'definitions/image.guided_edit.json',
-);
-const guidedEditParameters = await readJson(
-  'definitions/image.guided_edit.parameters.json',
-);
 const capability = await readJson('definitions/image.local_adjust.json');
 const parameters = await readJson(
   'definitions/image.local_adjust.parameters.json',
@@ -51,7 +45,7 @@ const guidedImageWorkflow = await readJson(
 );
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
-assert.equal(packageManifest.version, '0.10.8');
+assert.equal(packageManifest.version, '0.11.0');
 assert.equal(packageManifest.retakeHostCompatibility, '>=0.1.3 <0.2.0');
 assert.equal(packageManifest.license, 'Apache-2.0');
 assert.equal(packageManifest.files.includes('NOTICE'), true);
@@ -72,8 +66,6 @@ assert.deepEqual(
   [
     'definitions/image.annotation_edit.json',
     'definitions/image.annotation_edit.parameters.json',
-    'definitions/image.guided_edit.json',
-    'definitions/image.guided_edit.parameters.json',
     'definitions/image.local_adjust.json',
     'definitions/image.local_adjust.parameters.json',
     'definitions/image.local_crop.json',
@@ -254,29 +246,6 @@ assert.equal(annotationParameters.additionalProperties, false);
 assert.equal(annotationCapability.outputSlots[0]?.cardinality, 'many');
 assert.equal(annotationCapability.outputSlots[0]?.slotId, 'edited_images');
 
-const guidedEditCapabilityDescriptor = pluginManifest.contributions.find(
-  (entry) => entry.definitionPath === 'definitions/image.guided_edit.json',
-);
-assert.ok(guidedEditCapabilityDescriptor);
-assert.equal(
-  guidedEditCapabilityDescriptor.definitionHash,
-  guidedEditCapability.definitionHash,
-);
-assert.equal(guidedEditCapability.capabilityId, 'image.guided_edit');
-assert.equal(
-  guidedEditCapability.parametersSchemaRef,
-  'definitions/image.guided_edit.parameters.json',
-);
-assert.deepEqual(guidedEditParameters.required, []);
-assert.equal(guidedEditParameters.additionalProperties, false);
-assert.equal(
-  guidedEditCapability.inputSlots.find(
-    (slot) => slot.slotId === 'guidance_image',
-  )?.required,
-  false,
-);
-assert.equal(guidedEditCapability.outputSlots[0]?.cardinality, 'many');
-assert.equal(guidedEditCapability.outputSlots[0]?.slotId, 'edited_images');
 assert.deepEqual(packageManifest.dependencies, []);
 assert.deepEqual(
   packageManifest.components.agentPresets.map((entry) => entry.agentPresetId),
@@ -294,7 +263,7 @@ assert.deepEqual(
 );
 assert.equal(
   guidedImageAgent.allowedCapabilityIds[0],
-  guidedEditCapability.capabilityId,
+  'image.generate',
 );
 assert.equal(
   guidedImageAgent.skillPolicy.allowedSkillIds[0],
@@ -302,12 +271,21 @@ assert.equal(
 );
 assert.equal(
   guidedImageSkill.capabilityBindings[0]?.capabilityId,
-  guidedEditCapability.capabilityId,
+  'image.generate',
 );
 assert.equal(
   guidedImageWorkflow.steps[0]?.capabilityLock.capabilityId,
-  guidedEditCapability.capabilityId,
+  'image.generate',
 );
+assert.deepEqual(
+  guidedImageSkill.capabilityBindings[0]?.inputSlots,
+  ['source_image', 'references', 'prompt'],
+);
+assert.deepEqual(guidedImageSkill.capabilityBindings[0]?.outputSlots, ['images']);
+assert.equal(guidedImageWorkflow.steps[0]?.capabilityLock.definitionHash, 'sha256:retake-image-generate-v1');
+assert.equal(guidedImageWorkflow.steps[0]?.inputBindings[1]?.inputSlotId, 'references');
+assert.equal(guidedImageWorkflow.steps[0]?.inputBindings[1]?.source.slotId, 'references');
+assert.deepEqual(guidedImageWorkflow.steps[0]?.outputSlots, ['images']);
 assert.equal(
   guidedImageWorkflow.steps[0]?.skillLock.skillId,
   guidedImageSkill.skillId,
@@ -333,7 +311,6 @@ console.log(JSON.stringify({
   capabilityId: capability.capabilityId,
   capabilityIds: [
     annotationCapability.capabilityId,
-    guidedEditCapability.capabilityId,
     capability.capabilityId,
     cropCapability.capabilityId,
     resizeCapability.capabilityId,

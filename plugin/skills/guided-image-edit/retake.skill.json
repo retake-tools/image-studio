@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
   "skillId": "retake.image.guided-edit",
-  "version": "0.1.0",
-  "definitionHash": "sha256:retake-image-guided-edit-skill-v1",
+  "version": "0.2.0",
+  "definitionHash": "sha256:retake-image-guided-edit-skill-v2",
   "name": "Guided image edit",
   "description": "Edit one source Image from an explicit instruction and optional guidance Image.",
   "category": "media_generation",
   "capabilityBindings": [
     {
-      "capabilityId": "image.guided_edit",
+      "capabilityId": "image.generate",
       "inputSlots": [
         "source_image",
-        "guidance_image",
+        "references",
         "prompt"
       ],
       "outputSlots": [
-        "edited_images"
+        "images"
       ]
     }
   ],
@@ -68,7 +68,7 @@
             "zh": "可选连接参考图或选区蒙版..."
           }
         },
-        "slotId": "guidance_image"
+        "slotId": "references"
       },
       {
         "label": {

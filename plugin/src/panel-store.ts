@@ -40,7 +40,6 @@ export const adjustPanelStore = Object.freeze({
 });
 
 export const cropPanelStore = createPanelStore();
-export const guidedEditPanelStore = createPanelStore();
 export const resizePanelStore = createPanelStore();
 export const annotationPanelStore = createAnnotationPanelStore();
 export const outpaintPanelStore = createPanelStore();

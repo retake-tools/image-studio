@@ -85,13 +85,12 @@ Block scope, imported composite Asset, execution lifecycle, multi-result
 projection, Board History, and historical Operation context. See
 [Annotation editing](./annotation.md).
 
-`image.guided_edit` is the narrow composable counterpart for Package-authored
-Skills and Workflows. The same Image Studio Package now carries its Guided
-Image Skill, manual-review Workflow, and bounded AgentPreset; these definitions
-are not a second Package or Plugin. Its public contract accepts one source
-Image, one inline instruction, and one optional guidance Image (reference or
-mask). Its manual Image Toolbar Command is hidden while the bundled definitions
-migrate to the unified `image.generate` contract.
+Guided Image is the narrow composable path for Package-authored Skills and
+Workflows. The same Image Studio Package carries its Guided Image Skill,
+manual-review Workflow, and bounded AgentPreset; these definitions are not a
+second Package or Plugin. They bind Core `image.generate` with one exact
+`source_image`, one prompt, and optional ordered `references`. Image Studio
+does not declare a duplicate Capability, Command, or Panel for this path.
 
 `image.outpaint` keeps target geometry and image preparation in the Plugin.
 Image Studio builds one transparent target-size guide and one opaque black/white
