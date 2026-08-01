@@ -8,13 +8,6 @@
       "kind": "capability"
     },
     {
-      "contributionId": "design.retake.image-studio.capability.guided-edit",
-      "definitionHash": "sha256:image-guided-edit-v3",
-      "definitionPath": "definitions/image.guided_edit.json",
-      "exportName": "guidedEditCapability",
-      "kind": "capability"
-    },
-    {
       "contributionId": "design.retake.image-studio.capability.local-adjust",
       "definitionHash": "sha256:image-local-adjust-v2",
       "definitionPath": "definitions/image.local_adjust.json",
@@ -95,11 +88,6 @@
       "kind": "panel"
     },
     {
-      "contributionId": "design.retake.image-studio.panel.guided-edit",
-      "exportName": "guidedEditPanel",
-      "kind": "panel"
-    },
-    {
       "contributionId": "design.retake.image-studio.panel.outpaint",
       "exportName": "outpaintPanel",
       "kind": "panel"
@@ -110,7 +98,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-license-v17",
+  "definitionHash": "sha256:image-studio-web-license-v18",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -140,5 +128,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.10.8"
+  "version": "0.11.0"
 }

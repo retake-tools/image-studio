@@ -46,8 +46,8 @@ Verify in a disposable Retake Workspace:
   Operation, one Result Image, one succeeded Execution, and one output Asset
   while leaving the source unchanged;
 - the image Toolbar does not expose Selection Mask, Masked AI Edit, or Guided
-  Edit; the retained `image.masked_edit` and `image.guided_edit` definitions are
-  contract-only migration surfaces;
+  Edit; `image.masked_edit` remains contract-only while Guided Image binds Core
+  `image.generate` and contributes no duplicate Capability or Panel;
 - Crop aspect presets stay in bounds and the recorded output dimensions match
   the actual PNG;
 - Resize output dimensions, MIME type, extension, and file encoding agree;

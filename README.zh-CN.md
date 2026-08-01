@@ -19,8 +19,9 @@ Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布�
 - 不修改源图片。
 
 `image.masked_edit` 仅保留为外部 Workflow 已提供精确 Mask 时可调用的 typed compatibility
-contract；Image Studio 不再提供选区蒙版制作或局部蒙版编辑界面。`image.guided_edit` 在
-Guided Image Skill / Workflow 迁移完成前暂时保留，但不再显示在图片 Toolbar。
+contract；Image Studio 不再提供选区蒙版制作或局部蒙版编辑界面。Guided Image 现在绑定 Core
+`image.generate`，并严格使用 `source_image`、有序 `references` 与 `prompt` Slot；Image Studio
+不再声明重复的 `image.guided_edit` Capability 或手动面板。
 
 Retake Whiteboard 继续负责画布、Block / Edge、AssetStore、Execution、History、Package 生命周期、
 信任和持久化；本仓库只拥有图片专业能力、界面、参数和处理器。
@@ -44,7 +45,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 如需不可变且可复现的安装，使用当前发布 tag：
 
 ```text
-github:retake-tools/image-studio@v0.10.8#subdirectory=plugin
+github:retake-tools/image-studio@v0.11.0#subdirectory=plugin
 ```
 
 `main` 是持续移动的稳定更新通道；版本 tag 保持固定。Retake 会自动获取源码、执行受控构建、

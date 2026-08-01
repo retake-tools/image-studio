@@ -22,9 +22,10 @@ Retake-connected AI editing surfaces:
 
 `image.masked_edit` remains a typed compatibility contract for workflows that
 already supply an exact external mask; Image Studio no longer exposes mask
-authoring or masked-edit UI. `image.guided_edit` is retained temporarily for
-the bundled Skill/Workflow migration and is no longer shown in the image
-toolbar.
+authoring or masked-edit UI. Guided Image now binds the Core `image.generate`
+Capability with exact `source_image`, ordered `references`, and `prompt` Slots;
+Image Studio no longer declares a duplicate `image.guided_edit` Capability or
+manual panel.
 
 All processors create a new result asset and block through the Retake Host
 API, leaving the source image unchanged.
@@ -61,7 +62,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 For an immutable, reproducible install, use the current release tag:
 
 ```text
-github:retake-tools/image-studio@v0.10.8#subdirectory=plugin
+github:retake-tools/image-studio@v0.11.0#subdirectory=plugin
 ```
 
 Retake resolves either Git source, runs its controlled

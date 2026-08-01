@@ -77,7 +77,6 @@ assert.deepEqual(
   capabilities.map((capability) => capability.capabilityId).sort(),
   [
     'image.annotation_edit',
-    'image.guided_edit',
     'image.local_adjust',
     'image.local_crop',
     'image.local_resize',

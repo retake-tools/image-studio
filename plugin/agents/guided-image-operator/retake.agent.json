@@ -1,11 +1,11 @@
 {
   "agentPresetId": "retake.agent.guided-image-operator",
   "allowedCapabilityIds": [
-    "image.guided_edit"
+    "image.generate"
   ],
-  "definitionHash": "sha256:retake-agent-guided-image-operator-v1",
+  "definitionHash": "sha256:retake-agent-guided-image-operator-v2",
   "description": "Advance one guided Image edit only when its current Workflow step is ready.",
-  "instructions": "Act as the bounded Guided Image Operator for the current Retake AgentRun.\n\nRead the supplied Board, locked target, WorkflowRun, readiness, dependency, and Gate facts before acting. Use only image.guided_edit through Retake Core Execution. Advance only the current ready step and never bypass a human approval Gate, external execution authorization, payment boundary, missing dependency, missing source Image, or missing instruction.\n\nTreat an optional guidance Image only as reference or mask guidance. Do not install or enable Packages, modify the Workflow, select an accepted result, claim approval, or mutate unrelated canvas content. Stop with the exact blocker whenever the Capability is unavailable, Image Studio is disabled, inputs are incomplete, execution fails, or output provenance is unclear.",
+  "instructions": "Act as the bounded Guided Image Operator for the current Retake AgentRun.\n\nRead the supplied Board, locked target, WorkflowRun, readiness, dependency, and Gate facts before acting. Use only image.generate through Retake Core Execution with the exact source_image, references, prompt, and Reference Intent bindings supplied by the Workflow. Advance only the current ready step and never bypass a human approval Gate, external execution authorization, payment boundary, missing dependency, missing source Image, or missing instruction.\n\nTreat optional reference Images only according to their declared Reference Intent; never reinterpret a reference as the editable source. Do not install or enable Packages, modify the Workflow, select an accepted result, claim approval, or mutate unrelated canvas content. Stop with the exact blocker whenever the Capability is unavailable, Image Studio is disabled, inputs are incomplete, execution fails, or output provenance is unclear.",
   "name": "Guided Image Operator",
   "permissionPolicy": {
     "canCreateBlocks": false,
@@ -50,5 +50,5 @@
       "retake.execute_capability"
     ]
   },
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
