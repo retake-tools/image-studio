@@ -8,13 +8,6 @@
       "kind": "capability"
     },
     {
-      "contributionId": "design.retake.image-studio.capability.guided-edit",
-      "definitionHash": "sha256:image-guided-edit-v3",
-      "definitionPath": "definitions/image.guided_edit.json",
-      "exportName": "guidedEditCapability",
-      "kind": "capability"
-    },
-    {
       "contributionId": "design.retake.image-studio.capability.local-adjust",
       "definitionHash": "sha256:image-local-adjust-v2",
       "definitionPath": "definitions/image.local_adjust.json",
@@ -33,13 +26,6 @@
       "definitionHash": "sha256:image-local-resize-v2",
       "definitionPath": "definitions/image.local_resize.json",
       "exportName": "localResizeCapability",
-      "kind": "capability"
-    },
-    {
-      "contributionId": "design.retake.image-studio.capability.local-selection-mask",
-      "definitionHash": "sha256:image-local-selection-mask-v2",
-      "definitionPath": "definitions/image.local_selection_mask.json",
-      "exportName": "localSelectionMaskCapability",
       "kind": "capability"
     },
     {
@@ -77,16 +63,6 @@
       "kind": "command"
     },
     {
-      "contributionId": "design.retake.image-studio.command.guided-edit",
-      "exportName": "guidedEditImageCommand",
-      "kind": "command"
-    },
-    {
-      "contributionId": "design.retake.image-studio.command.masked-edit",
-      "exportName": "maskedEditSelectionCommand",
-      "kind": "command"
-    },
-    {
       "contributionId": "design.retake.image-studio.command.outpaint",
       "exportName": "outpaintImageCommand",
       "kind": "command"
@@ -94,11 +70,6 @@
     {
       "contributionId": "design.retake.image-studio.command.resize",
       "exportName": "resizeImageCommand",
-      "kind": "command"
-    },
-    {
-      "contributionId": "design.retake.image-studio.command.selection-mask",
-      "exportName": "selectionMaskImageCommand",
       "kind": "command"
     },
     {
@@ -117,16 +88,6 @@
       "kind": "panel"
     },
     {
-      "contributionId": "design.retake.image-studio.panel.guided-edit",
-      "exportName": "guidedEditPanel",
-      "kind": "panel"
-    },
-    {
-      "contributionId": "design.retake.image-studio.panel.masked-edit",
-      "exportName": "maskedEditPanel",
-      "kind": "panel"
-    },
-    {
       "contributionId": "design.retake.image-studio.panel.outpaint",
       "exportName": "outpaintPanel",
       "kind": "panel"
@@ -135,14 +96,9 @@
       "contributionId": "design.retake.image-studio.panel.resize",
       "exportName": "resizeImagePanel",
       "kind": "panel"
-    },
-    {
-      "contributionId": "design.retake.image-studio.panel.selection-mask",
-      "exportName": "selectionMaskImagePanel",
-      "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-license-v15",
+  "definitionHash": "sha256:image-studio-web-license-v18",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -172,5 +128,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.10.3"
+  "version": "0.11.0"
 }

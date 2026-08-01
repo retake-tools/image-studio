@@ -70,18 +70,12 @@ processor stay inside Image Studio, while its result uses the same atomic
 PNG, JPEG, or WebP encoding. Retake persists the returned Data URL as a standard
 Image Asset and continues to own generic download behavior.
 
-`image.local_selection_mask` is a separate pixel-selection surface rather than
-an extension of semantic Annotation. Its normalized brush history stays in the
-live Plugin panel, while the exact source-sized black/white PNG is returned as
-the durable `selection_mask` output. See
-[Selection Mask authoring](./selection-mask.md).
-
-`image.masked_edit` is the first connected Capability. The Plugin owns the
-source/mask role UI, prompt, and parameter contract. Retake resolves the
-current Connection and owns provider transport, Operation, Execution, Asset,
-Result Block, edges, and History. This deliberately avoids a generic service
-container, command bus, provider client, or token surface in the Plugin API.
-See [Masked AI editing](./masked-edit.md).
+Image Studio no longer exposes a Selection Mask authoring surface. Semantic
+Annotation is the official visual AI-editing path. `image.masked_edit` remains
+only as a typed compatibility contract for external workflows that already
+supply a source-sized black/white mask; it has no Command or Panel contribution.
+Retake still owns provider transport, Operation, Execution, Asset, Result
+Block, edges, and History. See [Masked AI editing](./masked-edit.md).
 
 `image.annotation_edit` uses the same connected boundary for semantic image
 editing. The Plugin owns the six annotation tools, normalized geometry,
@@ -91,13 +85,12 @@ Block scope, imported composite Asset, execution lifecycle, multi-result
 projection, Board History, and historical Operation context. See
 [Annotation editing](./annotation.md).
 
-`image.guided_edit` is the narrow composable counterpart for Package-authored
-Skills and Workflows. The same Image Studio Package now carries its Guided
-Image Skill, manual-review Workflow, and bounded AgentPreset; these definitions
-are not a second Package or Plugin. Its public contract accepts one source
-Image, one inline instruction, and one optional guidance Image (reference or
-mask). The manual Image Toolbar Command uses the same Capability without
-requiring guidance.
+Guided Image is the narrow composable path for Package-authored Skills and
+Workflows. The same Image Studio Package carries its Guided Image Skill,
+manual-review Workflow, and bounded AgentPreset; these definitions are not a
+second Package or Plugin. They bind Core `image.generate` with one exact
+`source_image`, one prompt, and optional ordered `references`. Image Studio
+does not declare a duplicate Capability, Command, or Panel for this path.
 
 `image.outpaint` keeps target geometry and image preparation in the Plugin.
 Image Studio builds one transparent target-size guide and one opaque black/white

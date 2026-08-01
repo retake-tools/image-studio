@@ -8,11 +8,6 @@ export interface AdjustPanelSnapshot {
   readonly revision: number;
 }
 
-export interface SelectionPanelSnapshot {
-  readonly blocks: readonly ImageToolbarBlockV2[];
-  readonly revision: number;
-}
-
 export interface AnnotationPanelSnapshot {
   readonly block: ImageToolbarBlockV2 | null;
   readonly operation: PluginOperationInspectorViewV2 | null;
@@ -45,10 +40,7 @@ export const adjustPanelStore = Object.freeze({
 });
 
 export const cropPanelStore = createPanelStore();
-export const guidedEditPanelStore = createPanelStore();
 export const resizePanelStore = createPanelStore();
-export const selectionMaskPanelStore = createPanelStore();
-export const maskedEditPanelStore = createSelectionPanelStore();
 export const annotationPanelStore = createAnnotationPanelStore();
 export const outpaintPanelStore = createPanelStore();
 
@@ -90,38 +82,6 @@ function update(block: ImageToolbarBlockV2 | null): void {
     revision: current.revision + 1,
   });
   for (const listener of listeners) listener();
-}
-
-function createSelectionPanelStore() {
-  let snapshot: SelectionPanelSnapshot = Object.freeze({
-    blocks: Object.freeze([]) as readonly ImageToolbarBlockV2[],
-    revision: 0,
-  });
-  const storeListeners = new Set<Listener>();
-  return Object.freeze({
-    close(): void {
-      if (snapshot.blocks.length === 0) return;
-      set([]);
-    },
-    getSnapshot() {
-      return snapshot;
-    },
-    open(blocks: readonly ImageToolbarBlockV2[]): void {
-      set(blocks.map((block) => Object.freeze({ ...block })));
-    },
-    subscribe(listener: Listener): () => void {
-      storeListeners.add(listener);
-      return () => storeListeners.delete(listener);
-    },
-  });
-
-  function set(blocks: readonly ImageToolbarBlockV2[]): void {
-    snapshot = Object.freeze({
-      blocks: Object.freeze([...blocks]),
-      revision: snapshot.revision + 1,
-    });
-    for (const listener of storeListeners) listener();
-  }
 }
 
 function createAnnotationPanelStore() {

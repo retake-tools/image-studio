@@ -3,8 +3,13 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { createPluginTranslator } from '@retake/plugin-api';
 import {
+  adjustImageCommand,
+  annotationImageCommand,
+  cropImageCommand,
   imageStudioMessages,
   imageStudioPlugin,
+  outpaintImageCommand,
+  resizeImageCommand,
 } from '../plugin/src/index';
 import { imageStudioSettings } from '../plugin/src/settings';
 import { imageStudioTheme } from '../plugin/src/theme';
@@ -40,15 +45,32 @@ test('plugin theme values come from the public token facade', () => {
   assert.equal(imageStudioTheme.surface, 'var(--retake-color-surface)');
 });
 
+test('image commands publish intentional host toolbar icons', () => {
+  assert.deepEqual(
+    [
+      adjustImageCommand.icon,
+      annotationImageCommand.icon,
+      cropImageCommand.icon,
+      resizeImageCommand.icon,
+      outpaintImageCommand.icon,
+    ],
+    [
+      'adjustments',
+      'annotation',
+      'crop',
+      'resize',
+      'outpaint',
+    ],
+  );
+});
+
 test('panels do not own locale detection or private theme fallbacks', async () => {
   const sources = await Promise.all([
     'adjust-panel.tsx',
     'annotation-copy.ts',
     'crop-panel.tsx',
-    'masked-edit-panel.tsx',
     'outpaint-copy.ts',
     'resize-panel.tsx',
-    'selection-mask-panel.tsx',
   ].map((fileName) => (
     readFile(new URL(`../plugin/src/${fileName}`, import.meta.url), 'utf8')
   )));
@@ -56,4 +78,68 @@ test('panels do not own locale detection or private theme fallbacks', async () =
   assert.doesNotMatch(combined, /isChineseLocale/);
   assert.doesNotMatch(combined, /startsWith\(['"]zh/);
   assert.doesNotMatch(combined, /var\(--retake-(?:accent|surface|text),/);
+});
+
+test('annotation view keeps compact controls and a conflict-free reset gesture', async () => {
+  const [overlay, panel, styles] = await Promise.all([
+    readFile(
+      new URL('../plugin/src/annotation-overlay.tsx', import.meta.url),
+      'utf8',
+    ),
+    readFile(
+      new URL('../plugin/src/annotation-panel.tsx', import.meta.url),
+      'utf8',
+    ),
+    readFile(
+      new URL('../plugin/src/annotation-styles.ts', import.meta.url),
+      'utf8',
+    ),
+  ]);
+
+  assert.match(overlay, /scale\(0\.86 \$\{fixedShapeYScale \* 0\.86\}\)/);
+  assert.match(panel, /onDoubleClick=\{\(event\) => \{/);
+  assert.match(panel, /activeTool !== 'select' \|\| pending/);
+  assert.match(panel, /is-annotation nodrag nopan nowheel/);
+  assert.match(panel, /onWheelCapture=\{onStageWheel\}/);
+  assert.match(panel, /translate3d\(\$\{pan\.x\}px, \$\{pan\.y\}px, 0\)/);
+  assert.match(
+    panel,
+    /<X aria-hidden="true" size=\{8\} strokeWidth=\{2\.25\} \/>/,
+  );
+  assert.match(
+    styles,
+    /\.retake-annotation-quick-delete\s*\{[^}]*width:\s*14px;[^}]*height:\s*14px;/s,
+  );
+});
+
+test('outpaint measures the source when persisted dimensions are absent', async () => {
+  const [source, styles] = await Promise.all([
+    readFile(
+      new URL('../plugin/src/outpaint-panel.tsx', import.meta.url),
+      'utf8',
+    ),
+    readFile(
+      new URL('../plugin/src/outpaint-styles.ts', import.meta.url),
+      'utf8',
+    ),
+  ]);
+
+  assert.match(source, /sourceUrl \? \(/);
+  assert.match(source, /geometry \? \(/);
+  assert.match(source, /retake-outpaint-source-measure/);
+  assert.match(source, /naturalHeight/);
+  assert.match(source, /naturalWidth/);
+  assert.match(source, /300 \* geometry\.targetWidth \/ geometry\.targetHeight/);
+  assert.doesNotMatch(styles, /\.retake-outpaint-stage\s*\{[^}]*max-height:/s);
+});
+
+test('percentage resize uses the same inspectable range control as outpaint', async () => {
+  const source = await readFile(
+    new URL('../plugin/src/resize-panel.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(source, /retake-image-studio-range is-resize-scale/);
+  assert.match(source, /type="range"/);
+  assert.match(source, /<output>\{value\}%<\/output>/);
 });

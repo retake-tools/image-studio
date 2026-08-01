@@ -10,17 +10,14 @@ Image inputs:
 The prompt is an inline text input. The output is one durable `edited_image`.
 The Capability supports `agent_runtime.media`, not `local_canvas`.
 
-## User flow
+## Product status
 
-1. Create a Selection Mask from an Image with
-   `image.local_selection_mask`.
-2. Select exactly the source Image and the Selection Mask.
-3. Choose **Masked AI edit** in the selection toolbar.
-4. Confirm or swap the source/mask roles, write the edit instruction, and run.
-
-Image Studio does not ask the user to select a Build Profile or execution
-adapter. Retake uses the current image default Connection. The Settings
-surface remains the place to change or test that Connection.
+Image Studio no longer exposes Selection Mask authoring or a Masked AI Edit
+Command/Panel. For ordinary AI image changes, use semantic Annotation Edit.
+The Capability definition remains available only to external Workflows or
+Adapters that already provide a validated, source-sized mask. This avoids
+keeping two overlapping visual editing paths while preserving a provider-
+neutral typed boundary for specialized automation.
 
 ## Host boundary
 

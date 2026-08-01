@@ -5,32 +5,26 @@ import {
   definePlugin,
   defineMessages,
   type PluginActivationContext as PluginActivationContextV2,
+  type PluginCommandIcon,
   type PluginComponent,
   type PluginImageBlock as ImageToolbarBlockV2,
   type PluginOperationCommandContext,
   type PluginPanelProps,
-  type PluginSelectionCommandContext,
   type RetakeCapabilityContributionV2,
 } from '@retake/plugin-api';
 import { imageStudioSettings } from './settings';
 import { ImageStudioAdjustPanel } from './adjust-panel';
 import { ImageStudioAnnotationPanel } from './annotation-panel';
 import { ImageStudioCropPanel } from './crop-panel';
-import { ImageStudioGuidedEditPanel } from './guided-edit-panel';
-import { ImageStudioMaskedEditPanel } from './masked-edit-panel';
 import { ImageStudioOutpaintPanel } from './outpaint-panel';
 import {
   adjustPanelStore,
   annotationPanelStore,
   cropPanelStore,
-  guidedEditPanelStore,
-  maskedEditPanelStore,
   outpaintPanelStore,
   resizePanelStore,
-  selectionMaskPanelStore,
 } from './panel-store';
 import { ImageStudioResizePanel } from './resize-panel';
-import { ImageStudioSelectionMaskPanel } from './selection-mask-panel';
 
 const resultSlotId = 'result_image';
 
@@ -76,71 +70,6 @@ export const localResizeCapability = capabilityContribution({
   runtimeRequirements: ['browser.canvas_2d'],
   supportedAdapterClasses: ['local_canvas'],
   version: '0.2.0',
-});
-
-export const localSelectionMaskCapability = defineCapability({
-  apiVersion: 2,
-  definition: {
-    capabilityId: 'image.local_selection_mask',
-    category: 'image_editing',
-    definitionHash: 'sha256:image-local-selection-mask-v2',
-    displayName: localized(
-      'Local selection mask authoring',
-      '本地选区蒙版',
-    ),
-    inputSlots: [imageSourceInput()],
-    outputSlots: [{
-      cardinality: 'one',
-      dataType: 'image',
-      projectionBlockTypes: ['image'],
-      semanticRole: 'selection_mask',
-      slotId: 'selection_mask',
-    }],
-    parametersSchemaRef:
-      'definitions/image.local_selection_mask.parameters.json',
-    runtimeRequirements: ['browser.canvas_2d'],
-    schemaVersion: 2,
-    supportedAdapterClasses: ['local_canvas'],
-    version: '0.2.0',
-  },
-  kind: 'capability',
-});
-
-export const guidedEditCapability = defineCapability({
-  apiVersion: 2,
-  definition: {
-    capabilityId: 'image.guided_edit',
-    category: 'image_editing',
-    definitionHash: 'sha256:image-guided-edit-v3',
-    displayName: localized('Guided image edit', '引导式图片编辑'),
-    inputSlots: [
-      imageSourceInput(),
-      {
-        ...imageInput('guidance_image', 'guidance'),
-        artifactTypes: ['image', 'reference', 'selection_mask'],
-        cardinality: 'optional',
-        required: false,
-      },
-      {
-        ...textInput(),
-        bindingKinds: ['block', 'inline'],
-      },
-    ],
-    outputSlots: [{
-      artifactType: 'image',
-      cardinality: 'many',
-      dataType: 'image',
-      projectionBlockTypes: ['image'],
-      semanticRole: 'edited_images',
-      slotId: 'edited_images',
-    }],
-    parametersSchemaRef: 'definitions/image.guided_edit.parameters.json',
-    runtimeRequirements: ['durable_asset_output', 'image_generation'],
-    schemaVersion: 2,
-    supportedAdapterClasses: ['agent_runtime.media'],
-    version: '0.1.1',
-  },
-  kind: 'capability',
 });
 
 export const maskedEditCapability = defineCapability({
@@ -233,65 +162,37 @@ export const adjustImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.adjust',
   localized('Adjust image', '调整图片'),
   adjustPanelStore,
+  'adjustments',
   10,
 );
 export const annotationImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.annotation',
   localized('Annotate image', '标注图片'),
   annotationPanelStore,
-  20,
+  'annotation',
+  30,
   ['Mod+Shift+A'],
 );
 export const cropImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.crop',
   localized('Crop image', '裁剪图片'),
   cropPanelStore,
-  30,
+  'crop',
+  20,
 );
 export const resizeImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.resize',
   localized('Resize image', '缩放图片'),
   resizePanelStore,
+  'resize',
   40,
 );
-export const selectionMaskImageCommand = imageToolbarCommand(
-  'design.retake.image-studio.command.selection-mask',
-  localized('Create selection mask', '创建选区蒙版'),
-  selectionMaskPanelStore,
-  50,
-);
-export const guidedEditImageCommand = imageToolbarCommand(
-  'design.retake.image-studio.command.guided-edit',
-  localized('Guided edit', '引导式编辑'),
-  guidedEditPanelStore,
-  55,
-);
-
-export const maskedEditSelectionCommand = defineCommand({
-  apiVersion: 1,
-  availability: ({ blocks }) => ({
-    enabled: blocks.length === 2,
-    visible: blocks.length === 2,
-  }),
-  commandId: 'design.retake.image-studio.command.masked-edit',
-  contextKind: 'selection',
-  defaultBindings: [{
-    order: 10,
-    surfaceId: 'selection.context-toolbar',
-  }],
-  kind: 'command',
-  label: localized('Masked AI edit', '局部 AI 编辑'),
-  run({ blocks }: PluginSelectionCommandContext) {
-    closePanels();
-    maskedEditPanelStore.open(blocks);
-  },
-});
-
 export const outpaintImageCommand = imageToolbarCommand(
   'design.retake.image-studio.command.outpaint',
   localized('Expand image', 'AI 扩图'),
   outpaintPanelStore,
-  60,
+  'outpaint',
+  50,
 );
 
 export const reopenAnnotationOperationCommand = defineCommand({
@@ -302,6 +203,7 @@ export const reopenAnnotationOperationCommand = defineCommand({
     order: 10,
     surfaceId: 'operation.inspector',
   }],
+  icon: 'annotation',
   kind: 'command',
   label: localized('Reopen annotation edit', '重新打开标注编辑'),
   ownedCapabilityId: 'image.annotation_edit',
@@ -317,13 +219,8 @@ export const annotationImagePanel = panelContribution(
   ImageStudioAnnotationPanel,
 );
 export const cropImagePanel = panelContribution(ImageStudioCropPanel);
-export const guidedEditPanel = panelContribution(ImageStudioGuidedEditPanel);
-export const maskedEditPanel = panelContribution(ImageStudioMaskedEditPanel);
 export const outpaintPanel = panelContribution(ImageStudioOutpaintPanel);
 export const resizeImagePanel = panelContribution(ImageStudioResizePanel);
-export const selectionMaskImagePanel = panelContribution(
-  ImageStudioSelectionMaskPanel,
-);
 
 export const imageStudioPlugin = definePlugin({
   contributions: {
@@ -334,24 +231,16 @@ export const imageStudioPlugin = definePlugin({
     annotationImagePanel,
     cropImageCommand,
     cropImagePanel,
-    guidedEditCapability,
-    guidedEditImageCommand,
-    guidedEditPanel,
     localAdjustCapability,
     localCropCapability,
     localResizeCapability,
-    localSelectionMaskCapability,
     maskedEditCapability,
-    maskedEditPanel,
-    maskedEditSelectionCommand,
     outpaintCapability,
     outpaintImageCommand,
     outpaintPanel,
     reopenAnnotationOperationCommand,
     resizeImageCommand,
     resizeImagePanel,
-    selectionMaskImageCommand,
-    selectionMaskImagePanel,
   },
   messages: imageStudioMessages,
   settings: imageStudioSettings,
@@ -469,6 +358,7 @@ function imageToolbarCommand(
   panelStore: {
     open(block: ImageToolbarBlockV2): void;
   },
+  icon: PluginCommandIcon,
   order: number,
   recommendedShortcuts: readonly string[] = [],
 ) {
@@ -480,6 +370,7 @@ function imageToolbarCommand(
       order,
       surfaceId: 'image.context-toolbar',
     }],
+    icon,
     kind: 'command',
     label,
     recommendedShortcuts,
@@ -505,9 +396,6 @@ function closePanels(): void {
   adjustPanelStore.close();
   annotationPanelStore.close();
   cropPanelStore.close();
-  guidedEditPanelStore.close();
-  maskedEditPanelStore.close();
   outpaintPanelStore.close();
   resizePanelStore.close();
-  selectionMaskPanelStore.close();
 }

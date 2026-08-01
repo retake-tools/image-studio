@@ -2,11 +2,13 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   annotationDraftFromUnknown,
+  annotationBrushStrokeWidthPixels,
   annotationLimits,
   annotationMarksMissingIntent,
   compileAnnotationInstruction,
   createAnnotationMark,
   finalizeDrawingAnnotationMark,
+  fitAnnotationStage,
   hasExecutableAnnotationIntent,
   hitTestAnnotationEndpoint,
   hitTestAnnotationMark,
@@ -18,6 +20,26 @@ import {
   type AnnotationMark,
   type AnnotationMarkKind,
 } from '../plugin/src/annotation';
+
+test('100 percent annotation view contains landscape and portrait images', () => {
+  assert.deepEqual(fitAnnotationStage(16 / 9, 760, 428), {
+    height: 427.5,
+    width: 760,
+  });
+  assert.deepEqual(fitAnnotationStage(9 / 16, 760, 428), {
+    height: 428,
+    width: 240.75,
+  });
+  assert.equal(fitAnnotationStage(null, 760, 428), null);
+});
+
+test('brush stroke widths remain screen-space values', () => {
+  assert.equal(annotationBrushStrokeWidthPixels('m', 900, 600), 16.2);
+  assert.ok(
+    Math.abs(annotationBrushStrokeWidthPixels('s', 450, 900) - 10.8)
+      < 1e-12,
+  );
+});
 
 const kinds: readonly AnnotationMarkKind[] = [
   'marker',

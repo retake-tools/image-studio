@@ -77,11 +77,9 @@ assert.deepEqual(
   capabilities.map((capability) => capability.capabilityId).sort(),
   [
     'image.annotation_edit',
-    'image.guided_edit',
     'image.local_adjust',
     'image.local_crop',
     'image.local_resize',
-    'image.local_selection_mask',
     'image.masked_edit',
     'image.outpaint',
   ],
@@ -99,7 +97,6 @@ const requiredPublicFiles = [
   'docs/masked-edit.md',
   'docs/outpaint.md',
   'docs/releasing.md',
-  'docs/selection-mask.md',
   '.github/workflows/ci.yml',
 ];
 for (const filePath of requiredPublicFiles) {
@@ -115,7 +112,6 @@ for (const expectedLink of [
   './docs/masked-edit.md',
   './docs/outpaint.md',
   './docs/releasing.md',
-  './docs/selection-mask.md',
 ]) {
   assert.ok(
     readme.includes(expectedLink),

@@ -20,6 +20,45 @@ export const imageStudioStyles = `
   width: min(340px, calc(100vw - 32px));
 }
 
+.retake-image-studio-panel.is-editor {
+  max-height: min(720px, calc(100vh - 32px));
+  width: min(880px, calc(100vw - 32px));
+}
+
+.retake-image-studio-editor-body {
+  display: grid;
+  gap: ${theme.spaceMedium};
+  grid-template-columns: minmax(0, 1fr) 260px;
+  min-height: 0;
+}
+
+.retake-image-studio-editor-preview {
+  min-height: 0;
+  min-width: 0;
+}
+
+.retake-image-studio-editor-controls {
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spaceMedium};
+  min-width: 0;
+  overflow: auto;
+}
+
+.retake-image-studio-editor-controls .retake-image-studio-panel__run {
+  margin-top: auto;
+}
+
+@media (max-width: 720px) {
+  .retake-image-studio-panel.is-editor {
+    overflow: auto;
+  }
+
+  .retake-image-studio-editor-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .retake-image-studio-panel__header {
   align-items: flex-start;
   display: flex;
@@ -79,6 +118,11 @@ export const imageStudioStyles = `
   place-items: center;
 }
 
+.retake-image-studio-panel.is-adjust .retake-image-studio-preview {
+  height: min(540px, calc(100vh - 132px));
+  min-height: 360px;
+}
+
 .retake-image-studio-preview img {
   display: block;
   height: 100%;
@@ -130,6 +174,10 @@ export const imageStudioStyles = `
   color: ${theme.muted};
   font-variant-numeric: tabular-nums;
   text-align: right;
+}
+
+.retake-image-studio-range.is-resize-scale {
+  grid-template-columns: 82px 24px minmax(0, 1fr) 24px 42px;
 }
 
 .retake-image-studio-field {
@@ -196,7 +244,8 @@ export const imageStudioStyles = `
   border-radius: 9px;
   display: flex;
   justify-content: center;
-  min-height: 176px;
+  height: min(540px, calc(100vh - 132px));
+  min-height: 360px;
   overflow: hidden;
   padding: 8px;
 }
@@ -204,7 +253,7 @@ export const imageStudioStyles = `
 .retake-image-studio-crop-media {
   display: inline-block;
   line-height: 0;
-  max-height: 240px;
+  max-height: 100%;
   max-width: 100%;
   overflow: hidden;
   position: relative;
@@ -213,7 +262,7 @@ export const imageStudioStyles = `
 .retake-image-studio-crop-media img {
   display: block;
   height: auto;
-  max-height: 240px;
+  max-height: min(520px, calc(100vh - 152px));
   max-width: 100%;
   user-select: none;
   width: auto;
@@ -261,34 +310,34 @@ export const imageStudioStyles = `
   background: #fff;
   border: 1px solid #0f766e;
   border-radius: 2px;
-  height: 8px;
-  pointer-events: none;
+  height: 12px;
+  pointer-events: auto;
   position: absolute;
-  width: 8px;
+  width: 12px;
 }
 
-.retake-image-studio-crop-frame i:nth-child(1) {
-  left: -5px;
-  top: -5px;
+.retake-image-studio-crop-frame i.is-nw {
+  cursor: nwse-resize;
+  left: -7px;
+  top: -7px;
 }
 
-.retake-image-studio-crop-frame i:nth-child(2) {
-  right: -5px;
-  top: -5px;
+.retake-image-studio-crop-frame i.is-ne {
+  cursor: nesw-resize;
+  right: -7px;
+  top: -7px;
 }
 
-.retake-image-studio-crop-frame i:nth-child(3) {
-  bottom: -5px;
-  left: -5px;
+.retake-image-studio-crop-frame i.is-sw {
+  bottom: -7px;
+  cursor: nesw-resize;
+  left: -7px;
 }
 
-.retake-image-studio-crop-frame i:nth-child(4) {
-  bottom: -5px;
-  right: -5px;
-}
-
-.retake-image-studio-range.is-crop {
-  grid-template-columns: 82px 24px minmax(0, 1fr) 24px 40px;
+.retake-image-studio-crop-frame i.is-se {
+  bottom: -7px;
+  cursor: nwse-resize;
+  right: -7px;
 }
 
 .retake-image-studio-crop-hint {
@@ -343,132 +392,4 @@ export const imageStudioStyles = `
   opacity: 0.45;
 }
 
-.retake-image-studio-panel.is-selection-mask {
-  width: min(440px, calc(100vw - 32px));
-}
-
-.retake-image-studio-mask-stage {
-  align-items: center;
-  background:
-    linear-gradient(45deg, #eef2f7 25%, transparent 25%),
-    linear-gradient(-45deg, #eef2f7 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #eef2f7 75%),
-    linear-gradient(-45deg, transparent 75%, #eef2f7 75%);
-  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
-  background-size: 16px 16px;
-  border: 1px solid #d8dee8;
-  border-radius: 9px;
-  display: flex;
-  justify-content: center;
-  min-height: 220px;
-  overflow: hidden;
-  padding: 8px;
-}
-
-.retake-image-studio-mask-media {
-  display: inline-block;
-  line-height: 0;
-  max-height: 360px;
-  max-width: 100%;
-  position: relative;
-}
-
-.retake-image-studio-mask-media img {
-  display: block;
-  height: auto;
-  max-height: 360px;
-  max-width: 100%;
-  pointer-events: none;
-  user-select: none;
-  width: auto;
-}
-
-.retake-image-studio-mask-canvas {
-  height: 100%;
-  inset: 0;
-  position: absolute;
-  touch-action: none;
-  width: 100%;
-}
-
-.retake-image-studio-mask-canvas.is-select {
-  cursor: crosshair;
-}
-
-.retake-image-studio-mask-canvas.is-erase {
-  cursor: cell;
-}
-
-.retake-image-studio-mask-toolbar,
-.retake-image-studio-mask-actions {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  justify-content: space-between;
-}
-
-.retake-image-studio-segmented {
-  background: #f1f5f9;
-  border-radius: 8px;
-  display: inline-flex;
-  padding: 3px;
-}
-
-.retake-image-studio-segmented button,
-.retake-image-studio-mask-history button,
-.retake-image-studio-mask-actions button {
-  background: transparent;
-  border: 0;
-  border-radius: 6px;
-  color: #475569;
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-  min-height: 30px;
-  padding: 0 10px;
-}
-
-.retake-image-studio-segmented button.is-active {
-  background: #fff;
-  box-shadow: 0 1px 3px rgb(15 23 42 / 12%);
-  color: #0f766e;
-  font-weight: 700;
-}
-
-.retake-image-studio-mask-history {
-  display: flex;
-  gap: 4px;
-}
-
-.retake-image-studio-mask-history button,
-.retake-image-studio-mask-actions button {
-  background: #f1f5f9;
-}
-
-.retake-image-studio-segmented button:disabled,
-.retake-image-studio-mask-history button:disabled,
-.retake-image-studio-mask-actions button:disabled {
-  cursor: default;
-  opacity: 0.45;
-}
-
-.retake-image-studio-mask-size {
-  align-items: center;
-  color: #475569;
-  display: grid;
-  font-size: 12px;
-  gap: 10px;
-  grid-template-columns: 72px minmax(0, 1fr) 48px;
-}
-
-.retake-image-studio-mask-size input {
-  accent-color: #0f766e;
-  width: 100%;
-}
-
-.retake-image-studio-mask-size output {
-  color: #64748b;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
 `;

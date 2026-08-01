@@ -13,12 +13,15 @@ import {
 } from '@retake/plugin-api';
 import {
   cropOutputGeometry,
-  cropRegionCenter,
   cropRegionForPreset,
   isFullImageCrop,
+  moveCropRegion,
   renderCroppedImage,
+  resizeCropRegion,
   type CropAspectPreset,
+  type CropResizeHandle,
   type ImageDimensions,
+  type NormalizedCropRegion,
 } from './image-crop';
 import { cropPanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
@@ -36,11 +39,13 @@ const aspectPresets: readonly CropAspectPreset[] = [
   '9:16',
 ];
 
+type CropDragMode = 'move' | CropResizeHandle;
+
 interface DragState {
   readonly bounds: DOMRect;
-  readonly centerX: number;
-  readonly centerY: number;
+  readonly mode: CropDragMode;
   readonly pointerId: number;
+  readonly region: NormalizedCropRegion;
   readonly startX: number;
   readonly startY: number;
 }
@@ -60,12 +65,12 @@ export function ImageStudioCropPanel({
   );
   const translator = usePluginTranslator(host, cropMessages);
   const copy = localizedCropCopy(translator);
-  const [center, setCenter] = useState({ x: 0.5, y: 0.5 });
   const [dimensions, setDimensions] = useState<ImageDimensions | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [preset, setPreset] = useState<CropAspectPreset>('original');
-  const [scalePercent, setScalePercent] = useState(100);
+  const [regionOverride, setRegionOverride] =
+    useState<NormalizedCropRegion | null>(null);
   const dragRef = useRef<DragState | null>(null);
   const block = panel.block;
   const asset = block ? host.assets.getBound(block.assetId) : null;
@@ -78,7 +83,6 @@ export function ImageStudioCropPanel({
     : false;
 
   useEffect(() => {
-    setCenter({ x: 0.5, y: 0.5 });
     setDimensions(
       assetWidth && assetHeight
         ? { height: assetHeight, width: assetWidth }
@@ -87,7 +91,7 @@ export function ImageStudioCropPanel({
     setError(null);
     setPending(false);
     setPreset('original');
-    setScalePercent(100);
+    setRegionOverride(null);
   }, [assetHeight, assetId, assetWidth, blockId]);
 
   useEffect(() => {
@@ -98,15 +102,13 @@ export function ImageStudioCropPanel({
 
   if (!block) return null;
   const sourceUrl = asset?.previewUrl ?? block.previewUrl;
-  const region = dimensions
+  const region = regionOverride ?? (dimensions
     ? cropRegionForPreset({
-        centerX: center.x,
-        centerY: center.y,
         dimensions,
         preset,
-        scale: scalePercent / 100,
+        scale: 1,
       })
-    : null;
+    : null);
   const output = dimensions && region
     ? cropOutputGeometry(dimensions, region)
     : null;
@@ -158,32 +160,53 @@ export function ImageStudioCropPanel({
     }
   }
 
-  function beginDrag(event: PointerEvent<HTMLDivElement>): void {
+  function beginDrag(event: PointerEvent<HTMLElement>): void {
     if (!region || pending) return;
     const bounds = event.currentTarget.parentElement?.getBoundingClientRect();
     if (!bounds || bounds.width <= 0 || bounds.height <= 0) return;
-    const regionCenter = cropRegionCenter(region);
     dragRef.current = {
       bounds,
-      centerX: regionCenter.x,
-      centerY: regionCenter.y,
+      mode: 'move',
       pointerId: event.pointerId,
+      region,
       startX: event.clientX,
       startY: event.clientY,
     };
     event.currentTarget.setPointerCapture(event.pointerId);
   }
 
-  function drag(event: PointerEvent<HTMLDivElement>): void {
-    const state = dragRef.current;
-    if (!state || state.pointerId !== event.pointerId) return;
-    setCenter({
-      x: state.centerX + (event.clientX - state.startX) / state.bounds.width,
-      y: state.centerY + (event.clientY - state.startY) / state.bounds.height,
-    });
+  function beginResize(
+    event: PointerEvent<HTMLElement>,
+    mode: CropResizeHandle,
+  ): void {
+    if (!region || pending) return;
+    const bounds = event.currentTarget.parentElement?.parentElement
+      ?.getBoundingClientRect();
+    if (!bounds || bounds.width <= 0 || bounds.height <= 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    dragRef.current = {
+      bounds,
+      mode,
+      pointerId: event.pointerId,
+      region,
+      startX: event.clientX,
+      startY: event.clientY,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
   }
 
-  function endDrag(event: PointerEvent<HTMLDivElement>): void {
+  function drag(event: PointerEvent<HTMLElement>): void {
+    const state = dragRef.current;
+    if (!state || state.pointerId !== event.pointerId) return;
+    const deltaX = (event.clientX - state.startX) / state.bounds.width;
+    const deltaY = (event.clientY - state.startY) / state.bounds.height;
+    setRegionOverride(state.mode === 'move'
+      ? moveCropRegion(state.region, deltaX, deltaY)
+      : resizeCropRegion(state.region, state.mode, deltaX, deltaY));
+  }
+
+  function endDrag(event: PointerEvent<HTMLElement>): void {
     if (dragRef.current?.pointerId !== event.pointerId) return;
     dragRef.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -201,10 +224,8 @@ export function ImageStudioCropPanel({
     }[event.key];
     if (!delta) return;
     event.preventDefault();
-    setCenter((current) => ({
-      x: current.x + delta.x,
-      y: current.y + delta.y,
-    }));
+    if (!region) return;
+    setRegionOverride(moveCropRegion(region, delta.x, delta.y));
   }
 
   return (
@@ -212,7 +233,7 @@ export function ImageStudioCropPanel({
       <style>{imageStudioStyles}</style>
       <section
         aria-label={copy.title}
-        className="retake-image-studio-panel"
+        className="retake-image-studio-panel is-editor is-crop"
         data-retake-image-studio="crop"
       >
         <header className="retake-image-studio-panel__header">
@@ -230,139 +251,114 @@ export function ImageStudioCropPanel({
             ×
           </button>
         </header>
-        {sourceUrl ? (
-          <div className="retake-image-studio-crop-stage">
-            <div className="retake-image-studio-crop-media">
-              <img
-                alt={block.title}
-                onLoad={(event) => {
-                  const next = {
-                    height: event.currentTarget.naturalHeight,
-                    width: event.currentTarget.naturalWidth,
-                  };
-                  if (next.width > 0 && next.height > 0) {
-                    setDimensions((current) => (
-                      current?.width === next.width
-                      && current.height === next.height
-                        ? current
-                        : next
-                    ));
-                  }
-                }}
-                src={sourceUrl}
-              />
-              {region ? (
-                <div
-                  aria-label={copy.cropArea}
-                  className="retake-image-studio-crop-frame"
-                  onKeyDown={moveWithKeyboard}
-                  onPointerCancel={endDrag}
-                  onPointerDown={beginDrag}
-                  onPointerMove={drag}
-                  onPointerUp={endDrag}
-                  style={{
-                    height: `${region.height * 100}%`,
-                    left: `${region.x * 100}%`,
-                    top: `${region.y * 100}%`,
-                    width: `${region.width * 100}%`,
-                  }}
-                  tabIndex={pending ? -1 : 0}
-                >
-                  <i />
-                  <i />
-                  <i />
-                  <i />
+        <div className="retake-image-studio-editor-body">
+          <div className="retake-image-studio-editor-preview">
+            {sourceUrl ? (
+              <div className="retake-image-studio-crop-stage">
+                <div className="retake-image-studio-crop-media">
+                  <img
+                    alt={block.title}
+                    onLoad={(event) => {
+                      const next = {
+                        height: event.currentTarget.naturalHeight,
+                        width: event.currentTarget.naturalWidth,
+                      };
+                      if (next.width > 0 && next.height > 0) {
+                        setDimensions((current) => (
+                          current?.width === next.width
+                          && current.height === next.height
+                            ? current
+                            : next
+                        ));
+                      }
+                    }}
+                    src={sourceUrl}
+                  />
+                  {region ? (
+                    <div
+                      aria-label={copy.cropArea}
+                      className="retake-image-studio-crop-frame"
+                      onKeyDown={moveWithKeyboard}
+                      onPointerCancel={endDrag}
+                      onPointerDown={beginDrag}
+                      onPointerMove={drag}
+                      onPointerUp={endDrag}
+                      style={{
+                        height: `${region.height * 100}%`,
+                        left: `${region.x * 100}%`,
+                        top: `${region.y * 100}%`,
+                        width: `${region.width * 100}%`,
+                      }}
+                      tabIndex={pending ? -1 : 0}
+                    >
+                      {(['nw', 'ne', 'sw', 'se'] as const).map((handle) => (
+                        <i
+                          aria-label={`${copy.resizeCropArea} ${handle}`}
+                          className={`is-${handle}`}
+                          key={handle}
+                          onPointerDown={(event) => beginResize(event, handle)}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-              ) : null}
-            </div>
+              </div>
+            ) : (
+              <p className="retake-image-studio-panel__error">
+                {copy.sourceUnavailable}
+              </p>
+            )}
           </div>
-        ) : (
-          <p className="retake-image-studio-panel__error">
-            {copy.sourceUnavailable}
-          </p>
-        )}
-        <label className="retake-image-studio-field">
-          <span>{copy.aspectRatio}</span>
-          <select
-            disabled={pending}
-            onChange={(event) => {
-              setPreset(event.target.value as CropAspectPreset);
-              setCenter({ x: 0.5, y: 0.5 });
-              setScalePercent(100);
-            }}
-            value={preset}
-          >
-            {aspectPresets.map((value) => (
-              <option key={value} value={value}>
-                {value === 'original' ? copy.original : value}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="retake-image-studio-range is-crop">
-          <span>{copy.cropSize}</span>
-          <button
-            aria-label={copy.decreaseCropSize}
-            disabled={pending || scalePercent <= 20}
-            onClick={() => setScalePercent((current) => (
-              Math.max(20, current - 5)
-            ))}
-            type="button"
-          >
-            −
-          </button>
-          <input
-            aria-label={copy.cropSize}
-            disabled={pending}
-            max={100}
-            min={20}
-            onChange={(event) => setScalePercent(Number(event.target.value))}
-            step={1}
-            type="range"
-            value={scalePercent}
-          />
-          <button
-            aria-label={copy.increaseCropSize}
-            disabled={pending || scalePercent >= 100}
-            onClick={() => setScalePercent((current) => (
-              Math.min(100, current + 5)
-            ))}
-            type="button"
-          >
-            +
-          </button>
-          <output>{scalePercent}%</output>
+          <div className="retake-image-studio-editor-controls">
+            <label className="retake-image-studio-field">
+              <span>{copy.aspectRatio}</span>
+              <select
+                disabled={pending}
+                onChange={(event) => {
+                  setPreset(event.target.value as CropAspectPreset);
+                  setRegionOverride(null);
+                }}
+                value={preset}
+              >
+                {aspectPresets.map((value) => (
+                  <option key={value} value={value}>
+                    {value === 'original' ? copy.original : value}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="retake-image-studio-crop-hint">
+              {copy.positionHint}
+            </p>
+            {output ? (
+              <div className="retake-image-studio-crop-output">
+                <span>{copy.output}</span>
+                <strong>{output.width} × {output.height} px</strong>
+              </div>
+            ) : null}
+            {error ? (
+              <p className="retake-image-studio-panel__error" role="alert">
+                {error}
+              </p>
+            ) : null}
+            <button
+              className="retake-image-studio-panel__run"
+              disabled={
+                pending
+                || !sourceUrl
+                || !region
+                || !output
+                || isFullImageCrop(region)
+              }
+              onClick={() => {
+                void run();
+              }}
+              type="button"
+            >
+              {pending ? copy.running : copy.run}
+            </button>
+          </div>
         </div>
-        <p className="retake-image-studio-crop-hint">
-          {copy.positionHint}
-        </p>
-        {output ? (
-          <div className="retake-image-studio-crop-output">
-            <span>{copy.output}</span>
-            <strong>{output.width} × {output.height} px</strong>
-          </div>
-        ) : null}
-        {error ? (
-          <p className="retake-image-studio-panel__error" role="alert">
-            {error}
-          </p>
-        ) : null}
-        <button
-          className="retake-image-studio-panel__run"
-          disabled={
-            pending
-            || !sourceUrl
-            || !region
-            || !output
-            || isFullImageCrop(region)
-          }
-          onClick={() => {
-            void run();
-          }}
-          type="button"
-        >
-          {pending ? copy.running : copy.run}
-        </button>
       </section>
     </>
   );
@@ -375,16 +371,14 @@ const cropMessages = defineMessages({
     'Crop area; drag or use arrow keys to position',
     '裁剪区域，可拖动或使用方向键定位',
   ),
-  cropSize: localized('Crop size', '裁剪范围'),
-  decreaseCropSize: localized('Decrease crop size', '缩小裁剪范围'),
   failed: localized('Image crop failed', '图片裁剪失败'),
-  increaseCropSize: localized('Increase crop size', '扩大裁剪范围'),
   original: localized('Original', '原图比例'),
   output: localized('Output size', '输出尺寸'),
   positionHint: localized(
-    'Drag to position. Use arrow keys for fine movement and Shift + arrow keys for larger steps.',
-    '拖动裁剪框定位；方向键微调，Shift + 方向键快速移动。',
+    'Drag inside the frame to position it, or drag a corner to resize. Use arrow keys for fine movement.',
+    '拖动裁剪框内部调整位置，拖动四角调整范围；方向键可微调位置。',
   ),
+  resizeCropArea: localized('Resize crop area', '调整裁剪范围'),
   run: localized('Apply crop', '应用裁剪'),
   running: localized('Processing…', '处理中…'),
   sourceUnavailable: localized(
@@ -400,13 +394,11 @@ function localizedCropCopy(translator: {
   aspectRatio: string;
   close: string;
   cropArea: string;
-  cropSize: string;
-  decreaseCropSize: string;
   failed: string;
-  increaseCropSize: string;
   original: string;
   output: string;
   positionHint: string;
+  resizeCropArea: string;
   run: string;
   running: string;
   sourceUnavailable: string;

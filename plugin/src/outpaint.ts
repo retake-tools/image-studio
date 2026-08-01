@@ -27,6 +27,14 @@ export interface OutpaintInputs {
   readonly maskDataUrl: string;
 }
 
+export interface OutpaintExpansionRegion {
+  readonly heightPercent: number;
+  readonly key: 'bottom' | 'left' | 'right' | 'top';
+  readonly leftPercent: number;
+  readonly topPercent: number;
+  readonly widthPercent: number;
+}
+
 export const outpaintMaxDimension = 4096;
 export const outpaintMaxArea = 16_777_216;
 export const outpaintMaskEncoding = 'grayscale_white_expand_v1';
@@ -130,6 +138,54 @@ export function outpaintParameters(
     targetHeight: geometry.targetHeight,
     targetWidth: geometry.targetWidth,
   };
+}
+
+export function outpaintExpansionRegions(
+  geometry: OutpaintGeometry,
+): readonly OutpaintExpansionRegion[] {
+  const left = geometry.sourceX / geometry.targetWidth * 100;
+  const right = (
+    geometry.targetWidth - geometry.sourceX - geometry.sourceWidth
+  ) / geometry.targetWidth * 100;
+  const top = geometry.sourceY / geometry.targetHeight * 100;
+  const bottom = (
+    geometry.targetHeight - geometry.sourceY - geometry.sourceHeight
+  ) / geometry.targetHeight * 100;
+  const sourceWidth = geometry.sourceWidth / geometry.targetWidth * 100;
+  const sourceHeight = geometry.sourceHeight / geometry.targetHeight * 100;
+  const regions: OutpaintExpansionRegion[] = [
+    {
+      heightPercent: top,
+      key: 'top',
+      leftPercent: 0,
+      topPercent: 0,
+      widthPercent: 100,
+    },
+    {
+      heightPercent: sourceHeight,
+      key: 'right',
+      leftPercent: left + sourceWidth,
+      topPercent: top,
+      widthPercent: right,
+    },
+    {
+      heightPercent: bottom,
+      key: 'bottom',
+      leftPercent: 0,
+      topPercent: top + sourceHeight,
+      widthPercent: 100,
+    },
+    {
+      heightPercent: sourceHeight,
+      key: 'left',
+      leftPercent: 0,
+      topPercent: top,
+      widthPercent: left,
+    },
+  ];
+  return regions.filter((region) => (
+    region.widthPercent > 0.01 && region.heightPercent > 0.01
+  ));
 }
 
 export async function createOutpaintInputs(

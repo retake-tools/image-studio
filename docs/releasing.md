@@ -42,22 +42,15 @@ Verify in a disposable Retake Workspace:
 - install does not enable the PluginModule automatically;
 - permission review, code trust, enable, disable, safe mode, and reload work;
 - update and cached rollback preserve exact source identity;
-- **Adjust image**, **Crop image**, **Resize image**, and **Create selection
-  mask** each create one Operation, one Result Image, one succeeded Execution,
-  and one output Asset while leaving the source unchanged;
-- **Guided edit** accepts source plus instruction without a guidance Image,
-  while the same Capability accepts an optional reference or mask from a
-  Package-authored Workflow;
+- **Adjust image**, **Crop image**, and **Resize image** each create one
+  Operation, one Result Image, one succeeded Execution, and one output Asset
+  while leaving the source unchanged;
+- the image Toolbar does not expose Selection Mask, Masked AI Edit, or Guided
+  Edit; `image.masked_edit` remains contract-only while Guided Image binds Core
+  `image.generate` and contributes no duplicate Capability or Panel;
 - Crop aspect presets stay in bounds and the recorded output dimensions match
   the actual PNG;
 - Resize output dimensions, MIME type, extension, and file encoding agree;
-- Selection Mask output has the exact source dimensions and is an opaque PNG
-  using `grayscale_white_selected_v1` (white selected, black unselected);
-- selecting exactly one source Image and one matching Selection Mask exposes
-  **Masked AI edit**, resolves the disposable Project's current image
-  Connection, and records both typed inputs without exposing credentials;
-- a completed connected edit produces one durable edited Image, while the
-  manual Codex/MCP route remains queued for explicit execution;
 - **Annotate image** restores a bound namespaced draft, supports all six mark
   types, saves normalized geometry and intent without adding Board History,
   imports one exact-size annotated composite, and starts one connected

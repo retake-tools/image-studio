@@ -11,10 +11,15 @@ export const outpaintMessages = defineMessages({
   connection: localized('Image connection', '图片连接'),
   decrease: localized('Decrease expansion', '减少扩展量'),
   defaultPrompt: localized(
-    'Naturally continue the surrounding scene, lighting, texture, and spatial relationships.',
-    '自然延续原图周围的场景、光线、纹理和空间关系。',
+    'Naturally extend only the area outside the source rectangle. Preserve the source pixels and keep perspective, scale, lighting, texture, and spatial relationships continuous. Do not copy, mirror, tile, repeat, or reintroduce the subject or any existing element in the new area.',
+    '仅自然延展原图矩形之外的区域；保持原图像素不变，并让透视、尺度、光线、纹理和空间关系连续。新增区域不得复制、镜像、平铺、重复主体或再次引入原图已有元素。',
   ),
   expandAmount: localized('Expansion', '扩展量'),
+  expansionArea: localized('AI expansion area', 'AI 扩充区域'),
+  expansionPreview: localized(
+    'Striped areas will be generated; the source image stays unchanged.',
+    '斜线区域将由 AI 自然延展，原图区域保持不变。',
+  ),
   failed: localized('Failed to start AI Expand', 'AI 扩图启动失败'),
   increase: localized('Increase expansion', '增加扩展量'),
   noConnection: localized(
@@ -34,6 +39,7 @@ export const outpaintMessages = defineMessages({
   run: localized('Run AI Expand', '执行 AI 扩图'),
   running: localized('Preparing expand…', '正在准备扩图…'),
   sourcePosition: localized('Drag source position', '拖动原图位置'),
+  sourceArea: localized('Source image', '原图'),
   sourceUnavailable: localized(
     'The source image is unavailable.',
     '当前源图不可用。',

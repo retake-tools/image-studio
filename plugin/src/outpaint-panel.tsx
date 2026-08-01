@@ -14,6 +14,7 @@ import { usePluginEnvironment } from './localization';
 import { outpaintCopy } from './outpaint-copy';
 import {
   createOutpaintInputs,
+  outpaintExpansionRegions,
   outpaintGeometry,
   outpaintGeometryIssue,
   outpaintParameters,
@@ -133,6 +134,9 @@ export function ImageStudioOutpaintPanel({
       })
     : null;
   const issue = geometry ? outpaintGeometryIssue(geometry) : null;
+  const expansionRegions = geometry
+    ? outpaintExpansionRegions(geometry)
+    : [];
   const issueMessage = issue === 'no_expansion'
     ? copy.noExpansion
     : issue === 'target_too_large'
@@ -278,54 +282,100 @@ export function ImageStudioOutpaintPanel({
           </button>
         </header>
 
-        {sourceUrl && geometry ? (
+        {sourceUrl ? (
           <div className="retake-outpaint-stage-shell">
-            <div
-              className="retake-outpaint-stage"
-              style={{
-                aspectRatio:
-                  `${geometry.targetWidth} / ${geometry.targetHeight}`,
-              }}
-            >
+            {geometry ? (
               <div
-                aria-label={copy.sourcePosition}
-                className="retake-outpaint-source"
-                onKeyDown={moveWithKeyboard}
-                onPointerCancel={endDrag}
-                onPointerDown={beginDrag}
-                onPointerMove={drag}
-                onPointerUp={endDrag}
+                aria-label={copy.expansionArea}
+                className="retake-outpaint-stage"
+                role="img"
                 style={{
-                  height:
-                    `${geometry.sourceHeight / geometry.targetHeight * 100}%`,
-                  left: `${geometry.sourceX / geometry.targetWidth * 100}%`,
-                  top: `${geometry.sourceY / geometry.targetHeight * 100}%`,
-                  width:
-                    `${geometry.sourceWidth / geometry.targetWidth * 100}%`,
+                  aspectRatio:
+                    `${geometry.targetWidth} / ${geometry.targetHeight}`,
+                  width: `min(100%, ${Math.min(
+                    380,
+                    300 * geometry.targetWidth / geometry.targetHeight,
+                  )}px)`,
                 }}
-                tabIndex={pending ? -1 : 0}
               >
-                <img
-                  alt={block.title}
-                  draggable={false}
-                  onLoad={(event) => {
-                    const next = {
-                      height: event.currentTarget.naturalHeight,
-                      width: event.currentTarget.naturalWidth,
-                    };
-                    if (next.width > 0 && next.height > 0) {
-                      setDimensions((current) => (
-                        current?.width === next.width
-                        && current.height === next.height
-                          ? current
-                          : next
-                      ));
-                    }
+                {expansionRegions.map((region) => (
+                  <div
+                    aria-hidden="true"
+                    className="retake-outpaint-expansion"
+                    key={region.key}
+                    style={{
+                      height: `${region.heightPercent}%`,
+                      left: `${region.leftPercent}%`,
+                      top: `${region.topPercent}%`,
+                      width: `${region.widthPercent}%`,
+                    }}
+                  />
+                ))}
+                <div
+                  aria-label={copy.sourcePosition}
+                  className="retake-outpaint-source"
+                  onKeyDown={moveWithKeyboard}
+                  onPointerCancel={endDrag}
+                  onPointerDown={beginDrag}
+                  onPointerMove={drag}
+                  onPointerUp={endDrag}
+                  style={{
+                    height:
+                      `${geometry.sourceHeight / geometry.targetHeight * 100}%`,
+                    left: `${geometry.sourceX / geometry.targetWidth * 100}%`,
+                    top: `${geometry.sourceY / geometry.targetHeight * 100}%`,
+                    width:
+                      `${geometry.sourceWidth / geometry.targetWidth * 100}%`,
                   }}
-                  src={sourceUrl}
-                />
+                  tabIndex={pending ? -1 : 0}
+                >
+                  <span className="retake-outpaint-source-label">
+                    {copy.sourceArea}
+                  </span>
+                  <img
+                    alt={block.title}
+                    draggable={false}
+                    onLoad={(event) => {
+                      const next = {
+                        height: event.currentTarget.naturalHeight,
+                        width: event.currentTarget.naturalWidth,
+                      };
+                      if (next.width > 0 && next.height > 0) {
+                        setDimensions((current) => (
+                          current?.width === next.width
+                          && current.height === next.height
+                            ? current
+                            : next
+                        ));
+                      }
+                    }}
+                    src={sourceUrl}
+                  />
+                </div>
               </div>
-            </div>
+            ) : (
+              <img
+                alt={block.title}
+                className="retake-outpaint-source-measure"
+                draggable={false}
+                onLoad={(event) => {
+                  const next = {
+                    height: event.currentTarget.naturalHeight,
+                    width: event.currentTarget.naturalWidth,
+                  };
+                  if (next.width > 0 && next.height > 0) {
+                    setDimensions(next);
+                  }
+                }}
+                src={sourceUrl}
+              />
+            )}
+            {geometry ? (
+              <p className="retake-outpaint-stage-legend">
+                <span aria-hidden="true" />
+                {copy.expansionPreview}
+              </p>
+            ) : null}
           </div>
         ) : (
           <p className="retake-image-studio-panel__error">

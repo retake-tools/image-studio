@@ -38,6 +38,8 @@ export interface RenderedCroppedImage {
   readonly width: number;
 }
 
+export type CropResizeHandle = 'nw' | 'ne' | 'sw' | 'se';
+
 const presetRatios: Record<
   Exclude<CropAspectPreset, 'original'>,
   number
@@ -129,6 +131,57 @@ export function cropRegionCenter(
   return {
     x: region.x + region.width / 2,
     y: region.y + region.height / 2,
+  };
+}
+
+export function moveCropRegion(
+  region: NormalizedCropRegion,
+  deltaX: number,
+  deltaY: number,
+): NormalizedCropRegion {
+  return {
+    ...region,
+    x: clamp(region.x + deltaX, 0, 1 - region.width),
+    y: clamp(region.y + deltaY, 0, 1 - region.height),
+  };
+}
+
+export function resizeCropRegion(
+  region: NormalizedCropRegion,
+  handle: CropResizeHandle,
+  deltaX: number,
+  deltaY: number,
+): NormalizedCropRegion {
+  const east = handle.endsWith('e');
+  const south = handle.startsWith('s');
+  const horizontalScale = (
+    region.width + deltaX * (east ? 1 : -1)
+  ) / region.width;
+  const verticalScale = (
+    region.height + deltaY * (south ? 1 : -1)
+  ) / region.height;
+  const requestedScale = Math.abs(horizontalScale - 1)
+    >= Math.abs(verticalScale - 1)
+      ? horizontalScale
+      : verticalScale;
+  const anchorX = east ? region.x : region.x + region.width;
+  const anchorY = south ? region.y : region.y + region.height;
+  const maximumScale = Math.min(
+    (east ? 1 - anchorX : anchorX) / region.width,
+    (south ? 1 - anchorY : anchorY) / region.height,
+  );
+  const minimumScale = Math.min(
+    1,
+    Math.max(0.05 / region.width, 0.05 / region.height),
+  );
+  const scale = clamp(requestedScale, minimumScale, maximumScale);
+  const width = region.width * scale;
+  const height = region.height * scale;
+  return {
+    height,
+    width,
+    x: east ? anchorX : anchorX - width,
+    y: south ? anchorY : anchorY - height,
   };
 }
 

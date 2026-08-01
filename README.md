@@ -5,28 +5,27 @@
 Image Studio is the official Retake plugin for deep, workflow-native image
 editing on the infinite canvas.
 
-The current package provides four browser-native capabilities and three
-Retake-connected AI capabilities:
+The current package provides three browser-native authoring tools and two
+Retake-connected AI editing surfaces:
 
 - `image.local_adjust`: live brightness, contrast, and saturation preview.
-- `image.local_crop`: aspect presets, crop-size control, drag or keyboard
-  positioning, exact output dimensions, and Canvas 2D crop output.
+- `image.local_crop`: aspect presets, directly resizable crop handles, drag or
+  keyboard positioning, exact output dimensions, and Canvas 2D crop output.
 - `image.local_resize`: aspect-preserving percentage or pixel sizing, explicit
   upscale control, and PNG, JPEG, or WebP output.
-- `image.local_selection_mask`: source-sized pixel mask authoring with add,
-  erase, undo, redo, invert, and a provider-neutral black/white PNG output.
-- `image.masked_edit`: bind one source image and one matching Selection Mask,
-  then run a local-account Codex image edit through Retake's current image
-  Connection.
 - `image.annotation_edit`: mark an image with numbered points, arrows, freehand
   lines, region brushes, rectangles, or ellipses; attach per-mark or global
   instructions; and request one to four clean edited candidates.
-- `image.guided_edit`: edit one source image from a written instruction with an
-  optional reference or mask, using the same public connected execution
-  contract for manual Commands, Workflows, and Agents.
 - `image.outpaint`: choose a target ratio and expansion, drag or anchor the
   natural-size source inside the target, and request one to four expanded
   candidates while preserving the original source pixels exactly.
+
+`image.masked_edit` remains a typed compatibility contract for workflows that
+already supply an exact external mask; Image Studio no longer exposes mask
+authoring or masked-edit UI. Guided Image now binds the Core `image.generate`
+Capability with exact `source_image`, ordered `references`, and `prompt` Slots;
+Image Studio no longer declares a duplicate `image.guided_edit` Capability or
+manual panel.
 
 All processors create a new result asset and block through the Retake Host
 API, leaving the source image unchanged.
@@ -63,7 +62,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 For an immutable, reproducible install, use the current release tag:
 
 ```text
-github:retake-tools/image-studio@v0.10.3#subdirectory=plugin
+github:retake-tools/image-studio@v0.11.0#subdirectory=plugin
 ```
 
 Retake resolves either Git source, runs its controlled
@@ -84,7 +83,6 @@ rollback, disable, safe mode, and removal behavior.
 
 - [Install and manage Image Studio](./docs/install.md)
 - [Package layout and authoring boundaries](./docs/authoring.md)
-- [Selection Mask authoring](./docs/selection-mask.md)
 - [Masked AI editing](./docs/masked-edit.md)
 - [Annotation editing](./docs/annotation.md)
 - [AI image expand](./docs/outpaint.md)
