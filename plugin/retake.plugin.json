@@ -8,6 +8,13 @@
       "kind": "capability"
     },
     {
+      "contributionId": "design.retake.image-studio.capability.ip-character-definition",
+      "definitionHash": "sha256:retake-design-ip-character-define-v1",
+      "definitionPath": "definitions/design.ip_character.define.json",
+      "exportName": "ipCharacterDefinitionCapability",
+      "kind": "capability"
+    },
+    {
       "contributionId": "design.retake.image-studio.capability.local-adjust",
       "definitionHash": "sha256:image-local-adjust-v2",
       "definitionPath": "definitions/image.local_adjust.json",
@@ -98,7 +105,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-license-v18",
+  "definitionHash": "sha256:image-studio-web-ip-character-v21",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {
@@ -128,5 +135,5 @@
     "kind": "web_module"
   },
   "schemaVersion": 2,
-  "version": "0.11.0"
+  "version": "0.12.3"
 }

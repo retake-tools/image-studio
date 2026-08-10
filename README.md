@@ -22,10 +22,7 @@ Retake-connected AI editing surfaces:
 
 `image.masked_edit` remains a typed compatibility contract for workflows that
 already supply an exact external mask; Image Studio no longer exposes mask
-authoring or masked-edit UI. Guided Image now binds the Core `image.generate`
-Capability with exact `source_image`, ordered `references`, and `prompt` Slots;
-Image Studio no longer declares a duplicate `image.guided_edit` Capability or
-manual panel.
+authoring or masked-edit UI.
 
 All processors create a new result asset and block through the Retake Host
 API, leaving the source image unchanged.
@@ -35,10 +32,12 @@ Settings facades. The workspace-level default resize format is a typed Plugin
 setting; locale and Theme changes flow from the Host without Plugin-specific
 Core access.
 
-The same single Retake Package also contributes the Guided Image Skill,
-manual-review Workflow, and bounded Guided Image Operator AgentPreset. Guided
-Image is a workflow entrypoint into Image Studio, not a second Plugin or a
-separately installed product.
+IP Character Strategy is the focused public Skill entrypoint for creating only
+a character bible; IP Character Design remains the complete public scenario
+Workflow entrypoint. Retired Guided Image Skill, Workflow, and AgentPreset
+definitions are no longer shipped or registered as active authoring methods.
+Historical Runs remain readable from their frozen Board, StepRun, Execution,
+and Artifact facts, but cannot restart the retired flow.
 
 Retake Whiteboard remains responsible for canvas state, assets, executions,
 history, package lifecycle, trust, fallback UI, and persistence. This
@@ -52,7 +51,7 @@ stay outside the distributed artifact.
 
 ## Install
 
-In Retake Whiteboard 0.1.3 or later, open **Settings → Plugin library**.
+In Retake Whiteboard 0.1.4 or later, open **Settings → Plugin library**.
 To follow the latest stable release and receive update notifications, install:
 
 ```text
@@ -62,7 +61,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 For an immutable, reproducible install, use the current release tag:
 
 ```text
-github:retake-tools/image-studio@v0.11.0#subdirectory=plugin
+github:retake-tools/image-studio@v0.12.3#subdirectory=plugin
 ```
 
 Retake resolves either Git source, runs its controlled

@@ -67,10 +67,10 @@ export function AnnotationToolButton({
     <button
       aria-pressed={active}
       className={active ? 'is-active' : undefined}
+      data-tool-label={label}
       disabled={disabled}
       aria-label={label}
       onClick={onClick}
-      title={label}
       type="button"
     >
       {children ?? label}

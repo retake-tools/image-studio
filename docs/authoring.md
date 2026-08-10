@@ -8,12 +8,11 @@ two boundaries are related but not identical.
 ```text
 image-studio/
 ├── plugin/                     Portable Retake Package source
-│   ├── agents/                 Guided Image AgentPreset
 │   ├── definitions/            Capability and parameter contracts
-│   ├── skills/                 Guided Image Skill
+│   ├── skills/                 IP design Skills
 │   ├── src/                    Trusted Web PluginModule source
 │   ├── vendor/npm/             Pinned build-time authoring artifacts
-│   ├── workflows/              Guided Image Workflow
+│   ├── workflows/              IP Character Design Workflow
 │   ├── package.json            Controlled-build dependencies
 │   ├── package-lock.json       Exact dependency versions and integrity
 │   ├── retake.package.json     Root Package manifest
@@ -85,12 +84,10 @@ Block scope, imported composite Asset, execution lifecycle, multi-result
 projection, Board History, and historical Operation context. See
 [Annotation editing](./annotation.md).
 
-Guided Image is the narrow composable path for Package-authored Skills and
-Workflows. The same Image Studio Package carries its Guided Image Skill,
-manual-review Workflow, and bounded AgentPreset; these definitions are not a
-second Package or Plugin. They bind Core `image.generate` with one exact
-`source_image`, one prompt, and optional ordered `references`. Image Studio
-does not declare a duplicate Capability, Command, or Panel for this path.
+IP Character Strategy is the focused public Skill path for producing only a
+character bible. IP Character Design is the complete public scenario Workflow
+path. Retired Guided Image definitions are absent from the active Package;
+historical Runs use their frozen Board and Runtime facts for read-only display.
 
 `image.outpaint` keeps target geometry and image preparation in the Plugin.
 Image Studio builds one transparent target-size guide and one opaque black/white

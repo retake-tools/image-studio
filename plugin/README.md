@@ -1,12 +1,13 @@
 # Retake Image Studio Package
 
 This directory is the portable source for
-`design.retake.image-studio@0.11.0`.
+`design.retake.image-studio@0.12.3`.
 
 The single Retake Package contains the trusted Image Studio Web PluginModule,
-its image Capabilities, the Guided Image Skill and Workflow, and the bounded
-Guided Image Operator AgentPreset.
+its image Capabilities, the focused IP Character Strategy Skill entrypoint,
+and the complete IP Character Design scenario Workflow.
 
-The Guided Image Workflow binds Core `image.generate` with one source Image, a
-written edit instruction, and optional ordered references. It runs only after
-explicit execution and requires human approval of the accepted result.
+IP Character Strategy is the only public single-Operation Skill entrypoint. It
+creates a character bible from one brief without starting the complete design
+Workflow. Retired Guided Image definitions are not present in this Package and
+cannot enter the active Skill, Workflow, or AgentPreset registries.

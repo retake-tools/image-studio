@@ -3,23 +3,22 @@ export const annotationStyles = `
     position: fixed;
     inset: 0;
     z-index: 44;
-    background: rgb(15 23 42 / 7%);
-    backdrop-filter: blur(1px);
+    background: rgb(15 23 42 / 38%);
   }
 
   .retake-image-studio-panel.is-annotation {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    inset: 48px 18px;
     z-index: 45;
     display: flex;
     width: min(1220px, calc(100vw - 36px));
     height: min(760px, calc(100vh - 96px));
     max-height: calc(100vh - 96px);
     box-sizing: border-box;
+    margin: auto;
     overflow: hidden;
     overscroll-behavior: contain;
-    transform: translate(-50%, -50%);
+    background: var(--retake-surface, #fff);
   }
 
   .retake-image-studio-panel.is-annotation > .retake-image-studio-panel__header,
@@ -83,6 +82,38 @@ export const annotationStyles = `
     font-size: 11px;
   }
 
+  .retake-annotation-tools button {
+    position: relative;
+  }
+
+  .retake-annotation-tools button::after {
+    position: absolute;
+    left: 36px;
+    z-index: 3;
+    width: max-content;
+    max-width: 160px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 6px;
+    background: var(--retake-surface, #fff);
+    padding: 4px 7px;
+    box-shadow: 0 5px 16px rgb(15 23 42 / 14%);
+    color: var(--retake-text, #282832);
+    content: attr(data-tool-label);
+    font-size: 11px;
+    line-height: 1.25;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-2px);
+    transition: opacity 90ms ease, transform 90ms ease;
+    white-space: nowrap;
+  }
+
+  .retake-annotation-tools button:hover::after,
+  .retake-annotation-tools button:focus-visible::after {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
   .retake-annotation-tools button.is-active,
   .retake-annotation-strokes button.is-active {
     border-color: var(--retake-accent, #7068b1);
@@ -112,14 +143,12 @@ export const annotationStyles = `
 
   .retake-annotation-stage-shell {
     position: relative;
-    isolation: isolate;
-    contain: layout paint;
     display: grid;
     flex: 1;
     min-width: 0;
     min-height: 0;
     place-items: center;
-    overflow: clip;
+    overflow: hidden;
     border: 1px solid var(--retake-border, #d8dee8);
     border-radius: 8px;
     background:
@@ -140,6 +169,10 @@ export const annotationStyles = `
     transform-origin: center;
     touch-action: none;
     user-select: none;
+  }
+
+  .retake-annotation-stage.is-panning {
+    will-change: transform;
   }
 
   .retake-annotation-stage.is-select-tool {
@@ -230,7 +263,6 @@ export const annotationStyles = `
     line-height: 1.42;
     pointer-events: none;
     transform: translate(12px, -50%);
-    backdrop-filter: blur(6px);
   }
 
   .retake-annotation-hover-prompt strong {
@@ -280,7 +312,6 @@ export const annotationStyles = `
     border-radius: 8px;
     background: rgb(255 255 255 / 92%);
     box-shadow: 0 8px 22px rgb(16 24 40 / 14%);
-    backdrop-filter: blur(10px);
   }
 
   .retake-annotation-zoom span {
