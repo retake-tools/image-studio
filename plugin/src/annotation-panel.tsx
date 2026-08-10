@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -85,6 +86,18 @@ const tools: readonly AnnotationMarkKind[] = [
 ];
 const strokeSizes: readonly AnnotationStrokeSize[] = ['xs', 's', 'm', 'l'];
 
+function annotationStageTransform(
+  pan: { x: number; y: number },
+  zoom: number,
+): string {
+  if (
+    Math.abs(pan.x) < 0.01
+    && Math.abs(pan.y) < 0.01
+    && Math.abs(zoom - 1) < 0.001
+  ) return 'none';
+  return `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`;
+}
+
 type AnnotationTool = 'eraser' | 'select' | AnnotationMarkKind;
 type Gesture =
   | { kind: 'draw'; markId: string }
@@ -143,8 +156,11 @@ export function ImageStudioAnnotationPanel({
     future: AnnotationMark[][];
     past: AnnotationMark[][];
   }>({ future: [], past: [] });
+  const panRef = useRef(pan);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const stageShellRef = useRef<HTMLDivElement | null>(null);
+  const stageTransformFrameRef = useRef<number | undefined>(undefined);
+  const stageVisualRef = useRef<HTMLDivElement | null>(null);
   const connections = sourceBlockId
     ? host.execution.listConnections({ capabilityId })
     : [];
@@ -155,7 +171,7 @@ export function ImageStudioAnnotationPanel({
     sourceBlockId && hostSnapshot.boundBlockIds.includes(sourceBlockId),
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!source.blockId) return;
     const draft = initialAnnotationDraft(panel, host, source.asset?.assetId);
     setActiveTool('select');
@@ -171,7 +187,9 @@ export function ImageStudioAnnotationPanel({
     );
     setMarks(draft?.marks ?? []);
     setOutputCount(1);
-    setPan({ x: 0, y: 0 });
+    const nextPan = { x: 0, y: 0 };
+    panRef.current = nextPan;
+    setPan(nextPan);
     setPending(false);
     setSelectedMarkId(null);
     setStrokeSize('m');
@@ -180,7 +198,7 @@ export function ImageStudioAnnotationPanel({
     historyRef.current = { future: [], past: [] };
   }, [panel.revision]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!selectedMarkId) return;
     const frame = requestAnimationFrame(() => {
       intentRefs.current.get(selectedMarkId)?.focus();
@@ -188,7 +206,7 @@ export function ImageStudioAnnotationPanel({
     return () => cancelAnimationFrame(frame);
   }, [marks.length, selectedMarkId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setConnectionId((current) => {
       if (connections.some((connection) => (
         connection.connectionId === current
@@ -248,7 +266,7 @@ export function ImageStudioAnnotationPanel({
     }
   }, [panel.block, pending, sourceBlockId, sourceIsBound]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const shell = stageShellRef.current;
     if (!shell) return;
     const stageShell = shell;
@@ -277,6 +295,16 @@ export function ImageStudioAnnotationPanel({
       window.removeEventListener('resize', updateStageShellSize);
     };
   }, [sourceBlockId]);
+
+  useLayoutEffect(() => {
+    panRef.current = pan;
+  }, [pan.x, pan.y]);
+
+  useEffect(() => () => {
+    if (stageTransformFrameRef.current !== undefined) {
+      window.cancelAnimationFrame(stageTransformFrameRef.current);
+    }
+  }, []);
 
   const manifest = useMemo<AnnotationManifest>(() => ({
     globalInstruction,
@@ -310,6 +338,24 @@ export function ImageStudioAnnotationPanel({
   );
 
   if (!source.blockId) return null;
+
+  function applyStageTransform(
+    nextPan = panRef.current,
+    nextZoom = zoom,
+  ): void {
+    panRef.current = nextPan;
+    if (stageTransformFrameRef.current !== undefined) {
+      window.cancelAnimationFrame(stageTransformFrameRef.current);
+    }
+    stageTransformFrameRef.current = window.requestAnimationFrame(() => {
+      stageTransformFrameRef.current = undefined;
+      if (!stageVisualRef.current) return;
+      stageVisualRef.current.style.transform = annotationStageTransform(
+        nextPan,
+        nextZoom,
+      );
+    });
+  }
 
   function updateMarks(
     updater: (current: AnnotationMark[]) => AnnotationMark[],
@@ -393,6 +439,7 @@ export function ImageStudioAnnotationPanel({
       || (activeTool === 'select' && zoom > 1 && !hit)
     ) {
       event.currentTarget.setPointerCapture(event.pointerId);
+      stageVisualRef.current?.classList.add('is-panning');
       gestureRef.current = {
         kind: 'pan',
         lastClientX: event.clientX,
@@ -466,10 +513,10 @@ export function ImageStudioAnnotationPanel({
     event.preventDefault();
     event.stopPropagation();
     if (gesture.kind === 'pan') {
-      setPan((current) => ({
-        x: current.x + event.clientX - gesture.lastClientX,
-        y: current.y + event.clientY - gesture.lastClientY,
-      }));
+      applyStageTransform({
+        x: panRef.current.x + event.clientX - gesture.lastClientX,
+        y: panRef.current.y + event.clientY - gesture.lastClientY,
+      });
       gestureRef.current = {
         ...gesture,
         lastClientX: event.clientX,
@@ -508,8 +555,13 @@ export function ImageStudioAnnotationPanel({
   function finishGesture(event: PointerEvent<HTMLDivElement>): void {
     const gesture = gestureRef.current;
     gestureRef.current = null;
+    stageVisualRef.current?.classList.remove('is-panning');
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    if (gesture?.kind === 'pan') {
+      setPan(panRef.current);
+      return;
     }
     if (gesture?.kind !== 'draw') return;
     const mark = marks.find((candidate) => candidate.id === gesture.markId);
@@ -564,7 +616,11 @@ export function ImageStudioAnnotationPanel({
       const next = Math.min(5, Math.max(1, (
         current * Math.exp(-event.deltaY * 0.0014)
       )));
-      if (next <= 1.001) setPan({ x: 0, y: 0 });
+      if (next <= 1.001) {
+        const nextPan = { x: 0, y: 0 };
+        panRef.current = nextPan;
+        setPan(nextPan);
+      }
       return next;
     });
   }
@@ -709,6 +765,7 @@ export function ImageStudioAnnotationPanel({
                 {source.url ? (
                   <div
                     className={`retake-annotation-stage is-${activeTool}-tool`}
+                    ref={stageVisualRef}
                     style={{
                       ...(stageSize
                         ? {
@@ -719,7 +776,8 @@ export function ImageStudioAnnotationPanel({
                             aspectRatio: imageAspectRatio ?? 1,
                             width: '100%',
                           }),
-                      transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`,
+                      visibility: imageAspectRatio === null ? 'hidden' : 'visible',
+                      transform: annotationStageTransform(pan, zoom),
                     }}
                   >
                     <img
@@ -742,7 +800,9 @@ export function ImageStudioAnnotationPanel({
                         event.preventDefault();
                         event.stopPropagation();
                         gestureRef.current = null;
-                        setPan({ x: 0, y: 0 });
+                        const nextPan = { x: 0, y: 0 };
+                        panRef.current = nextPan;
+                        setPan(nextPan);
                         setZoom(1);
                       }}
                       onPointerCancel={finishGesture}
@@ -839,7 +899,11 @@ export function ImageStudioAnnotationPanel({
                     disabled={pending || zoom <= 1}
                     onClick={() => {
                       setZoom((current) => Math.max(1, current / 1.2));
-                      if (zoom <= 1.2) setPan({ x: 0, y: 0 });
+                      if (zoom <= 1.2) {
+                        const nextPan = { x: 0, y: 0 };
+                        panRef.current = nextPan;
+                        setPan(nextPan);
+                      }
                     }}
                     type="button"
                   >
@@ -860,7 +924,9 @@ export function ImageStudioAnnotationPanel({
                     aria-label={copy.zoomReset}
                     disabled={pending}
                     onClick={() => {
-                      setPan({ x: 0, y: 0 });
+                      const nextPan = { x: 0, y: 0 };
+                      panRef.current = nextPan;
+                      setPan(nextPan);
                       setZoom(1);
                     }}
                     type="button"

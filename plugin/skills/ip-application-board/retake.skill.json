@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "skillId": "retake.image.ip-application-board",
+  "version": "0.1.0",
+  "definitionHash": "sha256:retake-image-ip-application-board-v1",
+  "name": "IP application board",
+  "description": "Apply the accepted character design to a coherent set of practical brand touchpoints.",
+  "category": "production_design",
+  "capabilityBindings": [
+    {
+      "capabilityId": "image.generate",
+      "inputSlots": ["prompt", "source_image"],
+      "outputSlots": ["images"]
+    }
+  ],
+  "instructionTemplate": "Create one IP application board using the bound character bible as the brand and identity authority and the accepted character sheet as the exact source identity. Demonstrate a coherent, commercially plausible family of applications such as avatar, sticker, poster, packaging, or merchandise while preserving the same character. Treat constraints and exclusions frozen in the bible as binding. Do not redesign the character, introduce an unapproved logo, or claim legal or commercial approval.",
+  "outputRequirements": [
+    "Return clean application-board image candidates only.",
+    "Every application must preserve the accepted character identity and frozen brand constraints.",
+    "Show a coherent range of practical touchpoints on one reviewable board.",
+    "Expose visible inconsistency or delivery risk rather than hiding it behind decorative mockups."
+  ],
+  "ui": {
+    "description": {"default": "Apply the accepted character to practical brand touchpoints.", "locales": {"zh": "将已接受角色应用到实际品牌触点。"}},
+    "inputLabel": {"default": "Character bible", "locales": {"zh": "角色设定"}},
+    "inputSlots": [
+      {"label": {"default": "Character bible", "locales": {"zh": "角色设定"}}, "placeholder": {"default": "Connect the character bible...", "locales": {"zh": "连接角色设定文档..."}}, "slotId": "prompt"},
+      {"label": {"default": "Accepted character sheet", "locales": {"zh": "已接受角色设定图"}}, "placeholder": {"default": "Connect the accepted character sheet...", "locales": {"zh": "连接已接受的角色设定图..."}}, "slotId": "source_image"}
+    ],
+    "name": {"default": "IP application board", "locales": {"zh": "IP 应用展示板"}},
+    "operationTitle": {"default": "Generate application board", "locales": {"zh": "生成应用展示板"}},
+    "placeholder": {"default": "Connect the accepted character sheet...", "locales": {"zh": "连接已接受的角色设定图..."}}
+  },
+  "source": {"kind": "package", "paths": ["README.md"]}
+}

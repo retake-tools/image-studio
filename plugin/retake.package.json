@@ -5,21 +5,15 @@
     "toolchain": "retake_web_plugin_v1@2+esbuild@0.28.1"
   },
   "components": {
-    "agentPresets": [
-      {
-        "agentPresetId": "retake.agent.guided-image-operator",
-        "definitionHash": "sha256:retake-agent-guided-image-operator-v2",
-        "definitionPath": "agents/guided-image-operator/retake.agent.json",
-        "resourcePaths": [],
-        "version": "0.2.0"
-      }
-    ],
+    "agentPresets": [],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-license-v18",
+        "definitionHash": "sha256:image-studio-web-ip-character-v21",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
+          "definitions/design.ip_character.define.json",
+          "definitions/design.ip_character.define.parameters.json",
           "definitions/image.annotation_edit.json",
           "definitions/image.annotation_edit.parameters.json",
           "definitions/image.local_adjust.json",
@@ -33,25 +27,46 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.11.0"
+        "version": "0.12.3"
       }
     ],
     "skills": [
       {
-        "definitionHash": "sha256:retake-image-guided-edit-skill-v2",
-        "definitionPath": "skills/guided-image-edit/retake.skill.json",
+        "definitionHash": "sha256:retake-image-ip-application-board-v1",
+        "definitionPath": "skills/ip-application-board/retake.skill.json",
         "resourcePaths": [],
-        "skillId": "retake.image.guided-edit",
-        "version": "0.2.0"
+        "skillId": "retake.image.ip-application-board",
+        "version": "0.1.0"
+      },
+      {
+        "definitionHash": "sha256:retake-image-ip-character-sheet-v1",
+        "definitionPath": "skills/ip-character-sheet/retake.skill.json",
+        "resourcePaths": [],
+        "skillId": "retake.image.ip-character-sheet",
+        "version": "0.1.0"
+      },
+      {
+        "definitionHash": "sha256:retake-image-ip-character-strategy-v1",
+        "definitionPath": "skills/ip-character-strategy/retake.skill.json",
+        "resourcePaths": [],
+        "skillId": "retake.image.ip-character-strategy",
+        "version": "0.1.0"
+      },
+      {
+        "definitionHash": "sha256:retake-image-ip-concept-directions-v2",
+        "definitionPath": "skills/ip-concept-directions/retake.skill.json",
+        "resourcePaths": [],
+        "skillId": "retake.image.ip-concept-directions",
+        "version": "0.1.0"
       }
     ],
     "workflows": [
       {
-        "definitionHash": "sha256:retake-workflow-guided-image-review-v4",
-        "definitionPath": "workflows/guided-image-review/retake.workflow.json",
+        "definitionHash": "sha256:retake-workflow-ip-character-design-v2",
+        "definitionPath": "workflows/ip-character-design/retake.workflow.json",
         "resourcePaths": [],
-        "version": "0.2.0",
-        "workflowDefinitionId": "retake.workflow.guided-image-review"
+        "version": "0.1.0",
+        "workflowDefinitionId": "retake.workflow.ip-character-design"
       }
     ]
   },
@@ -60,33 +75,37 @@
   "entrypoints": [
     {
       "schemaVersion": 1,
-      "entrypointId": "agent:retake.agent.guided-image-operator",
-      "kind": "agent_preset",
-      "name": "Guided Image Operator",
-      "description": "Advance one ready guided Image edit step and stop at dependencies or human gates.",
+      "entrypointId": "skill:retake.image.ip-character-strategy",
+      "kind": "skill",
+      "name": "IP character strategy",
+      "description": "Turn one creative brief into a focused character bible without starting the complete IP design workflow.",
       "ref": {
-        "agentPresetId": "retake.agent.guided-image-operator"
+        "capabilityId": "design.ip_character.define",
+        "skillId": "retake.image.ip-character-strategy"
       },
       "compatibleStageIds": [
-        "media_generation"
+        "production_design"
       ],
-      "requiredInputSlotIds": []
+      "requiredInputSlotIds": [
+        "creative_brief"
+      ],
+      "recommended": true
     },
     {
       "schemaVersion": 1,
-      "entrypointId": "workflow:retake.workflow.guided-image-review",
+      "entrypointId": "workflow:retake.workflow.ip-character-design",
       "kind": "workflow",
-      "name": "Guided image edit and review",
-      "description": "Edit one Image and require human approval of the accepted result.",
+      "name": "IP character design",
+      "description": "Create a character bible, accepted concept, character sheet, and application board from one brief.",
       "ref": {
-        "workflowDefinitionId": "retake.workflow.guided-image-review"
+        "workflowDefinitionId": "retake.workflow.ip-character-design"
       },
       "compatibleStageIds": [
+        "production_design",
         "media_generation"
       ],
       "requiredInputSlotIds": [
-        "source_image",
-        "prompt"
+        "creative_brief"
       ],
       "recommended": true
     }
@@ -95,7 +114,8 @@
     "LICENSE",
     "NOTICE",
     "README.md",
-    "agents/guided-image-operator/retake.agent.json",
+    "definitions/design.ip_character.define.json",
+    "definitions/design.ip_character.define.parameters.json",
     "definitions/image.annotation_edit.json",
     "definitions/image.annotation_edit.parameters.json",
     "definitions/image.local_adjust.json",
@@ -111,7 +131,10 @@
     "package-lock.json",
     "package.json",
     "retake.plugin.json",
-    "skills/guided-image-edit/retake.skill.json",
+    "skills/ip-application-board/retake.skill.json",
+    "skills/ip-character-sheet/retake.skill.json",
+    "skills/ip-character-strategy/retake.skill.json",
+    "skills/ip-concept-directions/retake.skill.json",
     "src/adjust-panel.tsx",
     "src/annotation-copy.ts",
     "src/annotation-overlay.tsx",
@@ -138,10 +161,10 @@
     "src/styles.ts",
     "src/theme.ts",
     "vendor/npm/lucide-react-1.22.0.tgz",
-    "vendor/npm/retake-plugin-api-0.1.2.tgz",
-    "vendor/npm/retake-tools-package-contracts-0.1.2.tgz",
-    "vendor/npm/retake-tools-plugin-runtime-0.1.2.tgz",
-    "workflows/guided-image-review/retake.workflow.json"
+    "vendor/npm/retake-plugin-api-0.1.7.tgz",
+    "vendor/npm/retake-tools-package-contracts-0.1.7.tgz",
+    "vendor/npm/retake-tools-plugin-runtime-0.1.7.tgz",
+    "workflows/ip-character-design/retake.workflow.json"
   ],
   "integrity": "sha256:auto",
   "license": "Apache-2.0",
@@ -153,8 +176,8 @@
     "name": "Retake",
     "publisherId": "retake.publisher.official"
   },
-  "retakeHostCompatibility": ">=0.1.3 <0.2.0",
+  "retakeHostCompatibility": ">=0.1.4 <0.2.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.11.0"
+  "version": "0.12.3"
 }

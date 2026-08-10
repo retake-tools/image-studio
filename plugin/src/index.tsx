@@ -36,6 +36,52 @@ export const imageStudioMessages = defineMessages({
   pluginName: localized('Image Studio', '图片工作室'),
 });
 
+export const ipCharacterDefinitionCapability = defineCapability({
+  apiVersion: 2,
+  definition: {
+    capabilityId: 'design.ip_character.define',
+    category: 'production_design',
+    definitionHash: 'sha256:retake-design-ip-character-define-v1',
+    displayName: localized('Define IP character', '定义 IP 角色'),
+    inputSlots: [
+      {
+        artifactTypes: ['creative_brief'],
+        bindingKinds: ['inline', 'block', 'asset', 'artifact_revision'],
+        cardinality: 'one',
+        dataTypes: ['text', 'document'],
+        required: true,
+        semanticRole: 'creative_brief',
+        slotId: 'creative_brief',
+      },
+      {
+        artifactTypes: ['brand_constraints'],
+        bindingKinds: ['inline', 'block', 'asset', 'artifact_revision'],
+        cardinality: 'optional',
+        dataTypes: ['text', 'document'],
+        required: false,
+        semanticRole: 'brand_constraints',
+        slotId: 'brand_constraints',
+      },
+    ],
+    outputSlots: [{
+      artifactType: 'character_bible',
+      cardinality: 'one',
+      dataType: 'document',
+      projectionBlockTypes: ['document'],
+      schemaRef: 'retake.ip-character-bible-markdown/v1',
+      semanticRole: 'character_bible',
+      slotId: 'character_bible',
+    }],
+    parametersSchemaRef:
+      'definitions/design.ip_character.define.parameters.json',
+    runtimeRequirements: ['text_generation', 'durable_asset_output'],
+    schemaVersion: 2,
+    supportedAdapterClasses: ['text.document', 'agent_runtime.text'],
+    version: '0.1.0',
+  },
+  kind: 'capability',
+});
+
 export const localAdjustCapability = capabilityContribution({
   capabilityId: 'image.local_adjust',
   definitionHash: 'sha256:image-local-adjust-v2',
@@ -231,6 +277,7 @@ export const imageStudioPlugin = definePlugin({
     annotationImagePanel,
     cropImageCommand,
     cropImagePanel,
+    ipCharacterDefinitionCapability,
     localAdjustCapability,
     localCropCapability,
     localResizeCapability,
