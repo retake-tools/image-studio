@@ -45,9 +45,9 @@ Verify in a disposable Retake Workspace:
 - **Adjust image**, **Crop image**, and **Resize image** each create one
   Operation, one Result Image, one succeeded Execution, and one output Asset
   while leaving the source unchanged;
-- the image Toolbar does not expose Selection Mask, Masked AI Edit, or Guided
-  Edit; `image.masked_edit` remains contract-only while Guided Image binds Core
-  `image.generate` and contributes no duplicate Capability or Panel;
+- the image Toolbar does not expose Selection Mask or Masked AI Edit;
+  `image.masked_edit` remains contract-only, and no retired Guided Image Skill,
+  Workflow, AgentPreset, Capability, or file is present in the release Package;
 - Crop aspect presets stay in bounds and the recorded output dimensions match
   the actual PNG;
 - Resize output dimensions, MIME type, extension, and file encoding agree;

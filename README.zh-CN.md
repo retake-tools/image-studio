@@ -19,23 +19,22 @@ Image Studio 是 Retake 官方的图片处理 Plugin，目标是在无限画布�
 - 不修改源图片。
 
 `image.masked_edit` 仅保留为外部 Workflow 已提供精确 Mask 时可调用的 typed compatibility
-contract；Image Studio 不再提供选区蒙版制作或局部蒙版编辑界面。Guided Image 现在绑定 Core
-`image.generate`，并严格使用 `source_image`、有序 `references` 与 `prompt` Slot；Image Studio
-不再声明重复的 `image.guided_edit` Capability 或手动面板。
+contract；Image Studio 不再提供选区蒙版制作或局部蒙版编辑界面。
 
 Retake Whiteboard 继续负责画布、Block / Edge、AssetStore、Execution、History、Package 生命周期、
 信任和持久化；本仓库只拥有图片专业能力、界面、参数和处理器。
 
-同一个 Retake Package 还包含 Guided Image Skill、人工审阅 Workflow 和受限 Guided Image
-Operator AgentPreset。Guided Image 是进入 Image Studio 的流程入口，不是第二个 Plugin，也不是
-需要单独安装的产品。
+IP 角色策略是当前公开的单 Operation Skill 入口，只从创意简报创建角色设定文档；IP 形象设计继续作为
+完整的公开场景 Workflow 入口。退役的 Guided Image Skill、Workflow 和 AgentPreset 不再随 Package
+分发，也不会注册进当前创作目录。历史 Run 继续从冻结的 Board、StepRun、Execution 与 Artifact 事实
+只读展示，但不能重新启动旧流程。
 
 可分发的单一 Retake Package 源码位于 [`plugin/`](./plugin)。仓库根目录的测试、依赖和 Git 元数据不会
 进入安装产物。
 
 ## 从 Web 安装
 
-在 Retake Whiteboard 0.1.3 或更高版本中打开 **设置 → 插件库**。如需跟随最新稳定版并接收更新
+在 Retake Whiteboard 0.1.4 或更高版本中打开 **设置 → 插件库**。如需跟随最新稳定版并接收更新
 通知，输入：
 
 ```text
@@ -45,7 +44,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 如需不可变且可复现的安装，使用当前发布 tag：
 
 ```text
-github:retake-tools/image-studio@v0.11.0#subdirectory=plugin
+github:retake-tools/image-studio@v0.12.3#subdirectory=plugin
 ```
 
 `main` 是持续移动的稳定更新通道；版本 tag 保持固定。Retake 会自动获取源码、执行受控构建、

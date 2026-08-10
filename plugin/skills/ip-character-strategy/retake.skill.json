@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "skillId": "retake.image.ip-character-strategy",
+  "version": "0.1.0",
+  "definitionHash": "sha256:retake-image-ip-character-strategy-v1",
+  "name": "IP character strategy",
+  "description": "Turn a creative brief and optional brand constraints into an actionable character bible.",
+  "category": "production_design",
+  "capabilityBindings": [
+    {
+      "capabilityId": "design.ip_character.define",
+      "inputSlots": [
+        "creative_brief",
+        "brand_constraints"
+      ],
+      "outputSlots": [
+        "character_bible"
+      ]
+    }
+  ],
+  "instructionTemplate": "Act as an IP character design strategist. Convert the bound creative brief into one concrete, internally consistent character bible that can serve as the prompt authority for later concept generation, character sheets, and application boards. Treat optional brand constraints as binding requirements, not loose inspiration. Separate fixed identity facts from visual exploration space. Do not generate images, select a visual direction, claim approval, or invent brand facts that are absent from the inputs.",
+  "outputRequirements": [
+    "Return one Markdown character bible and no image output.",
+    "Include character premise, audience and use context, personality, silhouette, anatomy and proportions, facial identity, palette, materials, signature details, expression and pose range, exclusions, and consistency rules.",
+    "Distinguish immutable identity anchors from attributes that later concept directions may explore.",
+    "List any unresolved brief or brand conflicts explicitly instead of silently choosing for the user."
+  ],
+  "ui": {
+    "description": {
+      "default": "Create the character bible that guides later IP concept images.",
+      "locales": {
+        "zh": "创建用于指导后续 IP 概念图的角色设定文档。"
+      }
+    },
+    "inputLabel": {
+      "default": "Creative brief",
+      "locales": {
+        "zh": "创意简报"
+      }
+    },
+    "inputSlots": [
+      {
+        "label": {
+          "default": "Creative brief",
+          "locales": {
+            "zh": "创意简报"
+          }
+        },
+        "placeholder": {
+          "default": "Connect or enter the IP character brief...",
+          "locales": {
+            "zh": "连接或输入 IP 角色创意简报..."
+          }
+        },
+        "slotId": "creative_brief"
+      },
+      {
+        "label": {
+          "default": "Brand constraints",
+          "locales": {
+            "zh": "品牌约束"
+          }
+        },
+        "placeholder": {
+          "default": "Optionally connect brand rules, audience constraints, or exclusions...",
+          "locales": {
+            "zh": "可选连接品牌规范、受众约束或排除项..."
+          }
+        },
+        "slotId": "brand_constraints"
+      }
+    ],
+    "name": {
+      "default": "IP character strategy",
+      "locales": {
+        "zh": "IP 角色策略"
+      }
+    },
+    "operationTitle": {
+      "default": "Define IP character",
+      "locales": {
+        "zh": "定义 IP 角色"
+      }
+    },
+    "placeholder": {
+      "default": "Connect the creative brief...",
+      "locales": {
+        "zh": "连接创意简报..."
+      }
+    }
+  },
+  "source": {
+    "kind": "package",
+    "paths": [
+      "README.md"
+    ]
+  }
+}

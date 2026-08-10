@@ -11,7 +11,7 @@ Image Studio CLI or bridge.
 
 ## Install from GitHub
 
-1. Open **Settings → Plugin library** in Retake Whiteboard 0.1.3 or later.
+1. Open **Settings → Plugin library** in Retake Whiteboard 0.1.4 or later.
 2. To follow stable updates, enter:
 
    ```text
@@ -21,7 +21,7 @@ Image Studio CLI or bridge.
    For an immutable install instead, enter:
 
    ```text
-   github:retake-tools/image-studio@v0.11.0#subdirectory=plugin
+github:retake-tools/image-studio@v0.12.3#subdirectory=plugin
    ```
 
 3. Install the Package.

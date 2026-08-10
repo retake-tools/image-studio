@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "skillId": "retake.image.ip-concept-directions",
+  "version": "0.1.0",
+  "definitionHash": "sha256:retake-image-ip-concept-directions-v2",
+  "name": "IP concept directions",
+  "description": "Generate distinct visual directions from an approved character bible and declared references.",
+  "category": "production_design",
+  "capabilityBindings": [
+    {
+      "capabilityId": "image.generate",
+      "inputSlots": ["prompt", "references"],
+      "outputSlots": ["images"]
+    }
+  ],
+  "instructionTemplate": "Generate distinct IP character concept directions from the bound character bible. Treat the bible as the identity and design authority. Use each optional image only according to its declared reference intent. Explore materially different visual languages while preserving every immutable identity anchor. Do not merge references into an undeclared source image, silently change the audience or brand constraints, or select a winning direction.",
+  "outputRequirements": [
+    "Return clean character concept image candidates only.",
+    "Return exactly one visual direction per output image. Never place multiple alternatives in one image, contact sheet, comparison board, collage, or grid.",
+    "Each candidate must preserve the fixed identity anchors and express a clearly distinct visual direction.",
+    "Keep the character readable as one consistent IP rather than producing unrelated characters.",
+    "Do not claim that any candidate is accepted or approved."
+  ],
+  "ui": {
+    "description": {"default": "Explore distinct visual directions from the character bible.", "locales": {"zh": "根据角色设定探索不同的视觉方向。"}},
+    "inputLabel": {"default": "Character bible", "locales": {"zh": "角色设定"}},
+    "inputSlots": [
+      {"label": {"default": "Character bible", "locales": {"zh": "角色设定"}}, "placeholder": {"default": "Connect the character bible...", "locales": {"zh": "连接角色设定文档..."}}, "slotId": "prompt"},
+      {"label": {"default": "Visual references", "locales": {"zh": "视觉参考"}}, "placeholder": {"default": "Optionally connect declared visual references...", "locales": {"zh": "可选连接已声明的视觉参考..."}}, "slotId": "references"}
+    ],
+    "name": {"default": "IP concept directions", "locales": {"zh": "IP 概念方向"}},
+    "operationTitle": {"default": "Generate concept directions", "locales": {"zh": "生成概念方向"}},
+    "placeholder": {"default": "Connect the character bible...", "locales": {"zh": "连接角色设定文档..."}}
+  },
+  "source": {"kind": "package", "paths": ["README.md"]}
+}

@@ -55,11 +55,11 @@ assert.equal(moduleDescriptor.definitionHash, pluginModule.definitionHash);
 assert.deepEqual(
   declarativeComponentCounts,
   {
-    agentPresets: 1,
-    skills: 1,
+    agentPresets: 0,
+    skills: 4,
     workflows: 1,
   },
-  'The single Image Studio Package must carry its Guided Image definitions.',
+  'The Image Studio Package must carry only its active IP Design definitions.',
 );
 assert.deepEqual(rootPackage.dependencies, []);
 
@@ -76,6 +76,7 @@ for (const [index, capability] of capabilities.entries()) {
 assert.deepEqual(
   capabilities.map((capability) => capability.capabilityId).sort(),
   [
+    'design.ip_character.define',
     'image.annotation_edit',
     'image.local_adjust',
     'image.local_crop',
@@ -149,9 +150,9 @@ const portableSourceFiles = rootPackage.files.filter(
 for (const requiredBuildFile of [
   'package-lock.json',
   'package.json',
-  'vendor/npm/retake-plugin-api-0.1.2.tgz',
-  'vendor/npm/retake-tools-package-contracts-0.1.2.tgz',
-  'vendor/npm/retake-tools-plugin-runtime-0.1.2.tgz',
+  'vendor/npm/retake-plugin-api-0.1.7.tgz',
+  'vendor/npm/retake-tools-package-contracts-0.1.7.tgz',
+  'vendor/npm/retake-tools-plugin-runtime-0.1.7.tgz',
 ]) {
   assert.ok(
     rootPackage.files.includes(requiredBuildFile),

@@ -8,6 +8,7 @@ import {
   cropImageCommand,
   imageStudioMessages,
   imageStudioPlugin,
+  ipCharacterDefinitionCapability,
   outpaintImageCommand,
   resizeImageCommand,
 } from '../plugin/src/index';
@@ -64,6 +65,25 @@ test('image commands publish intentional host toolbar icons', () => {
   );
 });
 
+test('IP character strategy capability is plugin-owned and provider-neutral', () => {
+  assert.equal(
+    ipCharacterDefinitionCapability.definition.capabilityId,
+    'design.ip_character.define',
+  );
+  assert.deepEqual(
+    ipCharacterDefinitionCapability.definition.supportedAdapterClasses,
+    ['text.document', 'agent_runtime.text'],
+  );
+  assert.equal(
+    ipCharacterDefinitionCapability.definition.outputSlots[0]?.artifactType,
+    'character_bible',
+  );
+  assert.equal(
+    imageStudioPlugin.contributions.ipCharacterDefinitionCapability,
+    ipCharacterDefinitionCapability,
+  );
+});
+
 test('panels do not own locale detection or private theme fallbacks', async () => {
   const sources = await Promise.all([
     'adjust-panel.tsx',
@@ -81,13 +101,17 @@ test('panels do not own locale detection or private theme fallbacks', async () =
 });
 
 test('annotation view keeps compact controls and a conflict-free reset gesture', async () => {
-  const [overlay, panel, styles] = await Promise.all([
+  const [overlay, panel, panelSupport, styles] = await Promise.all([
     readFile(
       new URL('../plugin/src/annotation-overlay.tsx', import.meta.url),
       'utf8',
     ),
     readFile(
       new URL('../plugin/src/annotation-panel.tsx', import.meta.url),
+      'utf8',
+    ),
+    readFile(
+      new URL('../plugin/src/annotation-panel-support.tsx', import.meta.url),
       'utf8',
     ),
     readFile(
@@ -99,9 +123,42 @@ test('annotation view keeps compact controls and a conflict-free reset gesture',
   assert.match(overlay, /scale\(0\.86 \$\{fixedShapeYScale \* 0\.86\}\)/);
   assert.match(panel, /onDoubleClick=\{\(event\) => \{/);
   assert.match(panel, /activeTool !== 'select' \|\| pending/);
+  assert.match(panel, /useLayoutEffect/);
+  assert.match(panel, /visibility: imageAspectRatio === null \? 'hidden' : 'visible'/);
+  assert.match(panel, /'brush'/);
+  assert.match(panelSupport, /data-tool-label=\{label\}/);
+  assert.doesNotMatch(
+    styles,
+    /\.retake-annotation-modal-layer\s*\{[^}]*backdrop-filter/s,
+  );
   assert.match(panel, /is-annotation nodrag nopan nowheel/);
   assert.match(panel, /onWheelCapture=\{onStageWheel\}/);
   assert.match(panel, /translate3d\(\$\{pan\.x\}px, \$\{pan\.y\}px, 0\)/);
+  assert.match(panel, /applyStageTransform/);
+  assert.match(panel, /function annotationStageTransform/);
+  assert.match(panel, /return 'none'/);
+  const panPointerMove = panel.slice(
+    panel.indexOf("if (gesture.kind === 'pan')"),
+    panel.indexOf('const point = normalizedPoint', panel.indexOf("if (gesture.kind === 'pan')")),
+  );
+  assert.match(panPointerMove, /applyStageTransform/);
+  assert.doesNotMatch(panPointerMove, /setPan/);
+  assert.doesNotMatch(
+    styles,
+    /\.retake-annotation-(?:hover-prompt|zoom)\s*\{[^}]*backdrop-filter/s,
+  );
+  assert.match(
+    styles,
+    /\.retake-image-studio-panel\.is-annotation\s*\{[^}]*inset: 48px 18px/s,
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.retake-image-studio-panel\.is-annotation\s*\{[^}]*transform:/s,
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.retake-annotation-stage-shell\s*\{[^}]*(?:contain: layout paint|isolation: isolate)/s,
+  );
   assert.match(
     panel,
     /<X aria-hidden="true" size=\{8\} strokeWidth=\{2\.25\} \/>/,

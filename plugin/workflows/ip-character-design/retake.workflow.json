@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "workflowId": "retake.workflow.ip-character-design",
+  "version": "0.1.0",
+  "definitionHash": "sha256:retake-workflow-ip-character-design-v2",
+  "name": "IP character design",
+  "description": "Turn one creative brief into a character bible, accepted visual direction, character sheet, and application board.",
+  "ui": {
+    "description": {"default": "Create a traceable IP character design pack from one brief.", "locales": {"zh": "从一个 Brief 创建可追踪的 IP 形象设计资产包。"}},
+    "name": {"default": "IP character design", "locales": {"zh": "IP 形象设计"}}
+  },
+  "inputSlots": [
+    {"slotId": "creative_brief", "artifactTypes": ["creative_brief"], "cardinality": "one", "dataTypes": ["text", "document"], "required": true},
+    {"slotId": "references", "artifactTypes": ["image", "reference", "character_reference", "style_reference"], "cardinality": "many", "dataTypes": ["image"], "required": false},
+    {"slotId": "brand_constraints", "artifactTypes": ["brand_constraints"], "cardinality": "optional", "dataTypes": ["text", "document"], "required": false}
+  ],
+  "outputSlots": [
+    {"slotId": "character_bible", "artifactType": "character_bible", "source": {"kind": "step_output", "stepId": "define_character", "outputSlotId": "character_bible"}, "exposedAsIntermediate": true},
+    {"slotId": "accepted_concept", "artifactType": "character_reference", "source": {"kind": "step_output", "stepId": "generate_concept_directions", "outputSlotId": "images"}, "exposedAsIntermediate": true},
+    {"slotId": "character_sheet", "artifactType": "character_sheet", "source": {"kind": "step_output", "stepId": "generate_character_sheet", "outputSlotId": "images"}, "exposedAsIntermediate": true},
+    {"slotId": "application_board", "artifactType": "ip_application_board", "source": {"kind": "step_output", "stepId": "generate_application_board", "outputSlotId": "images"}, "exposedAsIntermediate": false}
+  ],
+  "stages": [
+    {"stageId": "ip_strategy", "stageTypeId": "retake.stage.production_design", "name": "Character Strategy", "completionPolicy": "all_required_steps", "outputWorkflowSlotIds": ["character_bible"]},
+    {"stageId": "concept_design", "stageTypeId": "retake.stage.media_generation", "name": "Concept Directions", "completionPolicy": "all_required_steps", "outputWorkflowSlotIds": ["accepted_concept"]},
+    {"stageId": "character_system", "stageTypeId": "retake.stage.media_generation", "name": "Character System", "completionPolicy": "all_required_steps", "outputWorkflowSlotIds": ["character_sheet"]},
+    {"stageId": "application_design", "stageTypeId": "retake.stage.media_generation", "name": "Application Design", "completionPolicy": "all_required_steps", "outputWorkflowSlotIds": ["application_board"]}
+  ],
+  "steps": [
+    {
+      "stepId": "define_character", "type": "capability", "stageId": "ip_strategy",
+      "capabilityLock": {"capabilityId": "design.ip_character.define", "version": "0.1.0", "definitionHash": "sha256:retake-design-ip-character-define-v1"},
+      "skillLock": {"skillId": "retake.image.ip-character-strategy", "version": "0.1.0", "definitionHash": "sha256:retake-image-ip-character-strategy-v1"},
+      "inputBindings": [
+        {"inputSlotId": "creative_brief", "source": {"kind": "workflow_input", "slotId": "creative_brief"}},
+        {"inputSlotId": "brand_constraints", "source": {"kind": "workflow_input", "slotId": "brand_constraints"}}
+      ],
+      "outputSlots": ["character_bible"], "outputAcceptancePolicy": "automatic", "runPolicy": "manual", "dependsOn": [], "optional": false
+    },
+    {
+      "stepId": "generate_concept_directions", "type": "capability", "stageId": "concept_design",
+      "capabilityLock": {"capabilityId": "image.generate", "version": "0.2.0", "definitionHash": "sha256:retake-image-generate-document-prompt-v2"},
+      "skillLock": {"skillId": "retake.image.ip-concept-directions", "version": "0.1.0", "definitionHash": "sha256:retake-image-ip-concept-directions-v2"},
+      "inputBindings": [
+        {"inputSlotId": "prompt", "source": {"kind": "step_output", "stepId": "define_character", "outputSlotId": "character_bible"}},
+        {"inputSlotId": "references", "source": {"kind": "workflow_input", "slotId": "references"}}
+      ],
+      "defaultParameters": {"variationCount": 2},
+      "outputSlots": ["images"], "outputAcceptancePolicy": "manual_single", "runPolicy": "manual", "dependsOn": ["define_character"], "optional": false
+    },
+    {
+      "stepId": "generate_character_sheet", "type": "capability", "stageId": "character_system",
+      "capabilityLock": {"capabilityId": "image.generate", "version": "0.2.0", "definitionHash": "sha256:retake-image-generate-document-prompt-v2"},
+      "skillLock": {"skillId": "retake.image.ip-character-sheet", "version": "0.1.0", "definitionHash": "sha256:retake-image-ip-character-sheet-v1"},
+      "inputBindings": [
+        {"inputSlotId": "prompt", "source": {"kind": "step_output", "stepId": "define_character", "outputSlotId": "character_bible"}},
+        {"inputSlotId": "source_image", "source": {"kind": "step_output", "stepId": "generate_concept_directions", "outputSlotId": "images"}},
+        {"inputSlotId": "references", "source": {"kind": "workflow_input", "slotId": "references"}}
+      ],
+      "outputSlots": ["images"], "outputAcceptancePolicy": "manual_single", "runPolicy": "manual", "dependsOn": ["generate_concept_directions"], "optional": false
+    },
+    {
+      "stepId": "generate_application_board", "type": "capability", "stageId": "application_design",
+      "capabilityLock": {"capabilityId": "image.generate", "version": "0.2.0", "definitionHash": "sha256:retake-image-generate-document-prompt-v2"},
+      "skillLock": {"skillId": "retake.image.ip-application-board", "version": "0.1.0", "definitionHash": "sha256:retake-image-ip-application-board-v1"},
+      "inputBindings": [
+        {"inputSlotId": "prompt", "source": {"kind": "step_output", "stepId": "define_character", "outputSlotId": "character_bible"}},
+        {"inputSlotId": "source_image", "source": {"kind": "step_output", "stepId": "generate_character_sheet", "outputSlotId": "images"}}
+      ],
+      "outputSlots": ["images"], "outputAcceptancePolicy": "manual_single", "runPolicy": "manual", "dependsOn": ["generate_character_sheet"], "optional": false
+    }
+  ],
+  "gates": [
+    {
+      "definitionHash": "sha256:retake-workflow-gate-ip-design-final-review-v1",
+      "gateId": "ip_design_final_review",
+      "kind": "human_approval",
+      "name": "IP design final review",
+      "required": true,
+      "reviewChecklist": ["character_consistency", "brief_fidelity", "brand_constraints", "technical_integrity", "commercial_delivery_risk"],
+      "subject": {"kind": "artifact_revision", "workflowOutputSlotId": "application_board"}
+    }
+  ],
+  "defaultRunMode": "manual"
+}

@@ -4,6 +4,12 @@ import { readFile } from 'node:fs/promises';
 const packageRoot = new URL('../plugin/', import.meta.url);
 const packageManifest = await readJson('retake.package.json');
 const pluginManifest = await readJson('retake.plugin.json');
+const ipCharacterCapability = await readJson(
+  'definitions/design.ip_character.define.json',
+);
+const ipCharacterParameters = await readJson(
+  'definitions/design.ip_character.define.parameters.json',
+);
 const annotationCapability = await readJson(
   'definitions/image.annotation_edit.json',
 );
@@ -34,19 +40,25 @@ const outpaintCapability = await readJson(
 const outpaintParameters = await readJson(
   'definitions/image.outpaint.parameters.json',
 );
-const guidedImageAgent = await readJson(
-  'agents/guided-image-operator/retake.agent.json',
+const ipCharacterSkill = await readJson(
+  'skills/ip-character-strategy/retake.skill.json',
 );
-const guidedImageSkill = await readJson(
-  'skills/guided-image-edit/retake.skill.json',
+const ipApplicationBoardSkill = await readJson(
+  'skills/ip-application-board/retake.skill.json',
 );
-const guidedImageWorkflow = await readJson(
-  'workflows/guided-image-review/retake.workflow.json',
+const ipCharacterSheetSkill = await readJson(
+  'skills/ip-character-sheet/retake.skill.json',
+);
+const ipConceptDirectionsSkill = await readJson(
+  'skills/ip-concept-directions/retake.skill.json',
+);
+const ipCharacterWorkflow = await readJson(
+  'workflows/ip-character-design/retake.workflow.json',
 );
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
-assert.equal(packageManifest.version, '0.11.0');
-assert.equal(packageManifest.retakeHostCompatibility, '>=0.1.3 <0.2.0');
+assert.equal(packageManifest.version, '0.12.3');
+assert.equal(packageManifest.retakeHostCompatibility, '>=0.1.4 <0.2.0');
 assert.equal(packageManifest.license, 'Apache-2.0');
 assert.equal(packageManifest.files.includes('NOTICE'), true);
 assert.equal(
@@ -64,6 +76,8 @@ assert.equal(
 assert.deepEqual(
   packageManifest.components.pluginModules[0].resourcePaths,
   [
+    'definitions/design.ip_character.define.json',
+    'definitions/design.ip_character.define.parameters.json',
     'definitions/image.annotation_edit.json',
     'definitions/image.annotation_edit.parameters.json',
     'definitions/image.local_adjust.json',
@@ -78,6 +92,20 @@ assert.deepEqual(
     'definitions/image.outpaint.parameters.json',
   ],
 );
+
+const ipCharacterCapabilityDescriptor = pluginManifest.contributions.find(
+  (entry) => entry.definitionPath === 'definitions/design.ip_character.define.json',
+);
+assert.ok(ipCharacterCapabilityDescriptor);
+assert.equal(
+  ipCharacterCapabilityDescriptor.definitionHash,
+  ipCharacterCapability.definitionHash,
+);
+assert.equal(ipCharacterCapability.capabilityId, 'design.ip_character.define');
+assert.equal(ipCharacterCapability.outputSlots[0]?.artifactType, 'character_bible');
+assert.equal(ipCharacterCapability.supportedAdapterClasses.includes('agent_runtime.text'), true);
+assert.deepEqual(ipCharacterParameters.required ?? [], []);
+assert.equal(ipCharacterParameters.additionalProperties, false);
 assert.deepEqual(
   [...packageManifest.files].sort(compareText),
   packageManifest.files,
@@ -249,58 +277,97 @@ assert.equal(annotationCapability.outputSlots[0]?.slotId, 'edited_images');
 assert.deepEqual(packageManifest.dependencies, []);
 assert.deepEqual(
   packageManifest.components.agentPresets.map((entry) => entry.agentPresetId),
-  ['retake.agent.guided-image-operator'],
+  [],
 );
 assert.deepEqual(
   packageManifest.components.skills.map((entry) => entry.skillId),
-  ['retake.image.guided-edit'],
+  [
+    'retake.image.ip-application-board',
+    'retake.image.ip-character-sheet',
+    'retake.image.ip-character-strategy',
+    'retake.image.ip-concept-directions',
+  ],
 );
 assert.deepEqual(
   packageManifest.components.workflows.map(
     (entry) => entry.workflowDefinitionId,
   ),
-  ['retake.workflow.guided-image-review'],
+  ['retake.workflow.ip-character-design'],
 );
 assert.equal(
-  guidedImageAgent.allowedCapabilityIds[0],
-  'image.generate',
-);
-assert.equal(
-  guidedImageAgent.skillPolicy.allowedSkillIds[0],
-  guidedImageSkill.skillId,
-);
-assert.equal(
-  guidedImageSkill.capabilityBindings[0]?.capabilityId,
-  'image.generate',
-);
-assert.equal(
-  guidedImageWorkflow.steps[0]?.capabilityLock.capabilityId,
-  'image.generate',
+  ipCharacterSkill.capabilityBindings[0]?.capabilityId,
+  ipCharacterCapability.capabilityId,
 );
 assert.deepEqual(
-  guidedImageSkill.capabilityBindings[0]?.inputSlots,
-  ['source_image', 'references', 'prompt'],
+  ipCharacterSkill.capabilityBindings[0]?.inputSlots,
+  ['creative_brief', 'brand_constraints'],
 );
-assert.deepEqual(guidedImageSkill.capabilityBindings[0]?.outputSlots, ['images']);
-assert.equal(guidedImageWorkflow.steps[0]?.capabilityLock.definitionHash, 'sha256:retake-image-generate-v1');
-assert.equal(guidedImageWorkflow.steps[0]?.inputBindings[1]?.inputSlotId, 'references');
-assert.equal(guidedImageWorkflow.steps[0]?.inputBindings[1]?.source.slotId, 'references');
-assert.deepEqual(guidedImageWorkflow.steps[0]?.outputSlots, ['images']);
+assert.deepEqual(
+  ipCharacterSkill.capabilityBindings[0]?.outputSlots,
+  ['character_bible'],
+);
+assert.deepEqual(
+  [
+    ipConceptDirectionsSkill,
+    ipCharacterSheetSkill,
+    ipApplicationBoardSkill,
+  ].map((skill) => skill.capabilityBindings[0]?.capabilityId),
+  ['image.generate', 'image.generate', 'image.generate'],
+);
+assert.deepEqual(
+  ipCharacterWorkflow.steps.map((step) => step.stepId),
+  [
+    'define_character',
+    'generate_concept_directions',
+    'generate_character_sheet',
+    'generate_application_board',
+  ],
+);
+assert.deepEqual(
+  ipCharacterWorkflow.outputSlots.map((slot) => slot.artifactType),
+  [
+    'character_bible',
+    'character_reference',
+    'character_sheet',
+    'ip_application_board',
+  ],
+);
 assert.equal(
-  guidedImageWorkflow.steps[0]?.skillLock.skillId,
-  guidedImageSkill.skillId,
+  ipCharacterWorkflow.steps[1]?.capabilityLock.definitionHash,
+  'sha256:retake-image-generate-document-prompt-v2',
+);
+assert.deepEqual(
+  ipCharacterWorkflow.steps[1]?.defaultParameters,
+  { variationCount: 2 },
+  'Concept generation must expose two independent candidates by default.',
+);
+assert.match(
+  ipConceptDirectionsSkill.outputRequirements.join(' '),
+  /one visual direction per output image/i,
+);
+assert.match(
+  ipConceptDirectionsSkill.outputRequirements.join(' '),
+  /Never place multiple alternatives in one image/i,
 );
 assert.equal(
-  guidedImageWorkflow.steps[0]?.outputAcceptancePolicy,
-  'manual_single',
+  ipCharacterWorkflow.gates[0]?.subject.workflowOutputSlotId,
+  'application_board',
 );
-assert.equal(guidedImageWorkflow.gates[0]?.subject.kind, 'artifact_revision');
 assert.deepEqual(
   packageManifest.entrypoints.map((entry) => entry.entrypointId),
   [
-    'agent:retake.agent.guided-image-operator',
-    'workflow:retake.workflow.guided-image-review',
+    'skill:retake.image.ip-character-strategy',
+    'workflow:retake.workflow.ip-character-design',
   ],
+);
+const publicIpStrategy = packageManifest.entrypoints[0];
+assert.equal(publicIpStrategy.kind, 'skill');
+assert.equal(publicIpStrategy.recommended, true);
+assert.deepEqual(publicIpStrategy.requiredInputSlotIds, ['creative_brief']);
+assert.equal(
+  JSON.stringify(packageManifest).includes('guided-image'),
+  false,
+  'Retired Guided Image definitions must not enter the active Package manifest.',
 );
 
 for (const filePath of packageManifest.files) {
@@ -310,6 +377,7 @@ for (const filePath of packageManifest.files) {
 console.log(JSON.stringify({
   capabilityId: capability.capabilityId,
   capabilityIds: [
+    ipCharacterCapability.capabilityId,
     annotationCapability.capabilityId,
     capability.capabilityId,
     cropCapability.capabilityId,
@@ -320,9 +388,14 @@ console.log(JSON.stringify({
   packageId: packageManifest.packageId,
   pluginModuleId: pluginManifest.pluginModuleId,
   sourceFiles: packageManifest.files.length,
-  agentPresetIds: [guidedImageAgent.agentPresetId],
-  skillIds: [guidedImageSkill.skillId],
-  workflowIds: [guidedImageWorkflow.workflowId],
+  agentPresetIds: [],
+  skillIds: [
+    ipApplicationBoardSkill.skillId,
+    ipCharacterSheetSkill.skillId,
+    ipConceptDirectionsSkill.skillId,
+    ipCharacterSkill.skillId,
+  ],
+  workflowIds: [ipCharacterWorkflow.workflowId],
 }));
 
 async function readJson(filePath) {

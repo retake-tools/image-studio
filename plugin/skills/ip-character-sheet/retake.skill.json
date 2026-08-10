@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "skillId": "retake.image.ip-character-sheet",
+  "version": "0.1.0",
+  "definitionHash": "sha256:retake-image-ip-character-sheet-v1",
+  "name": "IP character sheet",
+  "description": "Turn an accepted concept into a consistent, reviewable character sheet.",
+  "category": "production_design",
+  "capabilityBindings": [
+    {
+      "capabilityId": "image.generate",
+      "inputSlots": ["prompt", "source_image", "references"],
+      "outputSlots": ["images"]
+    }
+  ],
+  "instructionTemplate": "Create a production-ready character sheet using the bound character bible as the identity authority and the accepted concept as the exact editable source identity. Preserve face, silhouette, proportions, palette, materials, costume, and signature details. Use optional references only for their declared intent. Organize the sheet as one clean review surface with a standard front presentation plus key expressions and pose language. Do not redesign the character, substitute another candidate, or imply that the sheet is approved.",
+  "outputRequirements": [
+    "Return clean character-sheet image candidates only.",
+    "Preserve the accepted concept identity and every immutable bible constraint.",
+    "Show a coherent standard character presentation, key expressions, and pose language on one reviewable sheet.",
+    "Avoid decorative text, UI chrome, watermarks, or unexplained alternate identities."
+  ],
+  "ui": {
+    "description": {"default": "Create a consistent character sheet from the accepted concept.", "locales": {"zh": "根据已接受概念创建一致的角色设定图。"}},
+    "inputLabel": {"default": "Character bible", "locales": {"zh": "角色设定"}},
+    "inputSlots": [
+      {"label": {"default": "Character bible", "locales": {"zh": "角色设定"}}, "placeholder": {"default": "Connect the character bible...", "locales": {"zh": "连接角色设定文档..."}}, "slotId": "prompt"},
+      {"label": {"default": "Accepted concept", "locales": {"zh": "已接受概念"}}, "placeholder": {"default": "Connect the accepted concept image...", "locales": {"zh": "连接已接受的概念图..."}}, "slotId": "source_image"},
+      {"label": {"default": "Visual references", "locales": {"zh": "视觉参考"}}, "placeholder": {"default": "Optionally connect declared references...", "locales": {"zh": "可选连接已声明的参考图..."}}, "slotId": "references"}
+    ],
+    "name": {"default": "IP character sheet", "locales": {"zh": "IP 角色设定图"}},
+    "operationTitle": {"default": "Generate character sheet", "locales": {"zh": "生成角色设定图"}},
+    "placeholder": {"default": "Connect the accepted concept...", "locales": {"zh": "连接已接受的概念图..."}}
+  },
+  "source": {"kind": "package", "paths": ["README.md"]}
+}
