@@ -345,6 +345,132 @@ export const annotationStyles = `
     overscroll-behavior: contain;
   }
 
+  .retake-annotation-task-panel {
+    display: grid;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--retake-border, #d8dee8);
+  }
+
+  .retake-annotation-task-panel section,
+  .retake-annotation-task-panel fieldset {
+    display: grid;
+    min-width: 0;
+    gap: 8px;
+    margin: 0;
+    border: 0;
+    padding: 0;
+  }
+
+  .retake-annotation-task-panel h3,
+  .retake-annotation-task-panel legend {
+    margin: 0;
+    padding: 0;
+    color: var(--retake-text, #30303d);
+    font-size: 11px;
+    font-weight: 750;
+  }
+
+  .retake-annotation-scope-card {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: var(--retake-surface, #fff);
+    padding: 9px;
+    color: var(--retake-accent, #625aa8);
+  }
+
+  .retake-annotation-scope-card > span {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+  }
+
+  .retake-annotation-scope-card strong {
+    color: var(--retake-text, #30303d);
+    font-size: 11px;
+  }
+
+  .retake-annotation-scope-card small {
+    color: var(--retake-text-muted, #777782);
+    font-size: 10px;
+  }
+
+  .retake-annotation-task-panel fieldset label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--retake-text, #30303d);
+    cursor: pointer;
+    font-size: 11px;
+  }
+
+  .retake-annotation-task-panel fieldset input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--retake-accent, #7068b1);
+  }
+
+  .retake-annotation-task-summary {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: var(--retake-surface, #fff);
+    padding: 9px;
+  }
+
+  .retake-annotation-task-summary > div {
+    display: grid;
+    gap: 3px;
+  }
+
+  .retake-annotation-task-summary dt {
+    color: var(--retake-text, #30303d);
+    font-size: 10px;
+    font-weight: 750;
+  }
+
+  .retake-annotation-task-summary dd {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: var(--retake-text-muted, #626270);
+    font-size: 10px;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .retake-annotation-draft-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--retake-text-muted, #626270);
+    font-size: 10px;
+  }
+
+  .retake-annotation-draft-status strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #16834b;
+    font-weight: 650;
+  }
+
+  .retake-annotation-draft-status strong.is-saving {
+    color: var(--retake-text-muted, #626270);
+  }
+
+  .retake-annotation-draft-status strong.is-failed {
+    color: #b42318;
+  }
+
   .retake-annotation-settings,
   .retake-annotation-intents,
   .retake-annotation-global {
@@ -588,6 +714,24 @@ export const annotationStyles = `
     width: auto;
     min-width: 126px;
     margin: 0;
+  }
+
+  .retake-annotation-cancel {
+    min-width: 84px;
+    height: 34px;
+    border: 1px solid var(--retake-border, #d8dee8);
+    border-radius: 8px;
+    background: var(--retake-surface, #fff);
+    color: var(--retake-text, #30303d);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .retake-annotation-cancel:disabled {
+    cursor: default;
+    opacity: 0.45;
   }
 
   @media (max-width: 760px) {

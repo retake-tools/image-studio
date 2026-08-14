@@ -8,7 +8,7 @@
     "agentPresets": [],
     "pluginModules": [
       {
-        "definitionHash": "sha256:image-studio-web-ip-character-v21",
+        "definitionHash": "sha256:image-studio-web-ip-character-v22",
         "definitionPath": "retake.plugin.json",
         "pluginModuleId": "design.retake.image-studio.web",
         "resourcePaths": [
@@ -141,6 +141,7 @@
     "src/annotation-panel-support.tsx",
     "src/annotation-panel.tsx",
     "src/annotation-styles.ts",
+    "src/annotation-task-panel.tsx",
     "src/annotation.ts",
     "src/browser-image.ts",
     "src/crop-panel.tsx",

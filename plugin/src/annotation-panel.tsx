@@ -39,6 +39,8 @@ import {
   compileAnnotationInstruction,
   createAnnotatedComposite,
   createAnnotationMark,
+  createDefaultAnnotationEditScope,
+  createDefaultAnnotationKeepItems,
   finalizeDrawingAnnotationMark,
   fitAnnotationStage,
   hasExecutableAnnotationIntent,
@@ -49,6 +51,7 @@ import {
   updateDrawingAnnotationMark,
   type AnnotationColor,
   type AnnotationEndpoint,
+  type AnnotationKeepItems,
   type AnnotationManifest,
   type AnnotationMark,
   type AnnotationMarkKind,
@@ -70,6 +73,7 @@ import {
   annotationSourceSession,
   initialAnnotationDraft,
 } from './annotation-panel-support';
+import { AnnotationTaskPanel } from './annotation-task-panel';
 import { annotationPanelStore } from './panel-store';
 import { usePluginEnvironment } from './localization';
 import { annotationStyles } from './annotation-styles';
@@ -135,10 +139,16 @@ export function ImageStudioAnnotationPanel({
   );
   const [connectionId, setConnectionId] = useState('');
   const [draftRevision, setDraftRevision] = useState(0);
+  const [draftStatus, setDraftStatus] = useState<
+    'failed' | 'saved' | 'saving'
+  >('saved');
   const [error, setError] = useState<string | null>(null);
   const [globalInstruction, setGlobalInstruction] = useState('');
   const [hoveredMarkId, setHoveredMarkId] = useState<string | null>(null);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
+  const [keepItems, setKeepItems] = useState<AnnotationKeepItems>(
+    createDefaultAnnotationKeepItems,
+  );
   const [marks, setMarks] = useState<AnnotationMark[]>([]);
   const [outputCount, setOutputCount] = useState<1 | 2 | 3 | 4>(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -157,6 +167,7 @@ export function ImageStudioAnnotationPanel({
     past: AnnotationMark[][];
   }>({ future: [], past: [] });
   const panRef = useRef(pan);
+  const panelRef = useRef<HTMLElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const stageShellRef = useRef<HTMLDivElement | null>(null);
   const stageTransformFrameRef = useRef<number | undefined>(undefined);
@@ -177,6 +188,7 @@ export function ImageStudioAnnotationPanel({
     setActiveTool('select');
     setColor(annotationColorOptions[0].value);
     setDraftRevision(0);
+    setDraftStatus('saved');
     setError(null);
     setGlobalInstruction(draft?.globalInstruction ?? '');
     setHoveredMarkId(null);
@@ -185,6 +197,7 @@ export function ImageStudioAnnotationPanel({
         ? source.asset.width / source.asset.height
         : null,
     );
+    setKeepItems(draft?.keepItems ?? createDefaultAnnotationKeepItems());
     setMarks(draft?.marks ?? []);
     setOutputCount(1);
     const nextPan = { x: 0, y: 0 };
@@ -196,6 +209,10 @@ export function ImageStudioAnnotationPanel({
     setZoom(1);
     gestureRef.current = null;
     historyRef.current = { future: [], past: [] };
+  }, [panel.revision]);
+
+  useLayoutEffect(() => {
+    panelRef.current?.focus();
   }, [panel.revision]);
 
   useLayoutEffect(() => {
@@ -224,23 +241,18 @@ export function ImageStudioAnnotationPanel({
       || draftRevision === 0
       || pending
     ) return;
+    setDraftStatus('saving');
     const timeout = window.setTimeout(() => {
-      void host.drafts.saveBound({
-        blockId: sourceBlockId,
-        capabilityId,
-        value: annotationDraftJson({
-          globalInstruction,
-          marks,
-          schemaVersion: 1,
-          ...(sourceAssetId ? { sourceAssetId } : {}),
-        }),
-      }).catch((cause) => {
-        setError(
-          cause instanceof Error
-            ? `${copy.draftFailed}: ${cause.message}`
-            : copy.draftFailed,
-        );
-      });
+      void saveCurrentDraft()
+        .then(() => setDraftStatus('saved'))
+        .catch((cause) => {
+          setDraftStatus('failed');
+          setError(
+            cause instanceof Error
+              ? `${copy.draftFailed}: ${cause.message}`
+              : copy.draftFailed,
+          );
+        });
     }, 300);
     return () => window.clearTimeout(timeout);
   }, [
@@ -249,6 +261,7 @@ export function ImageStudioAnnotationPanel({
     globalInstruction,
     host,
     isHistorical,
+    keepItems,
     marks,
     pending,
     sourceAssetId,
@@ -307,10 +320,13 @@ export function ImageStudioAnnotationPanel({
   }, []);
 
   const manifest = useMemo<AnnotationManifest>(() => ({
+    editScope: createDefaultAnnotationEditScope(),
     globalInstruction,
+    keepItems,
     marks,
+    outputMode: 'clean_edit',
     schemaVersion: 1,
-  }), [globalInstruction, marks]);
+  }), [globalInstruction, keepItems, marks]);
   const compiledInstruction = useMemo(
     () => compileAnnotationInstruction(manifest),
     [manifest],
@@ -579,6 +595,12 @@ export function ImageStudioAnnotationPanel({
   }
 
   function onPanelKeyDown(event: KeyboardEvent<HTMLElement>): void {
+    if (event.key === 'Escape' && !pending) {
+      event.preventDefault();
+      event.stopPropagation();
+      void closeWithoutExecution();
+      return;
+    }
     const target = event.target;
     const editable = target instanceof HTMLElement && Boolean(
       target.closest('input, textarea, select, [contenteditable="true"]'),
@@ -660,6 +682,43 @@ export function ImageStudioAnnotationPanel({
     }
   }
 
+  async function saveCurrentDraft(): Promise<void> {
+    if (isHistorical || !sourceBlockId || !sourceIsBound) return;
+    await host.drafts.saveBound({
+      blockId: sourceBlockId,
+      capabilityId,
+      value: annotationDraftJson({
+        editScope: createDefaultAnnotationEditScope(),
+        globalInstruction,
+        keepItems,
+        marks,
+        outputMode: 'clean_edit',
+        schemaVersion: 1,
+        ...(sourceAssetId ? { sourceAssetId } : {}),
+      }),
+    });
+  }
+
+  async function closeWithoutExecution(): Promise<void> {
+    if (pending) return;
+    if (!isHistorical && draftRevision > 0) {
+      setDraftStatus('saving');
+      try {
+        await saveCurrentDraft();
+        setDraftStatus('saved');
+      } catch (cause) {
+        setDraftStatus('failed');
+        setError(
+          cause instanceof Error
+            ? `${copy.draftFailed}: ${cause.message}`
+            : copy.draftFailed,
+        );
+        return;
+      }
+    }
+    annotationPanelStore.close();
+  }
+
   return (
     <>
       <style>{imageStudioStyles + annotationStyles}</style>
@@ -667,9 +726,13 @@ export function ImageStudioAnnotationPanel({
       <section
         aria-label={copy.title}
         aria-busy={pending}
+        aria-modal="true"
         className="retake-image-studio-panel is-annotation nodrag nopan nowheel"
         data-retake-image-studio="annotation"
         onKeyDown={onPanelKeyDown}
+        ref={panelRef}
+        role="dialog"
+        tabIndex={-1}
       >
         <header className="retake-image-studio-panel__header">
           <div>
@@ -680,7 +743,7 @@ export function ImageStudioAnnotationPanel({
             aria-label={copy.close}
             className="retake-image-studio-panel__close"
             disabled={pending}
-            onClick={() => annotationPanelStore.close()}
+            onClick={() => void closeWithoutExecution()}
             type="button"
           >
             <X aria-hidden="true" size={16} />
@@ -941,6 +1004,20 @@ export function ImageStudioAnnotationPanel({
             </div>
 
             <aside className="retake-annotation-side-panel">
+              <AnnotationTaskPanel
+                copy={copy}
+                disabled={pending}
+                draftStatus={draftStatus}
+                globalInstruction={globalInstruction}
+                keepItems={keepItems}
+                marks={marks}
+                onKeepItemsChange={(next) => {
+                  setKeepItems(next);
+                  setDraftRevision((revision) => revision + 1);
+                }}
+                showDraftStatus={!isHistorical}
+              />
+
               <div className="retake-annotation-settings">
                 <fieldset disabled={pending}>
                   <legend>
@@ -1140,12 +1217,20 @@ export function ImageStudioAnnotationPanel({
               ))}
             </div>
             <button
+              className="retake-annotation-cancel"
+              disabled={pending}
+              onClick={() => void closeWithoutExecution()}
+              type="button"
+            >
+              {copy.cancel}
+            </button>
+            <button
               className="retake-image-studio-panel__run"
               disabled={!canRun}
               onClick={() => void run()}
               type="button"
             >
-              {pending ? copy.running : copy.run}
+              {pending ? copy.running : copy.done}
             </button>
           </div>
         </div>

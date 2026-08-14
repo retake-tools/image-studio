@@ -151,7 +151,7 @@ export const annotationEditCapability = defineCapability({
   definition: {
     capabilityId: 'image.annotation_edit',
     category: 'image_editing',
-    definitionHash: 'sha256:image-annotation-edit-v2',
+    definitionHash: 'sha256:image-annotation-edit-v3',
     displayName: localized('Annotation image edit', '图片标注编辑'),
     inputSlots: [
       imageSourceInput(),
@@ -170,7 +170,7 @@ export const annotationEditCapability = defineCapability({
     runtimeRequirements: ['durable_asset_output', 'image_generation'],
     schemaVersion: 2,
     supportedAdapterClasses: ['agent_runtime.media'],
-    version: '0.2.0',
+    version: '0.3.0',
   },
   kind: 'capability',
 });

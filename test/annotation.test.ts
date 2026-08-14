@@ -91,7 +91,23 @@ test('annotation prompts preserve geometry, intent, and cleanup rules', () => {
   assert.match(prompt, /start \(0\.1000, 0\.8000\)/);
   assert.match(prompt, /Move the lamp toward the arrowhead/);
   assert.match(prompt, /tail is the start and the arrowhead is the destination/);
+  assert.match(prompt, /preserve the primary product or subject/);
   assert.match(prompt, /Return a clean final image without annotation IDs/);
+});
+
+test('annotation prompts freeze explicit protected content choices', () => {
+  const prompt = compileAnnotationInstruction({
+    editScope: { mode: 'manual_annotations' },
+    globalInstruction: 'Remove the wall shadow.',
+    keepItems: { logo: true, product: true, text: false },
+    marks: [],
+    outputMode: 'clean_edit',
+    schemaVersion: 1,
+  });
+
+  assert.match(prompt, /primary product or subject/);
+  assert.match(prompt, /existing logos or brand marks/);
+  assert.doesNotMatch(prompt, /existing text and typography/);
 });
 
 test('execution intent requires either a global or per-mark instruction', () => {
@@ -135,7 +151,9 @@ test('draft parsing sanitizes unknown fields and rejects unsafe payloads', () =>
     sourceAssetId: 'asset-1',
   });
   assert.deepEqual(parsed, {
+    editScope: { mode: 'manual_annotations' },
     globalInstruction: 'Remove this object.',
+    keepItems: { logo: true, product: true, text: true },
     marks: [{
       color: '#dc2626',
       id: 'M1',
@@ -144,6 +162,7 @@ test('draft parsing sanitizes unknown fields and rejects unsafe payloads', () =>
       point: { x: 0.5, y: 0.5 },
       strokeSize: 'm',
     }],
+    outputMode: 'clean_edit',
     schemaVersion: 1,
     sourceAssetId: 'asset-1',
   });
@@ -168,6 +187,24 @@ test('draft parsing sanitizes unknown fields and rejects unsafe payloads', () =>
       ),
       strokeSize: 'm',
     }],
+    schemaVersion: 1,
+  }), null);
+  assert.equal(annotationDraftFromUnknown({
+    editScope: { mode: 'whole_image' },
+    globalInstruction: 'Change the background.',
+    marks: [],
+    schemaVersion: 1,
+  }), null);
+  assert.equal(annotationDraftFromUnknown({
+    globalInstruction: 'Change the background.',
+    keepItems: { logo: true, product: 'yes', text: true },
+    marks: [],
+    schemaVersion: 1,
+  }), null);
+  assert.equal(annotationDraftFromUnknown({
+    globalInstruction: 'Change the background.',
+    marks: [],
+    outputMode: 'annotated_composite',
     schemaVersion: 1,
   }), null);
 });

@@ -1,6 +1,6 @@
 # Annotation editing
 
-`image.annotation_edit@0.2.0` turns visual marks and written intent into one
+`image.annotation_edit@0.3.0` turns visual marks and written intent into one
 provider-neutral, connected image-edit request.
 
 ## User flow
@@ -14,10 +14,20 @@ provider-neutral, connected image-edit request.
    accidental mark before the second click.
 3. Write an instruction for each mark, or add one global instruction that
    applies to all marks.
-4. Choose a compatible Retake image Connection and request one to four
+4. Review the manual edit scope, choose whether the product, logo, and text are
+   protected, and confirm the task summary. These choices are frozen into the
+   execution manifest and compiled prompt.
+5. Choose a compatible Retake image Connection and request one to four
    candidates.
-5. Run the edit. Retake creates the Operation, Execution, result Blocks,
+6. Choose **Done** to run the edit. Retake creates the Operation, Execution, result Blocks,
    durable Assets, edges, and Board History.
+
+**Cancel**, the close button, and `Escape` save the current bound draft and
+leave without creating an Execution. Once **Done** has started the connected
+execution, close and cancel controls remain disabled because Host API V2 does
+not expose execution abort through the Plugin panel contract. A start failure
+keeps the panel, marks, instructions, protected-content choices, and draft open
+for retry.
 
 The source image remains unchanged. The provider receives the clean source, an
 exact-size PNG composite containing the visible marks, a normalized geometry
@@ -45,6 +55,8 @@ Image Studio owns:
 
 - annotation tools, hit testing, zoom, pan, local undo and redo;
 - normalized geometry and per-mark or global intent;
+- manual edit scope, protected-content choices, clean-output mode, and task
+  summary;
 - bounded draft parsing and prompt compilation;
 - exact-source-size composite rendering;
 - Connection and candidate-count controls.

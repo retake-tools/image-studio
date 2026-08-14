@@ -22,6 +22,18 @@ export type AnnotationEndpoint =
   | 'start'
   | 'startXEndY';
 
+export interface AnnotationEditScope {
+  mode: 'manual_annotations';
+}
+
+export interface AnnotationKeepItems {
+  logo: boolean;
+  product: boolean;
+  text: boolean;
+}
+
+export type AnnotationOutputMode = 'clean_edit';
+
 export interface AnnotationPoint {
   x: number;
   y: number;
@@ -63,8 +75,11 @@ export type AnnotationMark =
   | PathAnnotationMark;
 
 export interface AnnotationManifest {
+  editScope?: AnnotationEditScope;
   globalInstruction: string;
+  keepItems?: AnnotationKeepItems;
   marks: AnnotationMark[];
+  outputMode?: AnnotationOutputMode;
   schemaVersion: 1;
 }
 
@@ -86,6 +101,14 @@ export const annotationLimits = {
   pathPointCount: 8_192,
   sourceAssetIdLength: 512,
 } as const;
+
+export function createDefaultAnnotationEditScope(): AnnotationEditScope {
+  return { mode: 'manual_annotations' };
+}
+
+export function createDefaultAnnotationKeepItems(): AnnotationKeepItems {
+  return { logo: true, product: true, text: true };
+}
 
 export const strokeBySize = {
   l: 2.8,
@@ -381,6 +404,12 @@ export function compileAnnotationInstruction(
     ].join(' ');
   });
   const globalInstruction = manifest.globalInstruction.trim();
+  const keepItems = manifest.keepItems ?? createDefaultAnnotationKeepItems();
+  const preservedItems = [
+    keepItems.product ? 'the primary product or subject' : undefined,
+    keepItems.logo ? 'any existing logos or brand marks' : undefined,
+    keepItems.text ? 'any existing text and typography' : undefined,
+  ].filter((item): item is string => typeof item === 'string');
   const hasDirectionalArrow = manifest.marks.some(
     (mark) => mark.kind === 'arrow',
   );
@@ -403,6 +432,9 @@ export function compileAnnotationInstruction(
     globalInstruction ? 'Global instruction:' : undefined,
     globalInstruction || undefined,
     '',
+    preservedItems.length
+      ? `Even inside marked areas, preserve ${preservedItems.join(', ')} unless the user explicitly asks to change that protected item.`
+      : undefined,
     'Preserve all unmarked content, subject identity, composition, camera, lighting, and style unless an instruction explicitly changes them.',
     'Return a clean final image without annotation IDs, markers, arrows, outlines, brush overlays, annotation notes, or editor UI.',
   ].filter((line): line is string => typeof line === 'string').join('\n');
@@ -431,17 +463,59 @@ export function annotationDraftFromUnknown(
     )
   ) return null;
   const marks = candidate.marks.map(parseAnnotationMark);
+  const editScope = parseAnnotationEditScope(candidate.editScope);
+  const keepItems = parseAnnotationKeepItems(candidate.keepItems);
   if (
     marks.some((mark) => mark === null)
     || new Set(marks.map((mark) => mark?.id)).size !== marks.length
+    || !editScope
+    || !keepItems
+    || (
+      candidate.outputMode !== undefined
+      && candidate.outputMode !== 'clean_edit'
+    )
   ) return null;
   return {
+    editScope,
     globalInstruction: candidate.globalInstruction,
+    keepItems,
     marks: marks.filter((mark): mark is AnnotationMark => mark !== null),
+    outputMode: candidate.outputMode === undefined
+      ? 'clean_edit'
+      : candidate.outputMode,
     schemaVersion: 1,
     ...(typeof candidate.sourceAssetId === 'string'
       ? { sourceAssetId: candidate.sourceAssetId }
       : {}),
+  };
+}
+
+function parseAnnotationEditScope(value: unknown): AnnotationEditScope | null {
+  if (value === undefined) return createDefaultAnnotationEditScope();
+  if (
+    value
+    && typeof value === 'object'
+    && !Array.isArray(value)
+    && (value as Record<string, unknown>).mode === 'manual_annotations'
+  ) return createDefaultAnnotationEditScope();
+  return null;
+}
+
+function parseAnnotationKeepItems(value: unknown): AnnotationKeepItems | null {
+  if (value === undefined) return createDefaultAnnotationKeepItems();
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+  const candidate = value as Record<string, unknown>;
+  if (
+    typeof candidate.logo !== 'boolean'
+    || typeof candidate.product !== 'boolean'
+    || typeof candidate.text !== 'boolean'
+  ) return null;
+  return {
+    logo: candidate.logo,
+    product: candidate.product,
+    text: candidate.text,
   };
 }
 

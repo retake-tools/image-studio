@@ -158,9 +158,42 @@
     "manifest": {
       "additionalProperties": false,
       "properties": {
+        "editScope": {
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "const": "manual_annotations",
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode"
+          ],
+          "type": "object"
+        },
         "globalInstruction": {
           "maxLength": 32000,
           "type": "string"
+        },
+        "keepItems": {
+          "additionalProperties": false,
+          "properties": {
+            "logo": {
+              "type": "boolean"
+            },
+            "product": {
+              "type": "boolean"
+            },
+            "text": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "logo",
+            "product",
+            "text"
+          ],
+          "type": "object"
         },
         "marks": {
           "items": {
@@ -182,11 +215,18 @@
         "schemaVersion": {
           "const": 1,
           "type": "integer"
+        },
+        "outputMode": {
+          "const": "clean_edit",
+          "type": "string"
         }
       },
       "required": [
+        "editScope",
         "globalInstruction",
+        "keepItems",
         "marks",
+        "outputMode",
         "schemaVersion"
       ],
       "type": "object"

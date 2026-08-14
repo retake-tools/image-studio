@@ -15,7 +15,9 @@ Retake-connected AI editing surfaces:
   upscale control, and PNG, JPEG, or WebP output.
 - `image.annotation_edit`: mark an image with numbered points, arrows, freehand
   lines, region brushes, rectangles, or ellipses; attach per-mark or global
-  instructions; and request one to four clean edited candidates.
+  instructions; freeze the manual edit scope and protected product, logo, or
+  text choices; review the task summary; and request one to four clean edited
+  candidates only when **Done** is chosen.
 - `image.outpaint`: choose a target ratio and expansion, drag or anchor the
   natural-size source inside the target, and request one to four expanded
   candidates while preserving the original source pixels exactly.

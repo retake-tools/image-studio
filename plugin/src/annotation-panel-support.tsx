@@ -21,8 +21,21 @@ export function annotationDraftJson(
   draft: AnnotationDraft | AnnotationManifest,
 ): PluginJsonValueV2 {
   const value: Record<string, PluginJsonValueV2> = {
+    ...(draft.editScope
+      ? { editScope: { mode: draft.editScope.mode } }
+      : {}),
     globalInstruction: draft.globalInstruction,
+    ...(draft.keepItems
+      ? {
+          keepItems: {
+            logo: draft.keepItems.logo,
+            product: draft.keepItems.product,
+            text: draft.keepItems.text,
+          },
+        }
+      : {}),
     marks: draft.marks.map(annotationMarkJson),
+    ...(draft.outputMode ? { outputMode: draft.outputMode } : {}),
     schemaVersion: draft.schemaVersion,
   };
   if ('sourceAssetId' in draft && draft.sourceAssetId) {

@@ -2,7 +2,7 @@
   "contributions": [
     {
       "contributionId": "design.retake.image-studio.capability.annotation-edit",
-      "definitionHash": "sha256:image-annotation-edit-v2",
+      "definitionHash": "sha256:image-annotation-edit-v3",
       "definitionPath": "definitions/image.annotation_edit.json",
       "exportName": "annotationEditCapability",
       "kind": "capability"
@@ -105,7 +105,7 @@
       "kind": "panel"
     }
   ],
-  "definitionHash": "sha256:image-studio-web-ip-character-v21",
+  "definitionHash": "sha256:image-studio-web-ip-character-v22",
   "description": {
     "default": "Native Image Studio controls and browser image processors.",
     "locales": {

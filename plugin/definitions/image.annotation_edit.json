@@ -1,7 +1,7 @@
 {
   "capabilityId": "image.annotation_edit",
   "category": "image_editing",
-  "definitionHash": "sha256:image-annotation-edit-v2",
+  "definitionHash": "sha256:image-annotation-edit-v3",
   "displayName": {
     "default": "Annotation image edit",
     "locales": {
@@ -70,5 +70,5 @@
   "supportedAdapterClasses": [
     "agent_runtime.media"
   ],
-  "version": "0.2.0"
+  "version": "0.3.0"
 }
