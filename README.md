@@ -63,7 +63,7 @@ github:retake-tools/image-studio@main#subdirectory=plugin
 For an immutable, reproducible install, use the current release tag:
 
 ```text
-github:retake-tools/image-studio@v0.12.3#subdirectory=plugin
+github:retake-tools/image-studio@v0.12.4#subdirectory=plugin
 ```
 
 Retake resolves either Git source, runs its controlled

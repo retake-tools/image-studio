@@ -57,7 +57,7 @@ const ipCharacterWorkflow = await readJson(
 );
 
 assert.equal(packageManifest.packageId, 'design.retake.image-studio');
-assert.equal(packageManifest.version, '0.12.3');
+assert.equal(packageManifest.version, '0.12.4');
 assert.equal(packageManifest.retakeHostCompatibility, '>=0.1.4 <0.2.0');
 assert.equal(packageManifest.license, 'Apache-2.0');
 assert.equal(packageManifest.files.includes('NOTICE'), true);

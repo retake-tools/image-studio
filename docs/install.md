@@ -21,7 +21,7 @@ Image Studio CLI or bridge.
    For an immutable install instead, enter:
 
    ```text
-github:retake-tools/image-studio@v0.12.3#subdirectory=plugin
+github:retake-tools/image-studio@v0.12.4#subdirectory=plugin
    ```
 
 3. Install the Package.
