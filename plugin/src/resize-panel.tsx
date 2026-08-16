@@ -4,9 +4,6 @@ import React, {
   useSyncExternalStore,
   type ReactElement,
 } from 'react';
-import type {
-  PluginPanelProps as PluginPanelPropsV2,
-} from '@retake/plugin-api';
 import { defineMessages } from '@retake/plugin-api';
 import {
   normalizedResizeEncoding,
@@ -20,13 +17,19 @@ import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
 import { usePluginTranslator } from './localization';
 import { useDefaultOutputFormat } from './settings';
+import {
+  imageStudioPanelClassName,
+  type ImageStudioPanelProps,
+  useImageStudioPanelEscape,
+} from './panel-presentation';
 
 const capabilityId = 'image.local_resize';
 const resultSlotId = 'result_image';
 
 export function ImageStudioResizePanel({
   host,
-}: PluginPanelPropsV2): ReactElement | null {
+  presentation,
+}: ImageStudioPanelProps): ReactElement | null {
   const panel = useSyncExternalStore(
     resizePanelStore.subscribe,
     resizePanelStore.getSnapshot,
@@ -53,6 +56,11 @@ export function ImageStudioResizePanel({
   const [quality, setQuality] = useState(90);
   const [value, setValue] = useState(50);
   const block = panel.block;
+  useImageStudioPanelEscape({
+    active: Boolean(block),
+    disabled: pending,
+    onClose: resizePanelStore.close,
+  });
   const asset = block ? host.assets.getBound(block.assetId) : null;
   const assetId = asset?.assetId ?? block?.assetId;
   const assetWidth = validDimension(asset?.width);
@@ -156,14 +164,14 @@ export function ImageStudioResizePanel({
       <style>{imageStudioStyles}</style>
       <section
         aria-label={copy.title}
-        className="retake-image-studio-panel is-editor is-resize"
+        className={imageStudioPanelClassName(
+          'retake-image-studio-panel is-editor is-resize',
+          presentation,
+        )}
         data-retake-image-studio="resize"
       >
         <header className="retake-image-studio-panel__header">
-          <div>
-            <span>Image Studio</span>
-            <h2>{copy.title}</h2>
-          </div>
+          <h2>{copy.title}</h2>
           <button
             aria-label={copy.close}
             className="retake-image-studio-panel__close"

@@ -5,6 +5,15 @@ export const outpaintStyles = `
   width: min(420px, calc(100vw - 32px));
 }
 
+.retake-image-studio-panel.is-outpaint.is-focus-editor {
+  width: 100%;
+  overflow: auto;
+}
+
+.retake-image-studio-panel.is-outpaint.is-focus-editor .retake-outpaint-stage-shell {
+  min-height: min(520px, calc(100vh - 310px));
+}
+
 .retake-outpaint-stage-shell {
   align-items: center;
   background: ${theme.background};

@@ -7,9 +7,6 @@ import React, {
   type PointerEvent,
   type ReactElement,
 } from 'react';
-import type {
-  PluginPanelProps as PluginPanelPropsV2,
-} from '@retake/plugin-api';
 import { usePluginEnvironment } from './localization';
 import { outpaintCopy } from './outpaint-copy';
 import {
@@ -23,6 +20,11 @@ import {
 import { outpaintPanelStore } from './panel-store';
 import { outpaintStyles } from './outpaint-styles';
 import { imageStudioStyles } from './styles';
+import {
+  imageStudioPanelClassName,
+  type ImageStudioPanelProps,
+  useImageStudioPanelEscape,
+} from './panel-presentation';
 
 const capabilityId = 'image.outpaint';
 const aspectPresets: readonly OutpaintAspectPreset[] = [
@@ -44,7 +46,8 @@ interface DragState {
 
 export function ImageStudioOutpaintPanel({
   host,
-}: PluginPanelPropsV2): ReactElement | null {
+  presentation,
+}: ImageStudioPanelProps): ReactElement | null {
   const panel = useSyncExternalStore(
     outpaintPanelStore.subscribe,
     outpaintPanelStore.getSnapshot,
@@ -77,6 +80,11 @@ export function ImageStudioOutpaintPanel({
   const [error, setError] = useState<string | null>(null);
   const [outputCount, setOutputCount] = useState<1 | 2 | 3 | 4>(1);
   const [pending, setPending] = useState(false);
+  useImageStudioPanelEscape({
+    active: Boolean(block),
+    disabled: pending,
+    onClose: outpaintPanelStore.close,
+  });
   const [position, setPosition] = useState({ x: 0.5, y: 0.5 });
   const [prompt, setPrompt] = useState('');
   const [scalePercent, setScalePercent] = useState(125);
@@ -263,14 +271,14 @@ export function ImageStudioOutpaintPanel({
       <section
         aria-busy={pending}
         aria-label={copy.title}
-        className="retake-image-studio-panel is-outpaint"
+        className={imageStudioPanelClassName(
+          'retake-image-studio-panel is-editor is-outpaint',
+          presentation,
+        )}
         data-retake-image-studio="outpaint"
       >
         <header className="retake-image-studio-panel__header">
-          <div>
-            <span>Image Studio</span>
-            <h2>{copy.title}</h2>
-          </div>
+          <h2>{copy.title}</h2>
           <button
             aria-label={copy.close}
             className="retake-image-studio-panel__close"

@@ -25,6 +25,40 @@ export const imageStudioStyles = `
   width: min(880px, calc(100vw - 32px));
 }
 
+.retake-image-studio-panel.is-focus-editor {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: ${theme.surface};
+}
+
+.retake-image-studio-panel.is-focus-editor .retake-image-studio-editor-body {
+  flex: 1;
+}
+
+.retake-image-studio-panel.is-focus-editor .retake-image-studio-editor-preview {
+  display: flex;
+}
+
+.retake-image-studio-panel.is-focus-editor .retake-image-studio-crop-stage,
+.retake-image-studio-panel.is-focus-editor .retake-image-studio-preview {
+  flex: 1;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+}
+
+.retake-image-studio-panel.is-focus-editor .retake-image-studio-crop-media img {
+  max-height: calc(100vh - 132px);
+}
+
 .retake-image-studio-editor-body {
   display: grid;
   gap: ${theme.spaceMedium};
@@ -60,19 +94,9 @@ export const imageStudioStyles = `
 }
 
 .retake-image-studio-panel__header {
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   justify-content: space-between;
-}
-
-.retake-image-studio-panel__header span {
-  color: ${theme.accent};
-  display: block;
-  font-size: 11px;
-  font-weight: 750;
-  letter-spacing: 0.08em;
-  margin-bottom: 3px;
-  text-transform: uppercase;
 }
 
 .retake-image-studio-panel__header h2 {

@@ -14,6 +14,7 @@ import {
 } from '../plugin/src/index';
 import { imageStudioSettings } from '../plugin/src/settings';
 import { imageStudioTheme } from '../plugin/src/theme';
+import { imageStudioPanelClassName } from '../plugin/src/panel-presentation';
 
 test('plugin declares public messages and typed workspace settings', () => {
   assert.equal(imageStudioPlugin.messages, imageStudioMessages);
@@ -98,6 +99,43 @@ test('panels do not own locale detection or private theme fallbacks', async () =
   assert.doesNotMatch(combined, /isChineseLocale/);
   assert.doesNotMatch(combined, /startsWith\(['"]zh/);
   assert.doesNotMatch(combined, /var\(--retake-(?:accent|surface|text),/);
+});
+
+test('host-selected focus editor presentation preserves overlay fallback', async () => {
+  assert.equal(
+    imageStudioPanelClassName('retake-image-studio-panel'),
+    'retake-image-studio-panel',
+  );
+  assert.equal(
+    imageStudioPanelClassName(
+      'retake-image-studio-panel',
+      'focus-editor',
+    ),
+    'retake-image-studio-panel is-focus-editor',
+  );
+  const [annotationPanel, styles, annotationStyles, editorPanels] = await Promise.all([
+    readFile(new URL('../plugin/src/annotation-panel.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../plugin/src/styles.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../plugin/src/annotation-styles.ts', import.meta.url), 'utf8'),
+    Promise.all([
+      'adjust-panel.tsx',
+      'annotation-panel.tsx',
+      'crop-panel.tsx',
+      'outpaint-panel.tsx',
+      'resize-panel.tsx',
+    ].map((fileName) => (
+      readFile(new URL(`../plugin/src/${fileName}`, import.meta.url), 'utf8')
+    ))),
+  ]);
+  assert.match(annotationPanel, /presentation === 'overlay' \? \(/);
+  assert.match(annotationPanel, /role=\{presentation === 'overlay' \? 'dialog' : 'region'\}/);
+  assert.match(styles, /\.retake-image-studio-panel\.is-focus-editor/);
+  assert.match(
+    annotationStyles,
+    /\.retake-image-studio-panel\.is-annotation\.is-focus-editor/,
+  );
+  assert.doesNotMatch(editorPanels.join('\n'), /<span>Image Studio<\/span>/);
+  assert.match(editorPanels.join('\n'), /const defaultCropScale = 0\.9/);
 });
 
 test('annotation view keeps compact controls and a conflict-free reset gesture', async () => {

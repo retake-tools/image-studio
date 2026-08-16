@@ -27,7 +27,7 @@
           "definitions/image.outpaint.json",
           "definitions/image.outpaint.parameters.json"
         ],
-        "version": "0.12.4"
+        "version": "0.12.6"
       }
     ],
     "skills": [
@@ -155,6 +155,7 @@
     "src/outpaint-panel.tsx",
     "src/outpaint-styles.ts",
     "src/outpaint.ts",
+    "src/panel-presentation.ts",
     "src/panel-store.ts",
     "src/plugin-assets.ts",
     "src/resize-panel.tsx",
@@ -180,5 +181,5 @@
   "retakeHostCompatibility": ">=0.1.4 <0.2.0",
   "schemaVersion": 1,
   "signature": null,
-  "version": "0.12.4"
+  "version": "0.12.6"
 }

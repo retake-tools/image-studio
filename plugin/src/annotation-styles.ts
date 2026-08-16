@@ -21,6 +21,16 @@ export const annotationStyles = `
     background: var(--retake-surface, #fff);
   }
 
+  .retake-image-studio-panel.is-annotation.is-focus-editor {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+  }
+
   .retake-image-studio-panel.is-annotation > .retake-image-studio-panel__header,
   .retake-image-studio-panel.is-annotation > .retake-annotation-notice {
     flex: none;

@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 import {
   defineMessages,
-  PluginPanelProps as PluginPanelPropsV2,
 } from '@retake/plugin-api';
 import {
   cropOutputGeometry,
@@ -27,9 +26,15 @@ import { cropPanelStore } from './panel-store';
 import { exactSourceImage } from './plugin-assets';
 import { imageStudioStyles } from './styles';
 import { usePluginTranslator } from './localization';
+import {
+  imageStudioPanelClassName,
+  type ImageStudioPanelProps,
+  useImageStudioPanelEscape,
+} from './panel-presentation';
 
 const capabilityId = 'image.local_crop';
 const resultSlotId = 'result_image';
+const defaultCropScale = 0.9;
 const aspectPresets: readonly CropAspectPreset[] = [
   'original',
   '1:1',
@@ -52,7 +57,8 @@ interface DragState {
 
 export function ImageStudioCropPanel({
   host,
-}: PluginPanelPropsV2): ReactElement | null {
+  presentation,
+}: ImageStudioPanelProps): ReactElement | null {
   const panel = useSyncExternalStore(
     cropPanelStore.subscribe,
     cropPanelStore.getSnapshot,
@@ -73,6 +79,11 @@ export function ImageStudioCropPanel({
     useState<NormalizedCropRegion | null>(null);
   const dragRef = useRef<DragState | null>(null);
   const block = panel.block;
+  useImageStudioPanelEscape({
+    active: Boolean(block),
+    disabled: pending,
+    onClose: cropPanelStore.close,
+  });
   const asset = block ? host.assets.getBound(block.assetId) : null;
   const assetId = asset?.assetId ?? block?.assetId;
   const assetWidth = validDimension(asset?.width);
@@ -106,7 +117,7 @@ export function ImageStudioCropPanel({
     ? cropRegionForPreset({
         dimensions,
         preset,
-        scale: 1,
+        scale: defaultCropScale,
       })
     : null);
   const output = dimensions && region
@@ -233,14 +244,14 @@ export function ImageStudioCropPanel({
       <style>{imageStudioStyles}</style>
       <section
         aria-label={copy.title}
-        className="retake-image-studio-panel is-editor is-crop"
+        className={imageStudioPanelClassName(
+          'retake-image-studio-panel is-editor is-crop',
+          presentation,
+        )}
         data-retake-image-studio="crop"
       >
         <header className="retake-image-studio-panel__header">
-          <div>
-            <span>Image Studio</span>
-            <h2>{copy.title}</h2>
-          </div>
+          <h2>{copy.title}</h2>
           <button
             aria-label={copy.close}
             className="retake-image-studio-panel__close"

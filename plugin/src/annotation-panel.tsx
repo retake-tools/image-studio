@@ -11,9 +11,6 @@ import React, {
   type ReactElement,
   type WheelEvent,
 } from 'react';
-import type {
-  PluginPanelProps as PluginPanelPropsV2,
-} from '@retake/plugin-api';
 import {
   ArrowUpRight,
   Circle,
@@ -32,6 +29,10 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
+import {
+  imageStudioPanelClassName,
+  type ImageStudioPanelProps,
+} from './panel-presentation';
 import {
   annotationColorOptions,
   annotationLimits,
@@ -116,7 +117,8 @@ type Gesture =
 
 export function ImageStudioAnnotationPanel({
   host,
-}: PluginPanelPropsV2): ReactElement | null {
+  presentation = 'overlay',
+}: ImageStudioPanelProps): ReactElement | null {
   const panel = useSyncExternalStore(
     annotationPanelStore.subscribe,
     annotationPanelStore.getSnapshot,
@@ -722,23 +724,25 @@ export function ImageStudioAnnotationPanel({
   return (
     <>
       <style>{imageStudioStyles + annotationStyles}</style>
-      <div aria-hidden="true" className="retake-annotation-modal-layer" />
+      {presentation === 'overlay' ? (
+        <div aria-hidden="true" className="retake-annotation-modal-layer" />
+      ) : null}
       <section
         aria-label={copy.title}
         aria-busy={pending}
-        aria-modal="true"
-        className="retake-image-studio-panel is-annotation nodrag nopan nowheel"
+        aria-modal={presentation === 'overlay' ? true : undefined}
+        className={imageStudioPanelClassName(
+          'retake-image-studio-panel is-annotation nodrag nopan nowheel',
+          presentation,
+        )}
         data-retake-image-studio="annotation"
         onKeyDown={onPanelKeyDown}
         ref={panelRef}
-        role="dialog"
+        role={presentation === 'overlay' ? 'dialog' : 'region'}
         tabIndex={-1}
       >
         <header className="retake-image-studio-panel__header">
-          <div>
-            <span>Image Studio</span>
-            <h2>{copy.title}</h2>
-          </div>
+          <h2>{copy.title}</h2>
           <button
             aria-label={copy.close}
             className="retake-image-studio-panel__close"

@@ -94,6 +94,18 @@ test('original preset is non-destructive only at full scale', () => {
   );
 });
 
+test('the editor default leaves a centered visible crop boundary', () => {
+  const region = cropRegionForPreset({
+    dimensions: { height: 1024, width: 1024 },
+    preset: 'original',
+    scale: 0.9,
+  });
+  assert.equal(region.width, 0.9);
+  assert.equal(region.height, 0.9);
+  assert.ok(Math.abs(region.x - 0.05) < 0.000001);
+  assert.ok(Math.abs(region.y - 0.05) < 0.000001);
+});
+
 test('invalid crop regions are rejected before Canvas execution', () => {
   assert.throws(
     () => cropOutputGeometry(
